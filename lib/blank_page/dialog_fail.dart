@@ -127,3 +127,75 @@ void showCustomDialog(
     },
   );
 }
+
+void showDialogFail(
+  BuildContext context, {
+  required String title,
+  required String description,
+  required VoidCallback onConfirm,
+}) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // กดนอกไม่ปิด
+    // barrierColor: Color(0xffE7C882).withOpacity(0.5),
+    builder: (context) {
+      return WillPopScope(
+        onWillPop: () async => false, // กันกด back
+        child: CupertinoAlertDialog(
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: 'Sarabun',
+              color: Colors.black,
+            ),
+          ),
+
+          content: Text(
+            description,
+            style: const TextStyle(
+              fontSize: 12,
+              fontFamily: 'Sarabun',
+              color: Colors.black,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+
+          actions: [
+            // ❌ ยกเลิก
+            CupertinoDialogAction(
+              child: const Text(
+                "ยกเลิก",
+                style: TextStyle(
+                  fontSize: 13,
+                  fontFamily: 'Sarabun',
+                  color: Colors.grey,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+
+            // ✅ ยืนยัน
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: const Text(
+                "ยืนยัน",
+                style: TextStyle(
+                  fontSize: 13,
+                  fontFamily: 'Sarabun',
+                  color: AppColors.primary,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                onConfirm();
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}

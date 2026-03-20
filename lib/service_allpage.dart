@@ -3,8 +3,9 @@ import 'package:dsd/model/service_data.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
-class ServicePage extends StatelessWidget {
-  const ServicePage({super.key});
+class ServiceAllPage extends StatelessWidget {
+  final Function(int) onTabChange;
+  const ServiceAllPage({super.key, required this.onTabChange});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,17 @@ class ServicePage extends StatelessWidget {
 
   Widget _serviceCard(ServiceItem service, BuildContext context) {
     return InkWell(
-      onTap: service.onTap(context),
+      // onTap: () => service.onTap(context),
+      onTap: () {
+        // // ถ้าเป็น ปฏิทินกิจกรรม ให้ pop กลับแล้ว switch tab
+        // if (service.title.contains('ปฏิทิน') && onTabChange != null) {
+        //   Navigator.pop(context);
+        //   onTabChange!(1);
+        // } else {
+
+        // }
+        service.onTap(context);
+      },
       borderRadius: BorderRadius.circular(8),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),

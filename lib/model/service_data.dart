@@ -1,6 +1,7 @@
 import 'package:dsd/Knowledge.dart';
+import 'package:dsd/calendar_page.dart';
 import 'package:dsd/exam_service.dart';
-import 'package:dsd/privilege_all.dart';
+import 'package:dsd/privilege/privilege_all.dart';
 import 'package:dsd/training_service.dart';
 import 'package:flutter/material.dart';
 
@@ -45,11 +46,23 @@ final List<ServiceItem> services = [
       // );
     },
   ),
+  // ServiceItem(
+  //   title: 'ปฏิทินกิจกรรม',
+  //   image: 'assets/DSD/imgs/4.png',
+  //   onTap: (context) {
+  //     globalOnTabChange(1);
+  //   },
+  // ),
   ServiceItem(
     title: 'ปฏิทินกิจกรรม',
     image: 'assets/DSD/imgs/4.png',
     onTap: (context) {
-      globalOnTabChange(1);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CalendarPage(pushedFromPage: true), // ✅
+        ),
+      );
     },
   ),
   ServiceItem(

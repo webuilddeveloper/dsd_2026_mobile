@@ -1,12 +1,21 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/model/calendar_data.dart';
+import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
   final Function(int)? onTabChange;
-  const CalendarPage({super.key, this.onTabChange});
+  final bool pushedFromPage;
+
+  const CalendarPage({
+    super.key,
+    this.onTabChange,
+    this.pushedFromPage = false, // 👈 default
+  });
 
   @override
   State<CalendarPage> createState() => _CalendarPageState();
@@ -16,14 +25,42 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime selectedDay = DateTime.now();
 
   void goBack() {
-    widget.onTabChange?.call(0);
+    if (widget.pushedFromPage) {
+      Navigator.pop(context); // มาจาก ServiceAllPage → pop กลับ
+    } else {
+      widget.onTabChange?.call(0); // มาจาก Menu/Home → switch tab
+    }
   }
 
-  List<Calendar> getEventsByDate(DateTime date) {
-    String formatted =
-        "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  @override
+  void initState() {
+    _eventCalendarApi();
+    super.initState();
+  }
 
-    return calendarList.where((e) => e.date == formatted).toList();
+  List<Map<String, dynamic>> eventCalendar = [];
+
+  Future<void> _eventCalendarApi() async {
+    final data = await postDio('${eventCalendarApi}read', {
+      "permission": "all",
+      "skip": 0,
+      "limit": 10,
+      "keySearch": "",
+      "isHighlight": false,
+      "category": "",
+    });
+    setState(() {
+      eventCalendar = (data as List).cast<Map<String, dynamic>>();
+    });
+
+    // return (data as List).cast<Map<String, dynamic>>();
+  }
+
+  List<Map<String, dynamic>> getEventsByDate(DateTime date) {
+    String formatted =
+        "${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}";
+
+    return eventCalendar.where((e) => e['dateStart'] == formatted).toList();
   }
 
   String formatThaiDate(DateTime date) {
@@ -183,7 +220,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   final item = events[index];
 
                   return Container(
-                    height: 115,
+                    // height: 115,
                     margin: const EdgeInsets.only(bottom: 10),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -198,83 +235,64 @@ class _CalendarPageState extends State<CalendarPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              item.title,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                            Expanded(
+                              child: Text(
+                                item['title'],
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 2,
                               ),
                             ),
-                            Text(
-                              "เวลา ${item.time}",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
+                            // Text(
+                            // "เวลา ${item.time}",
+                            //   "'",
+                            //   style: const TextStyle(
+                            //     fontSize: 14,
+                            //     fontWeight: FontWeight.w400,
+                            //   ),
+                            // ),
                           ],
                         ),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              flex: 1,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  item.image,
-                                  width: 80,
-                                  height: 60,
-                                  fit: BoxFit.cover,
-                                ),
+                            // ✅ รูปภาพ - ไม่ต้องใช้ Expanded
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                item['imageUrl'],
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (context, error, stackTrace) => Container(
+                                      width: 80,
+                                      height: 80,
+                                      color: Colors.grey[300],
+                                    ),
                               ),
                             ),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
+                            // ✅ description - ใช้ Text + strip HTML แทน Html widget
                             Expanded(
-                              flex: 3,
-                              child: Text(
-                                item.description,
-                                style: const TextStyle(
-                                  color: AppColors.textgrey,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
+                              child: Html(
+                                data: item['description'],
+                                style: {
+                                  "body": Style(
+                                    maxLines: 4,
+                                    textOverflow: TextOverflow.ellipsis,
+                                    fontSize: FontSize(12),
+                                    color: AppColors.textgrey,
+                                  ),
+                                },
                               ),
                             ),
                           ],
                         ),
                       ],
                     ),
-
-                    // child:
-                    // Row(
-                    //   children: [
-                    //     Image.asset(
-                    //       item.image,
-                    //       width: 80,
-                    //       height: 60,
-                    //       fit: BoxFit.cover,
-                    //     ),
-                    //     const SizedBox(width: 10),
-
-                    //     Expanded(
-                    //       child: Column(
-                    //         crossAxisAlignment: CrossAxisAlignment.start,
-                    //         children: [
-                    //           Text(
-                    //             item.title,
-                    //             style: const TextStyle(
-                    //               fontWeight: FontWeight.bold,
-                    //             ),
-                    //           ),
-                    //           const SizedBox(height: 4),
-                    //           Text("เวลา ${item.time}"),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                   );
                 },
               ),

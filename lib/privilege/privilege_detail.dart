@@ -1,10 +1,15 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/model/privilege.dart';
+import 'package:dsd/blank_page/dialog_fail.dart';
+import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/blank_page/launch.dart';
+
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class PrivilegeDetail extends StatefulWidget {
-  final PrivilegeItem privilege;
+  // final PrivilegeItem privilege;
+  final Map<String, dynamic> privilege;
   // news;
   const PrivilegeDetail({super.key, required this.privilege});
 
@@ -30,8 +35,6 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── 1. รูปภาพข่าว ──────────────────────────────────
-            // ── รูปภาพ + กล่องเนื้อหาซ้อนทับ ──
             Stack(
               children: [
                 // รูปภาพ
@@ -39,8 +42,8 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
                   padding: EdgeInsets.only(
                     top: MediaQuery.of(context).padding.top + 55,
                   ),
-                  child: Image.asset(
-                    widget.privilege.image,
+                  child: Image.network(
+                    widget.privilege['imageUrl'],
                     width: double.infinity,
                     height: 300,
                     fit: BoxFit.cover,
@@ -48,28 +51,27 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
                 ),
 
                 // Badge 1/2
-                Positioned(
-                  bottom: MediaQuery.of(context).padding.bottom + 0,
-                  right: 12,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Text(
-                      '1/2',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
-                    ),
-                  ),
-                ),
+                // Positioned(
+                //   bottom: MediaQuery.of(context).padding.bottom + 0,
+                //   right: 12,
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(
+                //       horizontal: 8,
+                //       vertical: 4,
+                //     ),
+                //     decoration: BoxDecoration(
+                //       color: Colors.black54,
+                //       borderRadius: BorderRadius.circular(12),
+                //     ),
+                //     child: const Text(
+                //       '1/2',
+                //       style: TextStyle(color: Colors.white, fontSize: 12),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
 
-            // กล่องเนื้อหาซ้อนทับรูปขึ้นไป 20px
             Transform.translate(
               offset: const Offset(0, -16), // ดึงขึ้นไปทับรูป
               child: Container(
@@ -87,7 +89,7 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.privilege.title,
+                      widget.privilege['title'],
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -106,13 +108,33 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
                       ),
                     ),
                     SizedBox(height: 8),
-                    Text('วันที่ลง : ${widget.privilege.date}'),
+                    Text(
+                      'วันที่ลง : ${formatDate(widget.privilege['_id']['creationTime'])}',
+                    ),
                     SizedBox(height: 16),
-                    Text(' ${widget.privilege.description}'),
+
+                    Html(data: widget.privilege['description']),
                     SizedBox(height: 32),
                     Center(
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          final link = widget.privilege['linkUrl'];
+
+                          if (link == null || link.toString().trim().isEmpty) {
+                            showDialogFail(
+                              context,
+                              title: 'ไม่พบลิงก์',
+                              description:
+                                  'ไม่สามารถเปิดข่าวนี้ได้ เนื่องจากไม่มีลิงก์',
+                              onConfirm: () {
+                                Navigator.pop(context);
+                              },
+                            );
+                            return;
+                          }
+
+                          launchURL(link as String);
+                        },
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -130,6 +152,7 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
                             child: Text(
                               'อ่านเพิ่มเติม',
                               style: TextStyle(
+                                color: AppColors.primary,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
