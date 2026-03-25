@@ -1,6 +1,8 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/blank_page/textfield%20.dart';
-import 'package:dsd/model/knowledge_data.dart';
+import 'package:dsd/blank_page/textfield.dart';
+import 'package:dsd/knowledge/knowledge_detail.dart';
+
+import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -17,16 +19,16 @@ class _KnowledgePageState extends State<KnowledgePage>
   final TextEditingController knowledgeSearch = TextEditingController();
   int selectedIndex = 0;
 
-  final List<String> tabs = [
-    'ทั้งหมด',
-    'เทคโนโลยียานยนต์',
-    'เทคโนโลยีไฟฟ้าและอิเล็กทรอนิกส์',
-  ];
+  List<Map<String, dynamic>> allknowlege = [];
+  List<Map<String, dynamic>> categoryknowlege = [];
+  bool isLoading = true;
 
   @override
   void initState() {
-    super.initState();
     _controller = AnimationController(vsync: this);
+    _knowledgeApi();
+    _knowledgeCategoryApi();
+    super.initState();
   }
 
   @override
@@ -35,40 +37,59 @@ class _KnowledgePageState extends State<KnowledgePage>
     super.dispose();
   }
 
+  /*===============================>> API <<=============================== */
+  Future<void> _knowledgeApi() async {
+    final data = await postDio('${knowledgeApi}read', {'limit': 10});
+    setState(() {
+      allknowlege = (data as List).cast<Map<String, dynamic>>();
+      isLoading = false;
+    });
+  }
+
+  Future<void> _knowledgeCategoryApi() async {
+    final data = await postDio('${knowledgeCategoryApi}read', {'limit': 10});
+    setState(() {
+      // ✅ เพิ่ม "ทั้งหมด" ไว้ตัวแรกเสมอ
+      categoryknowlege = [
+        {'code': '', 'title': 'ทั้งหมด'},
+        ...(data as List).cast<Map<String, dynamic>>(),
+      ];
+      isLoading = false;
+    });
+  }
+  /*===============================>> API <<=============================== */
+
   void goBack() => Navigator.pop(context, false);
 
-  List<KnowledgeData> getFilteredList() {
-    List<KnowledgeData> list = knowledgeList;
+  List<Map<String, dynamic>> getFiltered() {
+    List<Map<String, dynamic>> knowlege = allknowlege;
 
-    if (selectedIndex == 1) {
-      list = list.where((e) => e.title.contains('ยานยนต์')).toList();
-    } else if (selectedIndex == 2) {
-      list =
-          list
-              .where(
-                (e) =>
-                    e.title.contains('ไฟฟ้า') ||
-                    e.title.contains('อิเล็กทรอนิกส์'),
-              )
+    // ✅ filter ตาม category code
+    if (selectedIndex != 0) {
+      final selectedCode = categoryknowlege[selectedIndex]['code'];
+      knowlege = knowlege.where((e) => e['category'] == selectedCode).toList();
+      print(selectedCode);
+    }
+
+    // 🔍 filter จาก search
+    if (knowledgeSearch.text.isNotEmpty) {
+      final keyword = knowledgeSearch.text.toLowerCase();
+      knowlege =
+          knowlege
+              .where((e) => (e['title'] ?? '').toLowerCase().contains(keyword))
               .toList();
     }
 
-    if (knowledgeSearch.text.isNotEmpty) {
-      final keyword = knowledgeSearch.text.toLowerCase();
-      list =
-          list.where((e) => e.title.toLowerCase().contains(keyword)).toList();
-    }
-
-    return list;
+    return knowlege;
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredList = getFilteredList();
+    final filteredList = getFiltered();
 
     return Scaffold(
       appBar: appBar(
-        title: "การกำหนดฝึกอบรม",
+        title: "คลังความรู้",
         rightBtn: false,
         backBtn: true,
         backAction: () => goBack(),
@@ -92,7 +113,7 @@ class _KnowledgePageState extends State<KnowledgePage>
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: List.generate(tabs.length, (index) {
+                children: List.generate(categoryknowlege.length, (index) {
                   final isSelected = selectedIndex == index;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
@@ -115,7 +136,7 @@ class _KnowledgePageState extends State<KnowledgePage>
                           vertical: 6,
                         ),
                         child: Text(
-                          tabs[index],
+                          categoryknowlege[index]['title'],
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight:
@@ -212,12 +233,16 @@ class _KnowledgePageState extends State<KnowledgePage>
     );
   }
 
-  Widget _buildCard(KnowledgeData item) {
+  Widget _buildCard(Map<String, dynamic> item) {
     return GestureDetector(
       onTap: () {
-        // TODO: navigate to detail page
-        print('------ >>KnowledgeData');
-        print(item.title);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => KnowledgeDetail(code: item['code'], model: item),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -242,8 +267,8 @@ class _KnowledgePageState extends State<KnowledgePage>
                 borderRadius: BorderRadius.circular(4),
                 child: AspectRatio(
                   aspectRatio: 0.68, // สัดส่วนหนังสือ portrait
-                  child: Image.asset(
-                    item.image,
+                  child: Image.network(
+                    item['imageUrl'],
                     fit: BoxFit.cover,
                     errorBuilder:
                         (context, error, stackTrace) => Container(

@@ -1,7 +1,9 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/blank_page/dialog_fail.dart';
+
 import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
+import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -17,6 +19,29 @@ class NewsDetailPage extends StatefulWidget {
 class _NewsDetailPageState extends State<NewsDetailPage> {
   void goBack() {
     Navigator.pop(context);
+  }
+
+  @override
+  void initState() {
+    _readGallery();
+    super.initState();
+  }
+
+  List<Map<String, dynamic>> _gallery = [];
+
+  _readGallery() async {
+    final data = await postDio('${newsGallery}read', {
+      'limit': 10,
+      // "skip": 0,
+      'code': widget.news['code'],
+    });
+    setState(() {
+      _gallery = (data as List).cast<Map<String, dynamic>>();
+
+      if (widget.news['imageUrl'] != null) {
+        _gallery.insert(0, {'imageUrl': widget.news['imageUrl']});
+      }
+    });
   }
 
   @override
@@ -38,12 +63,26 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                   padding: EdgeInsets.only(
                     top: MediaQuery.of(context).padding.top + 55,
                   ),
-                  child: Image.network(
-                    widget.news['imageUrl'] ?? '  ',
-                    width: double.infinity,
-                    height: 300,
-                    fit: BoxFit.cover,
-                  ),
+                  child:
+                      _gallery.isNotEmpty
+                          ? GestureDetector(
+                            onTap:
+                                () => GalleryViewer.open(
+                                  context,
+                                  gallery: _gallery,
+                                  initialIndex: 0, // ✅ รูปแรก
+                                ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                _gallery[0]['imageUrl'],
+                                width: double.infinity,
+                                height: 350,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )
+                          : SizedBox(),
                 ),
 
                 // Badge 1/2
@@ -98,7 +137,40 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                       SizedBox(height: 16),
                       Divider(color: AppColors.borderColor),
                       SizedBox(height: 16),
+                      if (_gallery.length > 1)
+                        SizedBox(
+                          height: 120,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _gallery.length - 1,
+                            itemBuilder: (context, index) {
+                              final item = _gallery[index + 1];
 
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: GestureDetector(
+                                  onTap:
+                                      () => GalleryViewer.open(
+                                        context,
+                                        gallery: _gallery,
+                                        initialIndex:
+                                            index + 1, // ✅ ตรงนี้ใช้ได้
+                                      ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      item['imageUrl'],
+                                      width: 120,
+                                      height: 120,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      SizedBox(height: 16),
                       Text(
                         'รายละเอียด มีดังนี้',
                         style: const TextStyle(
@@ -112,53 +184,40 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
 
                       Html(data: widget.news['description']),
                       SizedBox(height: 32),
-                      Center(
-                        child: InkWell(
-                          onTap: () {
-                            final link = widget.news['linkUrl'];
-
-                            if (link == null ||
-                                link.toString().trim().isEmpty) {
-                              showDialogFail(
-                                context,
-                                title: 'ไม่พบลิงก์',
-                                description:
-                                    'ไม่สามารถเปิดข่าวนี้ได้ เนื่องจากไม่มีลิงก์',
-                                onConfirm: () {
-                                  Navigator.pop(context);
-                                },
-                              );
-                              return;
-                            }
-
-                            launchURL(link as String);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: AppColors.primary,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsetsGeometry.symmetric(
-                                vertical: 8,
-                                horizontal: 16,
-                              ),
-                              child: Text(
-                                'อ่านเพิ่มเติม',
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                      widget.news['textButton'] != ''
+                          ? Center(
+                            child: InkWell(
+                              onTap: () {
+                                final link = widget.news['linkUrl'];
+                                launchURL(link as String);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: AppColors.primary,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsetsGeometry.symmetric(
+                                    vertical: 8,
+                                    horizontal: 16,
+                                  ),
+                                  child: Text(
+                                    widget.news['textButton'],
+                                    style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
+                          )
+                          : SizedBox(),
                       SizedBox(height: 32),
                     ],
                   ),

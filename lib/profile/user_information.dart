@@ -1,0 +1,348 @@
+import 'package:dsd/blank_page/appbar.dart';
+
+import 'package:dsd/license_page.dart';
+
+import 'package:dsd/profile/edit_user_information.dart';
+import 'package:dsd/shared/api_provider.dart';
+
+import 'package:dsd/style_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+class UserInformationPage extends StatefulWidget {
+  final Function(int)? onTabChange;
+
+  const UserInformationPage({super.key, required this.onTabChange});
+
+  @override
+  State<UserInformationPage> createState() => _UserInformationPageState();
+}
+
+class _UserInformationPageState extends State<UserInformationPage> {
+  void goBack() {
+    widget.onTabChange?.call(0);
+  }
+
+  final storage = FlutterSecureStorage();
+  String _imageUrl = '';
+
+  final txtFirstName = TextEditingController();
+  final txtLastName = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _registerRead();
+  }
+
+  @override
+  void dispose() {
+    txtFirstName.dispose();
+    txtLastName.dispose();
+
+    super.dispose();
+  }
+
+  Future<void> _registerRead() async {
+    // var value = await storage.read(key: 'dataUserLoginDDPM') ?? ''; // local
+    final _code = await storage.read(key: 'profileCode');
+    final value = await postLoginRegister('${register}read', {
+      "code": _code,
+    }); // api
+
+    if (value.isNotEmpty) {
+      try {
+        var user = value['objectData'][0];
+
+        setState(() {
+          _imageUrl = user['imageUrl'] ?? '';
+          txtFirstName.text = user['firstName'] ?? '';
+          txtLastName.text = user['lastName'] ?? '';
+        });
+      } catch (_) {}
+    }
+  }
+
+  logout(BuildContext context) async {
+    final storage = FlutterSecureStorage();
+    storage.delete(key: 'profileCode');
+    var profileCategory = await storage.read(key: 'profileCategory');
+    if (profileCategory != '' && profileCategory != null) {
+      switch (profileCategory) {
+        case 'facebook':
+          // logoutFacebook();
+          // logoutFacebook();
+          break;
+        case 'google':
+          // logoutGoogle();
+          break;
+        case 'line':
+          // logoutLine();
+          break;
+        default:
+      }
+    }
+    widget.onTabChange?.call(0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.backgroundMain,
+      appBar: appBar(
+        title: "โปรไฟล์",
+        backBtn: true,
+        rightBtn: false,
+        backAction: () => goBack(),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: MediaQuery.of(context).size.height * 0.12,
+            bottom: MediaQuery.of(context).size.height * 0.15,
+          ),
+          child: Column(
+            children: [
+              Stack(
+                clipBehavior: Clip.none, // ให้วงกลมล้นออกมาได้
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 90,
+                        bottom: 30,
+                        left: 16,
+                        right: 16,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: AlignmentGeometry.center,
+                            child: Text(
+                              '${txtFirstName.text} ${txtLastName.text}',
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'บัญชีของฉัน',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          _rowtxt(
+                            title: 'บัญชีผู้ใช้งาน',
+                            ontap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => EditUserInformationPage(),
+                                ),
+                              ).then((_) {
+                                _registerRead(); // เรียกใหม่ตอนกลับมา
+                              });
+                            },
+                          ),
+                          SizedBox(height: 16),
+                          _rowtxt(
+                            title: 'ใบอนุญาติ',
+                            ontap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PageLicense(),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 8),
+                          const Divider(color: AppColors.backgroundMain),
+                          SizedBox(height: 8),
+                          _rowtxt(title: 'เปลี่ยนรหัสผ่าน', ontap: () {}),
+                          SizedBox(height: 32),
+                          Text(
+                            'กิจกรรมของคุณ',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          _rowtxt(title: 'การถูกใจ', ontap: () {}),
+                          SizedBox(height: 8),
+                          const Divider(color: AppColors.backgroundMain),
+                          SizedBox(height: 8),
+                          _rowtxt(title: 'ประวัติการอบรม', ontap: () {}),
+                          SizedBox(height: 8),
+                          const Divider(color: AppColors.backgroundMain),
+                          SizedBox(height: 8),
+                          SizedBox(height: 32),
+                          Text(
+                            'ตั้งค่า',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          _rowtxt(title: 'ตั้งค่าการแจ้งเตือน', ontap: () {}),
+                          SizedBox(height: 8),
+                          const Divider(color: AppColors.backgroundMain),
+                          SizedBox(height: 8),
+                          _rowtxt(
+                            title: 'เปลี่ยนภาษา /  Language',
+                            ontap: () {},
+                          ),
+
+                          SizedBox(height: 8),
+                          const Divider(color: AppColors.backgroundMain),
+                          SizedBox(height: 8),
+                          _rowtxt(title: 'เกี่ยวกับเรา', ontap: () {}),
+                          SizedBox(height: 8),
+                          const Divider(color: AppColors.backgroundMain),
+                          SizedBox(height: 8),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // รูปโปรไฟล์
+                  Positioned(
+                    top: -70,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            height: 140,
+                            width: 140,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(75),
+                              border: Border.all(width: 6, color: Colors.white),
+                              color: AppColors.primary,
+                            ),
+                            child: ClipOval(
+                              child:
+                                  _imageUrl.isNotEmpty
+                                      ? Image.network(
+                                        _imageUrl,
+                                        fit: BoxFit.cover,
+                                      )
+                                      : Image.asset(
+                                        'assets/DSD/imgs/profile.png',
+                                        fit: BoxFit.cover,
+                                      ),
+                            ),
+                          ),
+
+                          // Positioned(
+                          //   bottom: 0, // ลอยออกมานิดนึง (ดูมีมิติ)
+                          //   right: 0,
+                          //   child: Material(
+                          //     color: Colors.transparent,
+                          //     child: InkWell(
+                          //       onTap: () {
+                          //         // TODO: ใส่ action เปิดกล้อง
+                          //       },
+                          //       borderRadius: BorderRadius.circular(30),
+                          //       child: Container(
+                          //         height: 40,
+                          //         width: 40,
+                          //         decoration: BoxDecoration(
+                          //           color: AppColors.primary,
+                          //           shape: BoxShape.circle,
+                          //           border: Border.all(
+                          //             color: Colors.white,
+                          //             width: 2,
+                          //           ),
+                          //           boxShadow: [
+                          //             BoxShadow(
+                          //               color: Colors.black.withOpacity(0.15),
+                          //               blurRadius: 6,
+                          //               offset: Offset(0, 2),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //         child: Center(
+                          //           child: Image.asset(
+                          //             'assets/DSD/icon/icons_camera.png',
+                          //             width: 20,
+                          //             height: 20,
+                          //             fit: BoxFit.contain, // ✅ ไม่บีบภาพ
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+              InkWell(
+                onTap: () {
+                  logout(context);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.primary, width: 1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      horizontal: 24,
+                      vertical: 8,
+                    ),
+                    child: Text(
+                      'ออกจากระบบ',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  InkWell _rowtxt({required String title, required VoidCallback ontap}) {
+    return InkWell(
+      onTap: () => ontap(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+          ),
+          Icon(Icons.arrow_forward_ios, color: AppColors.primary),
+        ],
+      ),
+    );
+  }
+}

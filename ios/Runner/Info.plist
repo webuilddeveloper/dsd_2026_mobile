@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>dsd</string>
+	<string>DSD E-Cer</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +14,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>dsd</string>
+	<string>DSD E-Cer</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -28,6 +29,17 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+
+		<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+<string>แอป DSD E-Cer ขออนุญาตเข้าถึงกล้องของอุปกรณ์ เพื่อใช้ในการถ่ายภาพเอกสารหรือข้อมูลที่เกี่ยวข้องกับการใช้งาน</string>
+
+<key>NSPhotoLibraryUsageDescription</key>
+<string>แอป DSD E-Cer ขออนุญาตเข้าถึงรูปภาพในอุปกรณ์ เพื่อให้ผู้ใช้งานสามารถเลือกและอัปโหลดรูปภาพหรือเอกสารเข้าสู่ระบบ</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -1,6 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
-import 'package:dsd/blank_page/textfield%20.dart';
+import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/privilege/privilege_detail.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
@@ -55,7 +55,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
   final TextEditingController privilegeSearch = TextEditingController();
 
   int selectedIndex = 0;
-  // 🔥 filter logic
+
   List<Map<String, dynamic>> getFilteredList() {
     List<Map<String, dynamic>> privilegeslist = privilegesAll;
     if (selectedIndex != 0) {
@@ -63,8 +63,6 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
       privilegeslist =
           privilegeslist.where((e) => e['category'] == selectedCode).toList();
     }
-
-    // 🔥 filter ตาม search (ใช้แบบ ignore case)
     if (privilegeSearch.text.isNotEmpty) {
       final keyword = privilegeSearch.text.toLowerCase();
 
@@ -81,7 +79,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(
-        title: "สิทธิประโยชน์",
+        title: "สิทธิประโยชน์ ",
         rightBtn: false,
         backBtn: true,
         backAction: () => goBack(),
@@ -89,6 +87,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 🔍 search
             buildSearch(
@@ -108,6 +107,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: List.generate(category.length, (index) {
                   final isSelected = selectedIndex == index;
 
@@ -152,7 +152,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
 
             Expanded(
               child: GridView.builder(
-                itemCount: getFilteredList().length, // ✅ ใช้ filtered list
+                itemCount: getFilteredList().length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 12,
@@ -160,8 +160,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
                   childAspectRatio: 0.85,
                 ),
                 itemBuilder: (context, index) {
-                  final item = getFilteredList()[index]; // ✅ ดึง item ตาม index
-
+                  final item = getFilteredList()[index];
                   return InkWell(
                     onTap: () {
                       Navigator.push(
@@ -191,7 +190,6 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
                               top: Radius.circular(16),
                             ),
                             child: Image.network(
-                              // ✅ เปลี่ยนจาก asset เป็น network
                               item['imageUrl'] ?? '',
                               height: 120,
                               width: double.infinity,
@@ -218,24 +216,29 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
                                   ),
                                 ),
                                 const SizedBox(height: 6),
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/DSD/icon/icon date.png',
-                                      width: 14,
-                                      color: AppColors.borderColor,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      formatDate(item['_id']['creationTime']),
-                                      style: const TextStyle(
-                                        color: AppColors.borderColor,
-                                        fontSize: 11,
-                                        fontFamily: 'Kanit',
-                                      ),
-                                    ),
-                                  ],
-                                ),
+
+                                item['dateStart'] != null &&
+                                        item['dateStart'] != '' &&
+                                        item['dateStart'] != 'Invalid date'
+                                    ? Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/DSD/icon/icon date.png',
+                                          width: 14,
+                                          color: AppColors.borderColor,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          formatDate(item['dateStart']),
+                                          style: const TextStyle(
+                                            color: AppColors.borderColor,
+                                            fontSize: 11,
+                                            fontFamily: 'Kanit',
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                    : SizedBox(),
                               ],
                             ),
                           ),

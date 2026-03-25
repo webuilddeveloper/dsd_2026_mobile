@@ -1,11 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:dsd/home.dart';
-import 'package:dsd/model/service_data.dart';
+import 'package:dsd/login.dart';
+
 import 'package:dsd/notification.dart';
-import 'package:dsd/profile.dart';
-import 'package:dsd/calendar_page.dart';
+
+import 'package:dsd/calendar/calendar_page.dart';
+import 'package:dsd/profile/user_information.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Menu extends StatefulWidget {
@@ -17,6 +20,10 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
+  final storage = FlutterSecureStorage();
+
+  final GlobalKey<HomePageState> _homeKey = GlobalKey<HomePageState>();
+
   List<Widget> pages = <Widget>[];
   int _currentPage = 0;
   DateTime? currentBackPressTime;
@@ -26,25 +33,37 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   void initState() {
     // _callRead();
 
-    globalOnTabChange = _onItemTapped;
     pages = <Widget>[
-      HomePage(onTabChange: _onItemTapped),
-      // EventCalendarMain(title: 'ตารางงาน'),
+      HomePage(key: _homeKey, onTabChange: _onItemTapped),
       CalendarPage(onTabChange: _onItemTapped),
       NotificationList(onTabChange: _onItemTapped),
-      ProfilePage(onTabChange: _onItemTapped),
+      UserInformationPage(onTabChange: _onItemTapped),
     ];
     super.initState();
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      if (index == 0 && _currentPage == 0) {
-        // _callRead();
-      }
+  void _onItemTapped(int index) async {
+    if (index == 3) {
+      final code = await storage.read(key: 'profileCode');
 
-      _currentPage = index;
-    });
+      if (code == null || code.isEmpty) {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+
+        if (result == true) {
+          setState(() => _currentPage = index);
+          _homeKey.currentState?.refreshPage(); // ✅ refresh หลัง login
+        }
+        return;
+      }
+    }
+    if (index == 0) {
+      _homeKey.currentState?.refreshPage(); // ✅ refresh  Home
+    }
+
+    setState(() => _currentPage = index);
   }
 
   @override
@@ -97,8 +116,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           ],
         ),
         child: Row(
-          mainAxisAlignment:
-              MainAxisAlignment.spaceAround, // กระจายไอคอนให้ห่างกัน
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildTap(0, 'Home', icon: 'assets/DSD/icon/icon_home.png'),
             _buildTap(1, 'Calendar', icon: 'assets/DSD/icon/icon_calendar.png'),

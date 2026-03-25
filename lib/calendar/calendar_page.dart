@@ -1,5 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/calendar/calendar_detail.dart';
+
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,22 @@ class _CalendarPageState extends State<CalendarPage> {
       widget.onTabChange?.call(0); // มาจาก Menu/Home → switch tab
     }
   }
+
+  static const List<String> _thaiMonths = [
+    '',
+    'มกราคม',
+    'กุมภาพันธ์',
+    'มีนาคม',
+    'เมษายน',
+    'พฤษภาคม',
+    'มิถุนายน',
+    'กรกฎาคม',
+    'สิงหาคม',
+    'กันยายน',
+    'ตุลาคม',
+    'พฤศจิกายน',
+    'ธันวาคม',
+  ];
 
   @override
   void initState() {
@@ -64,23 +81,7 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   String formatThaiDate(DateTime date) {
-    const months = [
-      '',
-      'มกราคม',
-      'กุมภาพันธ์',
-      'มีนาคม',
-      'เมษายน',
-      'พฤษภาคม',
-      'มิถุนายน',
-      'กรกฎาคม',
-      'สิงหาคม',
-      'กันยายน',
-      'ตุลาคม',
-      'พฤศจิกายน',
-      'ธันวาคม',
-    ];
-
-    return "${date.day} ${months[date.month]} ${date.year + 543}";
+    return "${date.day} ${_thaiMonths[date.month]} ${date.year + 543}";
   }
 
   @override
@@ -90,7 +91,7 @@ class _CalendarPageState extends State<CalendarPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar(
-        title: "กำหนดการทดสอบมาตรฐานฝีมือแรงงาน",
+        title: "ปฏิทินกิจกรรม",
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
@@ -116,25 +117,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   titleCentered: true,
                   formatButtonVisible: false,
                   titleTextFormatter: (date, locale) {
-                    const months = [
-                      '',
-                      'มกราคม',
-                      'กุมภาพันธ์',
-                      'มีนาคม',
-                      'เมษายน',
-                      'พฤษภาคม',
-                      'มิถุนายน',
-                      'กรกฎาคม',
-                      'สิงหาคม',
-                      'กันยายน',
-                      'ตุลาคม',
-                      'พฤศจิกายน',
-                      'ธันวาคม',
-                    ];
-
-                    final year = date.year + 543; // 👈 แปลงเป็น พ.ศ.
-
-                    return '${months[date.month]} $year';
+                    return '${_thaiMonths[date.month]} ${date.year + 543}';
                   },
                 ),
 
@@ -194,8 +177,6 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
 
               const SizedBox(height: 16),
-
-              /// 📌 วันที่ + จำนวนกิจกรรม
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -219,79 +200,90 @@ class _CalendarPageState extends State<CalendarPage> {
                 itemBuilder: (context, index) {
                   final item = events[index];
 
-                  return Container(
-                    // height: 115,
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryShade,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => CalendraDetail(calendarlist: item),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      // height: 115,
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryShade,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
 
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                item['title'],
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 2,
-                              ),
-                            ),
-                            // Text(
-                            // "เวลา ${item.time}",
-                            //   "'",
-                            //   style: const TextStyle(
-                            //     fontSize: 14,
-                            //     fontWeight: FontWeight.w400,
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // ✅ รูปภาพ - ไม่ต้องใช้ Expanded
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                item['imageUrl'],
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.cover,
-                                errorBuilder:
-                                    (context, error, stackTrace) => Container(
-                                      width: 80,
-                                      height: 80,
-                                      color: Colors.grey[300],
-                                    ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            // ✅ description - ใช้ Text + strip HTML แทน Html widget
-                            Expanded(
-                              child: Html(
-                                data: item['description'],
-                                style: {
-                                  "body": Style(
-                                    maxLines: 4,
-                                    textOverflow: TextOverflow.ellipsis,
-                                    fontSize: FontSize(12),
-                                    color: AppColors.textgrey,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  item['title'],
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                },
+                                  maxLines: 2,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              // Text(
+                              // "เวลา ${item.time}",
+                              //   "'",
+                              //   style: const TextStyle(
+                              //     fontSize: 14,
+                              //     fontWeight: FontWeight.w400,
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // ✅ รูปภาพ - ไม่ต้องใช้ Expanded
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  item['imageUrl'],
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.cover,
+                                  errorBuilder:
+                                      (context, error, stackTrace) => Container(
+                                        width: 80,
+                                        height: 80,
+                                        color: Colors.grey[300],
+                                      ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              // ✅ description - ใช้ Text + strip HTML แทน Html widget
+                              Expanded(
+                                child: Html(
+                                  data: item['description'],
+                                  style: {
+                                    "body": Style(
+                                      maxLines: 4,
+                                      textOverflow: TextOverflow.ellipsis,
+                                      fontSize: FontSize(12),
+                                      color: AppColors.textgrey,
+                                    ),
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

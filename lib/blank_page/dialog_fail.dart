@@ -189,7 +189,6 @@ void showDialogFail(
                 ),
               ),
               onPressed: () {
-                Navigator.pop(context);
                 onConfirm();
               },
             ),

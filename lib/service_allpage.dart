@@ -30,7 +30,6 @@ class ServiceAllPage extends StatelessWidget {
             crossAxisCount: 3,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
-            // childAspectRatio: 0.85,
           ),
           itemBuilder: (context, index) {
             final service = services[index];
@@ -44,15 +43,7 @@ class ServiceAllPage extends StatelessWidget {
 
   Widget _serviceCard(ServiceItem service, BuildContext context) {
     return InkWell(
-      // onTap: () => service.onTap(context),
       onTap: () {
-        // // ถ้าเป็น ปฏิทินกิจกรรม ให้ pop กลับแล้ว switch tab
-        // if (service.title.contains('ปฏิทิน') && onTabChange != null) {
-        //   Navigator.pop(context);
-        //   onTabChange!(1);
-        // } else {
-
-        // }
         service.onTap(context);
       },
       borderRadius: BorderRadius.circular(8),

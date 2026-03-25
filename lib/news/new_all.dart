@@ -1,5 +1,5 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/blank_page/textfield%20.dart';
+import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/news/new_detail.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';

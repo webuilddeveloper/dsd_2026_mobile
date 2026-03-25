@@ -1,4 +1,4 @@
-package com.example.dsd
+package td.webuild.dsdecer.ios
 
 import io.flutter.embedding.android.FlutterActivity
 

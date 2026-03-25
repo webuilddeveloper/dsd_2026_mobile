@@ -1,11 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:dsd/blank_page/dialog_fail.dart';
+import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/menu.dart';
+import 'package:dsd/register.dart';
+import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, this.pageIndex});
-  final int? pageIndex;
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -13,6 +18,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
+  final storage = FlutterSecureStorage();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
@@ -24,6 +30,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
+
     _animCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -43,6 +50,8 @@ class _LoginPageState extends State<LoginPage>
     _animCtrl.dispose();
     super.dispose();
   }
+
+  final bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +152,7 @@ class _LoginPageState extends State<LoginPage>
                             // Username
                             _buildLabel('ชื่อผู้ใช้งาน'),
                             const SizedBox(height: 6),
-                            _buildTextField(
+                            buildTextField(
                               controller: _usernameController,
                               hint: 'กรอกชื่อผู้ใช้งาน',
                               icon: Icons.person_outline_rounded,
@@ -153,7 +162,7 @@ class _LoginPageState extends State<LoginPage>
                             // Password
                             _buildLabel('รหัสผ่าน'),
                             const SizedBox(height: 6),
-                            _buildTextField(
+                            buildTextField(
                               controller: _passwordController,
                               hint: 'กรอกรหัสผ่าน',
                               icon: Icons.lock_outline_rounded,
@@ -293,7 +302,14 @@ class _LoginPageState extends State<LoginPage>
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RegsiterPage(),
+                                ),
+                              );
+                            },
                             child: const Text(
                               'สมัครสมาชิก',
                               style: TextStyle(
@@ -314,14 +330,159 @@ class _LoginPageState extends State<LoginPage>
           ),
         ],
       ),
+      // persistentFooterDecoration: BoxDecoration(),
+      // persistentFooterButtons: [
+      //   Align(
+      //     alignment: Alignment.bottomLeft,
+      //     child: Padding(
+      //       padding: const EdgeInsets.only(top: 40, left: 20),
+      //       child: GestureDetector(
+      //         onTap: () => Navigator.pop(context),
+      //         child: Row(
+      //           children: [
+      //             ณ
+      //             Text(
+      //               'กลับหน้าก่อนหน้า ',
+      //               style: TextStyle(
+      //                 color: AppColors.textgrey,
+      //                 fontFamily: 'Kanit',
+      //                 fontSize: 14,
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ],
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+          child: GestureDetector(
+            onTap: _isLoading ? null : () => Navigator.pop(context),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 13,
+                  color: AppColors.textgrey,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'กลับหน้าก่อนหน้า',
+                  style: TextStyle(
+                    color: AppColors.textgrey,
+                    fontFamily: 'Kanit',
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
-  void _handleLogin() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => Menu(pageIndex: null)),
-      (Route<dynamic> route) => false,
-    );
+  Future<void> _handleLogin() async {
+    final storage = FlutterSecureStorage();
+
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (username.isEmpty) {
+      showDialogFail(
+        context,
+        title: 'เกิดข้อผิดพลาด',
+        description: 'กรุณากรอกชื่อผู้ใช้',
+        onConfirm: () {
+          Navigator.pop(context);
+        },
+      );
+      return;
+    }
+
+    if (password.isEmpty) {
+      showDialogFail(
+        context,
+        title: 'เกิดข้อผิดพลาด',
+        description: 'กรุณากรอกรหัสผ่าน',
+        onConfirm: () {
+          Navigator.pop(context);
+        },
+      );
+      return;
+    }
+
+    try {
+      final url = '${register}login';
+
+      final result = await postLoginRegister(url, {
+        'username': username,
+        'password': password,
+        'category': 'guest',
+      });
+
+      if (!mounted) return;
+
+      // ✅ LOGIN SUCCESS
+      if (result['status'] == 'S') {
+        final data = result['objectData'] ?? {};
+
+        await storage.write(key: 'token', value: result['jsonData']);
+        await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
+        await storage.write(key: 'profileCode', value: data['code'] ?? '');
+        await storage.write(key: 'username', value: data['username'] ?? '');
+        await storage.write(
+          key: 'profileImageUrl',
+          value: data['imageUrl'] ?? '',
+        );
+        await storage.write(key: 'idcard', value: data['idcard'] ?? '');
+        await storage.write(key: 'profileCategory', value: 'guest');
+        await storage.write(
+          key: 'profileFirstName',
+          value: data['firstName'] ?? '',
+        );
+        await storage.write(
+          key: 'profileLastName',
+          value: data['lastName'] ?? '',
+        );
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => Menu()),
+          (route) => false,
+        );
+      } else {
+        // ❌ LOGIN FAIL
+        showDialogFail(
+          context,
+          title: 'เกิดข้อผิดพลาด',
+          description:
+              (result['message'] != null &&
+                      result['message'].toString().isNotEmpty)
+                  ? result['message']
+                  : 'เข้าสู่ระบบไม่สำเร็จ',
+          onConfirm: () {
+            Navigator.pop(context);
+          },
+        );
+      }
+    } catch (e) {
+      print("LOGIN ERROR: $e");
+
+      // ❌ NETWORK ERROR
+      showDialogFail(
+        context,
+        title: 'เกิดข้อผิดพลาด',
+        description: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง',
+        onConfirm: () {
+          Navigator.pop(context);
+        },
+      );
+    } finally {
+      if (mounted) {}
+    }
   }
 
   Widget _buildLabel(String text) {
@@ -332,52 +493,6 @@ class _LoginPageState extends State<LoginPage>
         fontWeight: FontWeight.w600,
         color: AppColors.textDark,
         fontFamily: 'Kanit',
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hint,
-    required IconData icon,
-    bool obscure = false,
-    Widget? suffix,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: obscure,
-      style: const TextStyle(
-        fontFamily: 'Kanit',
-        fontSize: 14,
-        color: AppColors.textDark,
-      ),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(
-          fontFamily: 'Kanit',
-          fontSize: 13,
-          color: AppColors.textgrey,
-        ),
-        prefixIcon: Icon(icon, size: 18, color: AppColors.textgrey),
-        suffixIcon: suffix,
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: AppColors.borderColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: AppColors.borderColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 14,
-          horizontal: 16,
-        ),
       ),
     );
   }

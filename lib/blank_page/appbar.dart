@@ -5,6 +5,8 @@ appBarHome({
   String? name = "",
   String? memberType = "",
   String? imageUrl = "",
+
+  bool? imagenetwork,
   Widget? rightWidget,
   Function? rightAction,
   Function? profileAction,
@@ -37,7 +39,7 @@ appBarHome({
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: () => profileAction,
+                onTap: () => profileAction!(),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -56,7 +58,12 @@ appBarHome({
                         height: 32,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
-                          image: DecorationImage(image: AssetImage(imageUrl!)),
+                          image: DecorationImage(
+                            image:
+                                imagenetwork == true
+                                    ? NetworkImage(imageUrl!)
+                                    : AssetImage(imageUrl!),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -187,7 +194,7 @@ appBar({
                       child: const Icon(Icons.favorite_border, size: 15),
                     ),
                   )
-                  : SizedBox(),
+                  : SizedBox(width: 40),
             ],
           ),
         ),
