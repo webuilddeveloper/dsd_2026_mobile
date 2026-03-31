@@ -1,51 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-
 <dict>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+
 	<key>CFBundleDisplayName</key>
 	<string>DSD E-Cer</string>
+
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+
 	<key>CFBundleName</key>
 	<string>DSD E-Cer</string>
+
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
+
 	<key>CFBundleSignature</key>
 	<string>????</string>
+
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 
-		<key>NSAppTransportSecurity</key>
+	<!-- Network (ถ้าไม่จำเป็น แนะนำให้ปิดใน production) -->
+	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-<string>แอป DSD E-Cer ขออนุญาตเข้าถึงกล้องของอุปกรณ์ เพื่อใช้ในการถ่ายภาพเอกสารหรือข้อมูลที่เกี่ยวข้องกับการใช้งาน</string>
 
-<key>NSPhotoLibraryUsageDescription</key>
-<string>แอป DSD E-Cer ขออนุญาตเข้าถึงรูปภาพในอุปกรณ์ เพื่อให้ผู้ใช้งานสามารถเลือกและอัปโหลดรูปภาพหรือเอกสารเข้าสู่ระบบ</string>
+	<!-- Permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>แอป DSD E-Cer ขออนุญาตเข้าถึงกล้องของอุปกรณ์ เพื่อใช้ในการถ่ายภาพเอกสารหรือข้อมูลที่เกี่ยวข้องกับการใช้งาน</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>แอป DSD E-Cer ขออนุญาตเข้าถึงรูปภาพในอุปกรณ์ เพื่อให้ผู้ใช้งานสามารถเลือกและอัปโหลดรูปภาพหรือเอกสารเข้าสู่ระบบ</string>
+
+	<!-- iPhone Orientation -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
+	<!-- iPad Orientation -->
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -53,9 +72,30 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- Line --> 
+<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>line</string>
+		<string>lineauth2</string>
+		<string>line3rdp</string>
+	</array>
+
+	<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+				</array>
+			</dict>
+		</array>
+		<!-- Line --> 
+
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
 </dict>
 </plist>

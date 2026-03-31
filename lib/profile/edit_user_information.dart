@@ -21,9 +21,11 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   final _formKey = GlobalKey<FormState>();
 
   String _imageUrl = '';
+  String category = '';
   XFile? _pickedImage;
 
   final bool _isLoading = false;
+  bool _idcardEditable = true;
 
   final txtPrefixName = TextEditingController();
   final txtFirstName = TextEditingController();
@@ -56,8 +58,12 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   }
 
   Future<void> _registerRead() async {
-    // var value = await storage.read(key: 'dataUserLoginDDPM') ?? ''; // local
     final _code = await storage.read(key: 'profileCode');
+    final profileCategory = await storage.read(key: 'profileCategory');
+
+    setState(() {
+      category = profileCategory.toString();
+    });
     final value = await postLoginRegister('${register}read', {
       "code": _code,
     }); // api
@@ -77,6 +83,10 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
           txtPassword.text = user['password'] ?? '';
           txtIdcard.text = user['idcard'] ?? '';
           txtBirthday.text = user['birthDay'] ?? '';
+
+          if (category != 'guest' && txtIdcard.text.isNotEmpty) {
+            _idcardEditable = false;
+          }
         });
       } catch (_) {}
     }
@@ -293,11 +303,11 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                           controller: txtLastName,
                           hint: 'นามสกุล',
                           icon: Icons.badge_outlined,
-                          validator:
-                              (v) =>
-                                  (v == null || v.isEmpty)
-                                      ? 'กรุณากรอกนามสกุล'
-                                      : null,
+                          // validator:
+                          //     (v) =>
+                          //         (v == null || v.isEmpty)
+                          //             ? 'กรุณากรอกนามสกุล'
+                          //             : null,
                         ),
                         const SizedBox(height: 12),
                         buildTextField(
@@ -316,10 +326,18 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                         const SizedBox(height: 12),
                         buildTextField(
                           controller: txtIdcard,
-                          hint: 'หมายเลขบัคร',
+                          hint: 'หมายเลขบัตร (แก้ไขไม่ได้หลังจากบันทึก)',
                           icon: Icons.email_outlined,
                           keybord: TextInputType.emailAddress,
-                          isSelect: false,
+                          isSelect:
+                              category == 'guest' ? true : _idcardEditable,
+                          validator: (v) {
+                            if ((v == null || v.isEmpty) &&
+                                category != 'guest') {
+                              return 'กรุณากรอกหมายเลขบัตร หมายเหตุ : แก้ไขไม่ได้หลังจากบันทึก ';
+                            }
+                            return null;
+                          },
                         ),
 
                         const Divider(

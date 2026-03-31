@@ -7,6 +7,7 @@ import 'package:dsd/login.dart';
 import 'package:dsd/model/service_data.dart';
 import 'package:dsd/news/new_all.dart';
 import 'package:dsd/news/new_detail.dart';
+import 'package:dsd/notification.dart';
 import 'package:dsd/privilege/privilege_all.dart';
 import 'package:dsd/privilege/privilege_detail.dart';
 import 'package:dsd/service_allpage.dart';
@@ -28,6 +29,7 @@ class HomePageState extends State<HomePage> {
   final storage = FlutterSecureStorage();
   String _imageUrl = '';
   String _code = '';
+  String category = '';
 
   final txtFirstName = TextEditingController();
   final txtLastName = TextEditingController();
@@ -36,6 +38,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     _registerRead();
+    ischeck();
     super.initState();
   }
 
@@ -43,13 +46,26 @@ class HomePageState extends State<HomePage> {
     setState(() {
       _code = '';
       _imageUrl = '';
+      category = '';
+
       txtFirstName.clear();
       txtLastName.clear();
     });
     _registerRead();
+    ischeck();
   }
 
   /*===============================>> API <<=============================== */
+
+  ischeck() async {
+    final code = await storage.read(key: 'profileCode');
+    final profileCategory = await storage.read(key: 'profileCategory');
+
+    setState(() {
+      _code = code ?? '';
+      category = profileCategory ?? '';
+    });
+  }
 
   Future<List<Map<String, dynamic>>> _futureNews() async {
     final data = await postDio('${newsApi}read', {'limit': 10});
@@ -65,13 +81,6 @@ class HomePageState extends State<HomePage> {
 
   Future<void> _registerRead() async {
     // var value = await storage.read(key: 'dataUserLoginDDPM') ?? ''; // local
-    final code = await storage.read(key: 'profileCode');
-
-    setState(() {
-      _code = code ?? '';
-      print('###########################');
-      print(_code);
-    });
 
     final value = await postLoginRegister('${register}read', {
       "code": _code,
@@ -107,7 +116,12 @@ class HomePageState extends State<HomePage> {
             _code != ''
                 ? '${txtFirstName.text} ${txtLastName.text}'
                 : 'ท่านยังไม่ได้เข้าสู่ระบบ',
-        memberType: _code != '' ? 'ช่าง' : 'คลิกเพิ่อเข้าสู่ระบบ',
+        memberType:
+            _code != ''
+                ? category == 'guest'
+                    ? 'ช่าง'
+                    : 'บุคคลทั่วไป'
+                : 'คลิกเพิ่อเข้าสู่ระบบ',
         imagenetwork: _code != '' ? true : false,
         imageUrl: _code != '' ? _imageUrl : 'assets/DSD/imgs/profile.png',
 
@@ -115,34 +129,71 @@ class HomePageState extends State<HomePage> {
             _code != ''
                 ? Row(
                   children: [
-                    GestureDetector(
-                      onTap:
-                          () => {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PageLicense(),
+                    category == 'guest'
+                        ? GestureDetector(
+                          onTap:
+                              () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PageLicense(),
+                                  ),
+                                ),
+                              },
+                          child: Container(
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(18),
+                              color: Colors.white,
+                              border: Border.all(
+                                width: 1,
+                                color: const Color(0xFFDBDBDB),
                               ),
                             ),
-                          },
-                      child: Container(
-                        padding: EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
-                          color: Colors.white,
-                          border: Border.all(
-                            width: 1,
-                            color: const Color(0xFFDBDBDB),
+                            child: Image.asset(
+                              "assets/DSD/imgs/qr_bg.png",
+                              width: 35,
+                              height: 35,
+                              // color: Colors.white,
+                            ),
+                          ),
+                        )
+                        : GestureDetector(
+                          onTap:
+                              () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => NotificationList(
+                                          pushedFromPage: true,
+                                        ),
+                                  ),
+                                ),
+                              },
+                          child: Container(
+                            padding: EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(18),
+                              color: Colors.white,
+                              border: Border.all(
+                                width: 1,
+                                color: const Color(0xFFDBDBDB),
+                              ),
+                            ),
+                            // child: Image.asset(
+                            //   "assets/DSD/imgs/qr_bg.png",
+                            //   width: 35,
+                            //   height: 35,
+                            //   // color: Colors.white,
+                            // ),
+                            child: Icon(
+                              Icons.notification_add,
+                              color: AppColors.primary,
+                              size: 30,
+                            ),
                           ),
                         ),
-                        child: Image.asset(
-                          "assets/DSD/imgs/qr_bg.png",
-                          width: 35,
-                          height: 35,
-                          // color: Colors.white,
-                        ),
-                      ),
-                    ),
                   ],
                 )
                 : SizedBox(),

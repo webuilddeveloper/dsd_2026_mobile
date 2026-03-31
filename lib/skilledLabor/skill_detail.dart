@@ -56,11 +56,14 @@ class _SkillDetailPageState extends State<SkillDetailPage> {
   }
 
   loadData() async {
-    final idCode = await storage.read(key: 'idcard');
-    // if (!mounted) return;
-    setState(() {
-      idController.text = idCode ?? '';
-    });
+    final _code = await storage.read(key: 'profileCode');
+    final value = await postLoginRegister('${register}read', {"code": _code});
+    if (value.isNotEmpty) {
+      var user = value['objectData'][0];
+      setState(() {
+        idController.text = user['idcard'] ?? '';
+      });
+    }
   }
 
   /// ✅ API

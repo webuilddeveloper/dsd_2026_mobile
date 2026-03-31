@@ -1,7 +1,9 @@
+import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/certification.dart';
 import 'package:dsd/knowledge/Knowledge.dart';
 import 'package:dsd/calendar/calendar_page.dart';
 import 'package:dsd/login.dart';
+import 'package:dsd/profile/edit_user_information.dart';
 import 'package:dsd/skilledLabor/skill.dart';
 import 'package:dsd/privilege/privilege_all.dart';
 import 'package:dsd/training/training.dart';
@@ -19,11 +21,33 @@ class ServiceItem {
 Future<void> handleAuthNavigation(BuildContext context, Widget page) async {
   final storage = FlutterSecureStorage();
   final profileCode = await storage.read(key: 'profileCode');
+  final idcard = await storage.read(key: 'idcard');
+  print(profileCode);
+  print(idcard);
 
   if (profileCode == null || profileCode.isEmpty) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => LoginPage()));
+    // ส่งไปหน้า LoginPage และไม่ push page อื่นซ้อน
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => LoginPage()),
+    );
+  } else if (idcard == null || idcard.isEmpty) {
+    // ส่งไปหน้าแก้ไขข้อมูล ถ้ามี profileCode แต่ idcard ว่าง
+    showCustomDialog(
+      context,
+      title: 'กรุณากรอกข้อมูล',
+      description:
+          "คุณยังไม่ได้กรอกเลขบัตรประชาชน กรุณาอัพเดตข้อมูลเพื่อใช้งานฟังก์ชันนี้",
+      onConfirm: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => EditUserInformationPage()),
+        );
+      },
+    );
   } else {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+    // ปกติ มี profileCode และ idcard
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => page));
   }
 }
 

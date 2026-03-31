@@ -5,8 +5,10 @@ import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/menu.dart';
 import 'package:dsd/register.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/line.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -275,14 +277,49 @@ class _LoginPageState extends State<LoginPage>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildSocialButton('assets/images/facebook.png'),
+                          _buildSocialButton(
+                            imagePath: 'assets/images/facebook.png',
+                            onTap: () {},
+                          ),
                           const SizedBox(width: 14),
-                          _buildSocialButton('assets/images/google.png'),
+                          _buildSocialButton(
+                            imagePath: 'assets/images/google.png',
+                            onTap: () {},
+                          ),
                           const SizedBox(width: 14),
-                          _buildSocialButton('assets/images/line.png'),
+                          _buildSocialButton(
+                            imagePath: 'assets/images/line.png',
+                            onTap: () async {
+                              try {
+                                final result = await loginLine();
+                                print("RESULT: $result");
+
+                                final model = {
+                                  "username": result.userProfile?.userId ?? "",
+                                  "lineID": result.userProfile?.userId ?? "",
+                                  "email": result.accessToken.email ?? "",
+                                  "imageUrl":
+                                      result.userProfile?.pictureUrl ?? "",
+                                  "firstName":
+                                      result.userProfile?.displayName ?? "",
+                                  "lastName": "",
+                                };
+                                if (result.userProfile != null) {
+                                  _handleSocail(model: model, category: "line");
+                                } else {
+                                  print("Login failed (no profile)");
+                                }
+                              } catch (e) {
+                                print("LINE LOGIN ERROR: $e");
+                              }
+                            },
+                          ),
                           if (Platform.isIOS) ...[
                             const SizedBox(width: 14),
-                            _buildSocialButton('assets/images/apple.png'),
+                            _buildSocialButton(
+                              imagePath: 'assets/images/apple.png',
+                              onTap: () {},
+                            ),
                           ],
                         ],
                       ),
@@ -330,31 +367,7 @@ class _LoginPageState extends State<LoginPage>
           ),
         ],
       ),
-      // persistentFooterDecoration: BoxDecoration(),
-      // persistentFooterButtons: [
-      //   Align(
-      //     alignment: Alignment.bottomLeft,
-      //     child: Padding(
-      //       padding: const EdgeInsets.only(top: 40, left: 20),
-      //       child: GestureDetector(
-      //         onTap: () => Navigator.pop(context),
-      //         child: Row(
-      //           children: [
-      //             ณ
-      //             Text(
-      //               'กลับหน้าก่อนหน้า ',
-      //               style: TextStyle(
-      //                 color: AppColors.textgrey,
-      //                 fontFamily: 'Kanit',
-      //                 fontSize: 14,
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //     ),
-      //   ),
-      // ],
+
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
@@ -383,6 +396,50 @@ class _LoginPageState extends State<LoginPage>
         ),
       ),
     );
+  }
+
+  _handleSocail({
+    required Map<String, dynamic> model,
+    required String category,
+  }) async {
+    final result = await postLoginRegister('${registerV2}${category}/login', {
+      'username': model['username'],
+      'lineID': model['lineID'],
+      'email': model['email'],
+      'imageUrl': model['imageUrl'],
+      'firstName': model['firstName'],
+      'lastName': model['lastName'],
+    });
+
+    if (result['status'] == 'S') {
+      final data = result['objectData'] ?? {};
+      await storage.write(key: 'profileCode', value: data['code'] ?? '');
+      await storage.write(key: 'profileCategory', value: category);
+      
+      // await storage.write(key: 'token', value: result['jsonData']);
+      // await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
+
+      // await storage.write(key: 'username', value: data['username'] ?? '');
+      // await storage.write(
+      //   key: 'profileImageUrl',
+      //   value: data['imageUrl'] ?? '',
+      // );
+      // await storage.write(key: 'idcard', value: data['idcard'] ?? '');
+
+      // await storage.write(
+      //   key: 'profileFirstName',
+      //   value: data['firstName'] ?? '',
+      // );
+      // await storage.write(
+      //   key: 'profileLastName',
+      //   value: data['lastName'] ?? '',
+      // );
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => Menu()),
+        (route) => false,
+      );
+    }
   }
 
   Future<void> _handleLogin() async {
@@ -497,21 +554,29 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
-  Widget _buildSocialButton(String imagePath) {
-    return Container(
-      height: 48,
-      width: 48,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderColor),
-      ),
-      child: Center(
-        child: Image.asset(
-          imagePath,
-          width: 24,
-          height: 24,
-          color: Colors.black,
+  Widget _buildSocialButton({
+    required String imagePath,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: () {
+        onTap();
+      },
+      child: Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.borderColor),
+        ),
+        child: Center(
+          child: Image.asset(
+            imagePath,
+            width: 24,
+            height: 24,
+            color: Colors.black,
+          ),
         ),
       ),
     );

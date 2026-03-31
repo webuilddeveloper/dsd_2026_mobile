@@ -39,7 +39,8 @@ const trainingApi = '${dsd_server}m/training/';
 const sendtraining = '${dsd_server}m/training/register/';
 
 //register
-const register = '${dsd_server}m/Register/';
+const register = '${dsd_server}m/Register/'; 
+const registerV2 = '${dsd_server}m/v2/Register/';
 
 Future<dynamic> postDio(String url, dynamic criteria) async {
   final storage = FlutterSecureStorage();

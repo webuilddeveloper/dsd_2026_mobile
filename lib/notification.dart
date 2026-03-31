@@ -7,7 +7,12 @@ import 'package:flutter/material.dart';
 
 class NotificationList extends StatefulWidget {
   final Function(int)? onTabChange;
-  const NotificationList({super.key, required this.onTabChange});
+  final bool pushedFromPage;
+  const NotificationList({
+    super.key,
+    this.onTabChange,
+    this.pushedFromPage = false,
+  });
 
   @override
   State<NotificationList> createState() => _NotificationListState();
@@ -30,7 +35,11 @@ class _NotificationListState extends State<NotificationList>
   }
 
   void goBack() {
-    widget.onTabChange?.call(0);
+    if (widget.pushedFromPage) {
+      Navigator.pop(context); // มาจาก ServiceAllPage → pop กลับ
+    } else {
+      widget.onTabChange?.call(0); // มาจาก Menu/Home → switch tab
+    }
   }
 
   @override

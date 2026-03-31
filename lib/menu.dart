@@ -103,7 +103,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: Container(
-        height: 65 + MediaQuery.of(context).padding.bottom,
+        height: 72 + MediaQuery.of(context).padding.bottom,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),

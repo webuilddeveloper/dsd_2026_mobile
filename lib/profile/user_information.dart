@@ -4,6 +4,7 @@ import 'package:dsd/license_page.dart';
 
 import 'package:dsd/profile/edit_user_information.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/line.dart';
 
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
@@ -66,6 +67,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
   logout(BuildContext context) async {
     final storage = FlutterSecureStorage();
     storage.delete(key: 'profileCode');
+    storage.delete(key: 'idcard');
     var profileCategory = await storage.read(key: 'profileCategory');
     if (profileCategory != '' && profileCategory != null) {
       switch (profileCategory) {
@@ -77,7 +79,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
           // logoutGoogle();
           break;
         case 'line':
-          // logoutLine();
+          logoutLine();
           break;
         default:
       }

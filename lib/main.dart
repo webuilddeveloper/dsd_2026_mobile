@@ -1,9 +1,14 @@
 import 'package:dsd/splash.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LineSDK.instance.setup('2009618460').then((_) {
+    print('LineSDK Prepared');
+  });
   runApp(const MyApp());
 }
 
