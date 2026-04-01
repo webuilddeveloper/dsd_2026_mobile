@@ -1,7 +1,7 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/model/notification_data.dart';
-import 'package:dsd/noti_detail.dart';
+import 'package:dsd/notification/notification_detail.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 

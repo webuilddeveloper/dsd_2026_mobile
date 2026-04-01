@@ -1,12 +1,14 @@
 import 'package:dsd/blank_page/appbar.dart';
-
-import 'package:dsd/license_page.dart';
-
+import 'package:dsd/license/license_page.dart';
+import 'package:dsd/notification/notification_settings.dart';
+import 'package:dsd/profile/about_us.dart';
+import 'package:dsd/profile/change_password.dart';
 import 'package:dsd/profile/edit_user_information.dart';
+import 'package:dsd/profile/language_page.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/line.dart';
-
 import 'package:dsd/style_theme.dart';
+import 'package:dsd/training/traning_history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -26,6 +28,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
 
   final storage = FlutterSecureStorage();
   String _imageUrl = '';
+  String idcard = '';
 
   final txtFirstName = TextEditingController();
   final txtLastName = TextEditingController();
@@ -59,6 +62,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
           _imageUrl = user['imageUrl'] ?? '';
           txtFirstName.text = user['firstName'] ?? '';
           txtLastName.text = user['lastName'] ?? '';
+          idcard = user['idcard'] ?? '';
         });
       } catch (_) {}
     }
@@ -66,8 +70,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
 
   logout(BuildContext context) async {
     final storage = FlutterSecureStorage();
-    storage.delete(key: 'profileCode');
-    storage.delete(key: 'idcard');
+    storage.deleteAll();
     var profileCategory = await storage.read(key: 'profileCategory');
     if (profileCategory != '' && profileCategory != null) {
       switch (profileCategory) {
@@ -160,21 +163,33 @@ class _UserInformationPageState extends State<UserInformationPage> {
                             },
                           ),
                           SizedBox(height: 16),
+                          idcard != ''
+                              ? _rowtxt(
+                                title: 'ใบอนุญาติ',
+                                ontap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PageLicense(),
+                                    ),
+                                  );
+                                },
+                              )
+                              : SizedBox(),
+                          SizedBox(height: 8),
+                          const Divider(color: AppColors.backgroundMain),
+                          SizedBox(height: 8),
                           _rowtxt(
-                            title: 'ใบอนุญาติ',
+                            title: 'เปลี่ยนรหัสผ่าน',
                             ontap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => PageLicense(),
+                                  builder: (context) => ChangePassword(),
                                 ),
                               );
                             },
                           ),
-                          SizedBox(height: 8),
-                          const Divider(color: AppColors.backgroundMain),
-                          SizedBox(height: 8),
-                          _rowtxt(title: 'เปลี่ยนรหัสผ่าน', ontap: () {}),
                           SizedBox(height: 32),
                           Text(
                             'กิจกรรมของคุณ',
@@ -183,12 +198,22 @@ class _UserInformationPageState extends State<UserInformationPage> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(height: 16),
-                          _rowtxt(title: 'การถูกใจ', ontap: () {}),
-                          SizedBox(height: 8),
+                          // SizedBox(height: 16),
+                          // _rowtxt(title: 'การถูกใจ', ontap: () {}),
+                          // SizedBox(height: 8),
                           const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
-                          _rowtxt(title: 'ประวัติการอบรม', ontap: () {}),
+                          _rowtxt(
+                            title: 'ประวัติการอบรม',
+                            ontap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TrainingHistory(),
+                                ),
+                              );
+                            },
+                          ),
                           SizedBox(height: 8),
                           const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
@@ -201,19 +226,46 @@ class _UserInformationPageState extends State<UserInformationPage> {
                             ),
                           ),
                           SizedBox(height: 16),
-                          _rowtxt(title: 'ตั้งค่าการแจ้งเตือน', ontap: () {}),
+                          _rowtxt(
+                            title: 'ตั้งค่าการแจ้งเตือน',
+                            ontap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NotificationSettings(),
+                                ),
+                              );
+                            },
+                          ),
                           SizedBox(height: 8),
                           const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
                           _rowtxt(
                             title: 'เปลี่ยนภาษา /  Language',
-                            ontap: () {},
+                            ontap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LanguagePage(),
+                                ),
+                              );
+                            },
                           ),
 
                           SizedBox(height: 8),
                           const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
-                          _rowtxt(title: 'เกี่ยวกับเรา', ontap: () {}),
+                          _rowtxt(
+                            title: 'เกี่ยวกับเรา',
+                            ontap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AboutUs(),
+                                ),
+                              );
+                            },
+                          ),
                           SizedBox(height: 8),
                           const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
@@ -252,47 +304,6 @@ class _UserInformationPageState extends State<UserInformationPage> {
                                       ),
                             ),
                           ),
-
-                          // Positioned(
-                          //   bottom: 0, // ลอยออกมานิดนึง (ดูมีมิติ)
-                          //   right: 0,
-                          //   child: Material(
-                          //     color: Colors.transparent,
-                          //     child: InkWell(
-                          //       onTap: () {
-                          //         // TODO: ใส่ action เปิดกล้อง
-                          //       },
-                          //       borderRadius: BorderRadius.circular(30),
-                          //       child: Container(
-                          //         height: 40,
-                          //         width: 40,
-                          //         decoration: BoxDecoration(
-                          //           color: AppColors.primary,
-                          //           shape: BoxShape.circle,
-                          //           border: Border.all(
-                          //             color: Colors.white,
-                          //             width: 2,
-                          //           ),
-                          //           boxShadow: [
-                          //             BoxShadow(
-                          //               color: Colors.black.withOpacity(0.15),
-                          //               blurRadius: 6,
-                          //               offset: Offset(0, 2),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //         child: Center(
-                          //           child: Image.asset(
-                          //             'assets/DSD/icon/icons_camera.png',
-                          //             width: 20,
-                          //             height: 20,
-                          //             fit: BoxFit.contain, // ✅ ไม่บีบภาพ
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),

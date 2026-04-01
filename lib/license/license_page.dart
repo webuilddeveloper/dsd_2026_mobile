@@ -1,5 +1,5 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/license_detail_page.dart';
+import 'package:dsd/license/license_detail_page.dart';
 import 'package:dsd/model/license_data.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';

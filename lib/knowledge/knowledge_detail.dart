@@ -123,11 +123,55 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                         fontFamily: 'Kanit',
                       ),
                     ),
-
+                    const SizedBox(height: 16),
+                    //ปุ่มอ่าน
+                    Center(
+                      child: InkWell(
+                        onTap: () {
+                          launchURL(model['fileUrl']);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: AppColors.primary,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 40,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  'assets/DSD/imgs/Group337.png',
+                                  height: 20,
+                                  width: 20,
+                                  color: AppColors.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'อ่าน',
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Kanit',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     Divider(color: AppColors.borderColor),
                     const SizedBox(height: 16),
-
                     // ── ข้อมูล ──
                     if ((model['author'] ?? '') != '')
                       _InfoRow(label: 'ผู้แต่ง', value: model['author']),
@@ -153,10 +197,10 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                       _InfoRow(label: 'ขนาด', value: model['size'].toString()),
 
                     // ── วันที่ ──
-                    if ((model['createDate'] ?? '') != '' &&
-                        model['createDate'] != 'Invalid date')
+                    if ((model['publishDate'] ?? '') != '' &&
+                        model['publishDate'] != 'Invalid date')
                       Text(
-                        'วันที่ลง : ${dateStringToDate(model['createDate'])}',
+                        'วันที่เผยแพร่ :  ${dateStringToDate(model['publishDate'])}',
                         style: const TextStyle(fontFamily: 'Kanit'),
                       ),
 
@@ -172,57 +216,42 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
 
                     const SizedBox(height: 32),
 
-                    // ── ปุ่มอ่าน ──
-                    if ((model['fileUrl'] ?? '') != '' ||
-                        (model['linkUrl'] ?? '') != '')
-                      Center(
-                        child: InkWell(
-                          onTap: () {
-                            if (model['fileUrl']?.isNotEmpty == true) {
-                              launchURL(model['fileUrl']);
-                            } else {
+                    // ── ปุ่มอ้างอิง ──
+                    SizedBox(width: 16),
+                    model['textButton'] != null && model['textButton'] != ''
+                        ? Center(
+                          child: InkWell(
+                            onTap: () {
                               launchURL(model['linkUrl']);
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: AppColors.primary,
-                                width: 1,
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: AppColors.primary,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 48,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    'assets/DSD/imgs/Group337.png',
-                                    height: 20,
-                                    width: 20,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                  horizontal: 50,
+                                ),
+                                child: Text(
+                                  model['textButton'],
+                                  style: TextStyle(
                                     color: AppColors.primary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Kanit',
                                   ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'อ่าน',
-                                    style: TextStyle(
-                                      color: AppColors.primary,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: 'Kanit',
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
+                        )
+                        : SizedBox(),
                   ],
                 ),
               ),
@@ -247,7 +276,7 @@ class _InfoRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 130,
+            width: 80,
             child: Text(
               label,
               style: const TextStyle(

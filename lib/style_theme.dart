@@ -19,7 +19,7 @@ class StyleTheme {
     colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
       // secondary: AppColors.secondaryGold,
-      background: AppColors.backgroundMain,
+      surface: AppColors.backgroundMain,
       tertiary: AppColors.textDark,
     ),
 

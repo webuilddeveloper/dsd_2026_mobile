@@ -1,5 +1,5 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/model/service_data.dart';
+import 'package:dsd/service/service_data.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +14,6 @@ class ServiceAllPage extends StatelessWidget {
     }
 
     return Scaffold(
-      // appBar: AppBar(title: const Text('บริการ')),
       appBar: appBar(
         title: "บริการ",
         backBtn: true,
@@ -44,7 +43,7 @@ class ServiceAllPage extends StatelessWidget {
   Widget _serviceCard(ServiceItem service, BuildContext context) {
     return InkWell(
       onTap: () {
-        service.onTap(context);
+        service.onTap(context, onTabChange);
       },
       borderRadius: BorderRadius.circular(8),
       child: ClipRRect(

@@ -58,7 +58,8 @@ Widget buildSearch({
     ),
   );
 }
-
+ 
+ 
 Widget buildTextField({
   required TextEditingController controller,
   required String hint,
@@ -81,6 +82,7 @@ Widget buildTextField({
       color: isSelect == true ? AppColors.textgrey : AppColors.primary,
     ),
     keyboardType: keybord,
+
     inputFormatters: inputFormatters,
     validator: validator,
     decoration: InputDecoration(

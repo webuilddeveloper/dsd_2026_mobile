@@ -2,9 +2,7 @@
 
 import 'package:dsd/home.dart';
 import 'package:dsd/login.dart';
-
-import 'package:dsd/notification.dart';
-
+import 'package:dsd/notification/notification.dart';
 import 'package:dsd/calendar/calendar_page.dart';
 import 'package:dsd/profile/user_information.dart';
 import 'package:flutter/material.dart';
@@ -21,28 +19,27 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   final storage = FlutterSecureStorage();
-
   final GlobalKey<HomePageState> _homeKey = GlobalKey<HomePageState>();
 
   List<Widget> pages = <Widget>[];
   int _currentPage = 0;
+  int _previousPage = 0;
   DateTime? currentBackPressTime;
-  dynamic futureNotificationTire;
 
   @override
   void initState() {
-    // _callRead();
-
     pages = <Widget>[
-      HomePage(key: _homeKey, onTabChange: _onItemTapped),
-      CalendarPage(onTabChange: _onItemTapped),
-      NotificationList(onTabChange: _onItemTapped),
-      UserInformationPage(onTabChange: _onItemTapped),
+      HomePage(key: ValueKey(0), onTabChange: _onItemTapped),
+      CalendarPage(key: ValueKey(1), onTabChange: _onItemTapped),
+      NotificationList(key: ValueKey(2), onTabChange: _onItemTapped),
+      UserInformationPage(key: ValueKey(3), onTabChange: _onItemTapped),
     ];
     super.initState();
   }
 
   void _onItemTapped(int index) async {
+    if (index == _currentPage) return;
+
     if (index == 3) {
       final code = await storage.read(key: 'profileCode');
 
@@ -53,17 +50,24 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         );
 
         if (result == true) {
-          setState(() => _currentPage = index);
-          _homeKey.currentState?.refreshPage(); // ✅ refresh หลัง login
+          setState(() {
+            _previousPage = _currentPage;
+            _currentPage = index;
+          });
+          _homeKey.currentState?.refreshPage();
         }
         return;
       }
     }
+
     if (index == 0) {
-      _homeKey.currentState?.refreshPage(); // ✅ refresh  Home
+      _homeKey.currentState?.refreshPage();
     }
 
-    setState(() => _currentPage = index);
+    setState(() {
+      _previousPage = _currentPage;
+      _currentPage = index;
+    });
   }
 
   @override
@@ -76,14 +80,58 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         onTap: () => FocusScope.of(context).unfocus(),
         child: WillPopScope(
           onWillPop: confirmExit,
-          child: IndexedStack(index: _currentPage, children: pages),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) {
+              final isGoingRight = _currentPage > _previousPage;
+
+              // หน้าใหม่ slide เข้ามา
+              final slideIn = SlideTransition(
+                position: Tween<Offset>(
+                  begin:
+                      isGoingRight
+                          ? const Offset(1.0, 0.0)
+                          : const Offset(-1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                ),
+                child: child,
+              );
+
+              // หน้าเก่าถูกดัน/ค้างอยู่ข้างหลัง
+              return Stack(
+                children: [
+                  SlideTransition(
+                    position: Tween<Offset>(
+                      begin: Offset.zero,
+                      end:
+                          isGoingRight
+                              ? const Offset(-0.3, 0.0)
+                              : const Offset(0.3, 0.0),
+                    ).animate(
+                      CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeInOut,
+                      ),
+                    ),
+                    child: pages[_previousPage],
+                  ),
+                  slideIn,
+                ],
+              );
+            },
+            child: KeyedSubtree(
+              key: ValueKey(_currentPage),
+              child: pages[_currentPage],
+            ),
+          ),
         ),
       ),
       bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
-  // สร้างเมนูด้านล่าง
   Future<bool> confirmExit() {
     DateTime now = DateTime.now();
     if (currentBackPressTime == null ||
@@ -120,12 +168,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           children: [
             _buildTap(0, 'Home', icon: 'assets/DSD/icon/icon_home.png'),
             _buildTap(1, 'Calendar', icon: 'assets/DSD/icon/icon_calendar.png'),
-            _buildTap(
-              2,
-              'Notification',
-              icon: 'assets/DSD/icon/icon_noti.png',
-              // isNoti: true,
-            ),
+            _buildTap(2, 'Notification', icon: 'assets/DSD/icon/icon_noti.png'),
             _buildTap(3, 'Profile', icon: 'assets/DSD/icon/icon_user.png'),
           ],
         ),
@@ -133,12 +176,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildTap(
-    int? index,
-    String title, {
-    // bool isNoti = false,
-    String? icon,
-  }) {
+  Widget _buildTap(int? index, String title, {String? icon}) {
     return Flexible(
       flex: 1,
       child: Center(
@@ -153,31 +191,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // ----- >>> Noti
-                  // if (isNoti)
-                  //   Stack(
-                  //     children: [
-                  //       Image.asset(
-                  //         _currentPage == index ? iconActive! : icon!,
-                  //         height: 30,
-                  //         width: 30,
-                  //       ),
-                  //       if (_ListNotiModel.isNotEmpty)
-                  //         Positioned(
-                  //           top: 0,
-                  //           right: 3,
-                  //           child: Container(
-                  //             height: 10,
-                  //             width: 10,
-                  //             decoration: const BoxDecoration(
-                  //               shape: BoxShape.circle,
-                  //               color: Color(0xFFE40000),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //     ],
-                  //   )
-                  // else
                   Image.asset(
                     icon!,
                     height: 30,
@@ -185,7 +198,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                     color:
                         _currentPage == index
                             ? Theme.of(context).primaryColor
-                            : Color(0xff484C52),
+                            : const Color(0xff484C52),
                   ),
                   const SizedBox(height: 5),
                   Text(

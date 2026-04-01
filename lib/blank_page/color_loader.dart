@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, curly_braces_in_flow_control_structures
+
 import "package:flutter/material.dart";
 import 'dart:math';
 
@@ -5,9 +7,10 @@ class ColorLoader3 extends StatefulWidget {
   final double radius;
   final double dotRadius;
 
-  ColorLoader3({this.radius = 30.0, this.dotRadius = 3.0});
+  const ColorLoader3({super.key, this.radius = 30.0, this.dotRadius = 3.0});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ColorLoader3State createState() => _ColorLoader3State();
 }
 

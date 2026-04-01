@@ -290,27 +290,24 @@ class _LoginPageState extends State<LoginPage>
                           _buildSocialButton(
                             imagePath: 'assets/images/line.png',
                             onTap: () async {
-                              try {
-                                final result = await loginLine();
-                                print("RESULT: $result");
+                              final result = await loginLine();
 
-                                final model = {
-                                  "username": result.userProfile?.userId ?? "",
-                                  "lineID": result.userProfile?.userId ?? "",
-                                  "email": result.accessToken.email ?? "",
-                                  "imageUrl":
-                                      result.userProfile?.pictureUrl ?? "",
-                                  "firstName":
-                                      result.userProfile?.displayName ?? "",
-                                  "lastName": "",
-                                };
-                                if (result.userProfile != null) {
-                                  _handleSocail(model: model, category: "line");
-                                } else {
-                                  print("Login failed (no profile)");
-                                }
-                              } catch (e) {
-                                print("LINE LOGIN ERROR: $e");
+                              final model = {
+                                "username": result.userProfile?.userId ?? "",
+                                "lineID": result.userProfile?.userId ?? "",
+                                "email": result.accessToken.email ?? "",
+                                "imageUrl":
+                                    result.userProfile?.pictureUrl ?? "",
+                                "firstName":
+                                    result.userProfile?.displayName ?? "",
+                                "lastName": "",
+                              };
+
+                              if (result.userProfile != null) {
+                                // ยิง API ได้เลย
+                                _handleSocail(model: model, category: "line");
+                              } else {
+                                print("Login failed");
                               }
                             },
                           ),
@@ -402,6 +399,7 @@ class _LoginPageState extends State<LoginPage>
     required Map<String, dynamic> model,
     required String category,
   }) async {
+    // ignore: unnecessary_brace_in_string_interps
     final result = await postLoginRegister('${registerV2}${category}/login', {
       'username': model['username'],
       'lineID': model['lineID'],
@@ -415,7 +413,6 @@ class _LoginPageState extends State<LoginPage>
       final data = result['objectData'] ?? {};
       await storage.write(key: 'profileCode', value: data['code'] ?? '');
       await storage.write(key: 'profileCategory', value: category);
-      
       // await storage.write(key: 'token', value: result['jsonData']);
       // await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
 

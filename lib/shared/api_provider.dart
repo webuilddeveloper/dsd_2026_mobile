@@ -25,6 +25,7 @@ const privilegeGallery = '${dsd_server}m/privilege/gallery/';
 //eventCalendarApi
 const eventCalendarApi = '${dsd_server}m/eventCalendar//';
 const eventCalendarGallery = '${dsd_server}m/eventcalendar/gallery/';
+const eventCalendarCategory = '${dsd_server}m/eventcalendar/category/';
 
 //knowledge
 const knowledgeApi = '${dsd_server}m/knowledge/';
@@ -39,7 +40,7 @@ const trainingApi = '${dsd_server}m/training/';
 const sendtraining = '${dsd_server}m/training/register/';
 
 //register
-const register = '${dsd_server}m/Register/'; 
+const register = '${dsd_server}m/Register/';
 const registerV2 = '${dsd_server}m/v2/Register/';
 
 Future<dynamic> postDio(String url, dynamic criteria) async {
@@ -64,9 +65,6 @@ Future<dynamic> postLoginRegister(String url, dynamic criteria) async {
     body: body,
     headers: {"Accept": "application/json", "Content-Type": "application/json"},
   );
-
-  print(response.statusCode);
-
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);
     return data;

@@ -61,6 +61,7 @@ void showCustomDialog(
   required String title,
   required String description,
   required VoidCallback onConfirm,
+  bool cencelable = false,
 }) {
   showDialog(
     context: context,

@@ -3,6 +3,7 @@ import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dsd/blank_page/appbar.dart';
@@ -23,9 +24,16 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   String _imageUrl = '';
   String category = '';
   XFile? _pickedImage;
+  String lineID = '';
+  String _facebookID = '';
+  String _appleID = '';
+  String _googleID = '';
+  String _status = '';
+  bool _isLoading = false;
 
-  final bool _isLoading = false;
-  bool _idcardEditable = true;
+  bool get isGuest => category == 'guest';
+  bool get hasIdCard => txtIdcard.text.trim().isNotEmpty;
+  bool get canEditIdCard => !isGuest && !hasIdCard;
 
   final txtPrefixName = TextEditingController();
   final txtFirstName = TextEditingController();
@@ -58,35 +66,32 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   }
 
   Future<void> _registerRead() async {
-    final _code = await storage.read(key: 'profileCode');
+    final code = await storage.read(key: 'profileCode');
     final profileCategory = await storage.read(key: 'profileCategory');
 
-    setState(() {
-      category = profileCategory.toString();
-    });
-    final value = await postLoginRegister('${register}read', {
-      "code": _code,
-    }); // api
+    setState(() => category = profileCategory ?? '');
+
+    final value = await postLoginRegister('${register}read', {'code': code});
 
     if (value.isNotEmpty) {
       try {
-        var user = value['objectData'][0];
+        final user = value['objectData'][0];
         setState(() {
           _imageUrl = user['imageUrl'] ?? '';
           txtPrefixName.text = user['prefixName'] ?? '';
           txtFirstName.text = user['firstName'] ?? '';
           txtLastName.text = user['lastName'] ?? '';
           txtEmail.text = user['email'] ?? '';
-
           txtPhone.text = user['phone'] ?? '';
           txtUsername.text = user['username'] ?? '';
           txtPassword.text = user['password'] ?? '';
           txtIdcard.text = user['idcard'] ?? '';
           txtBirthday.text = user['birthDay'] ?? '';
-
-          if (category != 'guest' && txtIdcard.text.isNotEmpty) {
-            _idcardEditable = false;
-          }
+          lineID = user['lineID'] ?? '';
+          _facebookID = user['facebookID'] ?? '';
+          _appleID = user['appleID'] ?? '';
+          _googleID = user['googleID'] ?? '';
+          _status = user['status'] ?? 'N';
         });
       } catch (_) {}
     }
@@ -94,23 +99,17 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
 
   Future<void> _pickImage(ImageSource source) async {
     final img = await ImagePicker().pickImage(source: source);
-
     if (img != null) {
-      setState(() {
-        _pickedImage = img;
-      });
+      setState(() => _pickedImage = img);
       _upload();
     }
   }
 
   void _upload() async {
     if (_pickedImage == null) return;
-
     uploadImage(_pickedImage!)
         .then((res) {
-          setState(() {
-            _imageUrl = res;
-          });
+          setState(() => _imageUrl = res);
         })
         .catchError((err) {
           print(err);
@@ -131,16 +130,16 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                   leading: const Icon(Icons.photo_library_outlined),
                   title: const Text('อัลบั้มรูปภาพ'),
                   onTap: () {
-                    _pickImage(ImageSource.gallery);
                     Navigator.pop(context);
+                    _pickImage(ImageSource.gallery);
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.photo_camera_outlined),
                   title: const Text('กล้องถ่ายรูป'),
                   onTap: () {
-                    _pickImage(ImageSource.camera);
                     Navigator.pop(context);
+                    _pickImage(ImageSource.camera);
                   },
                 ),
               ],
@@ -154,80 +153,87 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
       return Image.file(File(_pickedImage!.path), fit: BoxFit.cover);
     } else if (_imageUrl.isNotEmpty) {
       return Image.network(_imageUrl, fit: BoxFit.cover);
-    } else {
-      return Image.asset('assets/DSD/imgs/profile.png', fit: BoxFit.cover);
     }
+    return Image.asset('assets/DSD/imgs/profile.png', fit: BoxFit.cover);
   }
 
   Future<void> _submitUpdate() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    final code = await storage.read(key: "profileCode");
-    print(txtPassword.text);
 
+    setState(() => _isLoading = true);
+
+    final code = await storage.read(key: 'profileCode');
+    await storage.write(key: 'idcard', value: txtIdcard.text);
     try {
       final result = await postLoginRegister('${register}update', {
         'code': code,
         'idcard': txtIdcard.text,
         'username': txtUsername.text,
         'password': txtPassword.text,
-        'facebookID': "",
-        'appleID': "",
-        'googleID': "",
-        'lineID': "",
+        'facebookID': _facebookID,
+        'appleID': _appleID,
+        'googleID': _googleID,
+        'lineID': lineID,
         'email': txtEmail.text,
         'imageUrl': _imageUrl,
-        'category': "guest",
+        'category': category,
         'prefixName': txtPrefixName.text,
         'firstName': txtFirstName.text,
         'lastName': txtLastName.text,
         'phone': txtPhone.text,
         'birthDay': txtBirthday.text,
-        'status': "N",
-        'platform': Platform.operatingSystem.toString(),
-        'countUnit': "[]",
+        'status': _status,
+        'platform': Platform.operatingSystem,
+        'countUnit': '[]',
       });
 
       if (!mounted) return;
-      if (result['status'] == 'S') {
-        // ✅ สมัครสำเร็จ
-        showCustomDialog(
-          context,
-          title: 'บันทึกสำเร็จ',
-          description: "ข้อมูลของคุณได้รับการอัปเดตเรียบร้อยแล้ว",
-          onConfirm: () {
-            Navigator.pop(context);
-          },
-        );
-      } else {
-        showCustomDialog(
-          context,
-          title: 'เกิดข้อผิดพลาด',
-          description:
-              (result['message'] != null && result['message'].isNotEmpty)
-                  ? result['message']!
-                  : 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
-          onConfirm: () {
-            Navigator.pop(context);
-          },
-        );
-      }
-    } catch (e) {
+
+      final isSuccess = result['status'] == 'S';
+      showCustomDialog(
+        context,
+        title: isSuccess ? 'บันทึกสำเร็จ' : 'เกิดข้อผิดพลาด',
+        description:
+            isSuccess
+                ? 'ข้อมูลของคุณได้รับการอัปเดตเรียบร้อยแล้ว'
+                : (result['message']?.isNotEmpty == true
+                    ? result['message']
+                    : 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง'),
+        onConfirm: () => Navigator.pop(context),
+      );
+    } catch (_) {
+      if (!mounted) return;
       showCustomDialog(
         context,
         title: 'เกิดข้อผิดพลาด',
         description: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง',
-        onConfirm: () {
-          Navigator.pop(context);
-        },
+        onConfirm: () => Navigator.pop(context),
       );
     } finally {
-      if (mounted) {
-        setState(() {});
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  void goBack() => Navigator.pop(context);
+  String? validateId(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'กรุณากรอกข้อมูล';
+    }
+
+    if (!RegExp(r'^\d{13}$').hasMatch(value)) {
+      return 'กรุณากรอกเลขบัตรประชาชน 13 หลัก';
+    }
+
+    return null;
+  }
+
+  Widget _sectionLabel(String text) => Padding(
+    padding: const EdgeInsets.only(bottom: 4),
+    child: Text(
+      text,
+      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -236,7 +242,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
         title: 'บัญชีผู้ใช้งาน',
         backBtn: true,
         rightBtn: false,
-        backAction: goBack,
+        backAction: () => Navigator.pop(context),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -249,7 +255,6 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              // ─── Card หลัก ───
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -279,7 +284,6 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-
                         _sectionLabel('ข้อมูลส่วนตัว'),
                         const SizedBox(height: 12),
                         buildTextField(
@@ -303,17 +307,12 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                           controller: txtLastName,
                           hint: 'นามสกุล',
                           icon: Icons.badge_outlined,
-                          // validator:
-                          //     (v) =>
-                          //         (v == null || v.isEmpty)
-                          //             ? 'กรุณากรอกนามสกุล'
-                          //             : null,
                         ),
                         const SizedBox(height: 12),
                         buildTextField(
                           controller: txtPhone,
                           hint: 'เบอร์โทรศัพท์',
-                          icon: Icons.person_outline,
+                          icon: Icons.phone_outlined,
                         ),
                         const SizedBox(height: 12),
                         buildTextField(
@@ -326,27 +325,24 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                         const SizedBox(height: 12),
                         buildTextField(
                           controller: txtIdcard,
-                          hint: 'หมายเลขบัตร (แก้ไขไม่ได้หลังจากบันทึก)',
-                          icon: Icons.email_outlined,
-                          keybord: TextInputType.emailAddress,
-                          isSelect:
-                              category == 'guest' ? true : _idcardEditable,
+                          hint: 'เลขบัตรประชาชน \n(แก้ไขไม่ได้หลังจากบันทึก)',
+                          icon: Icons.badge_outlined,
+                          keybord: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(13),
+                          ],
+                          isSelect: canEditIdCard, // ✅ ใช้ตัวนี้ตัวเดียวจบ
                           validator: (v) {
-                            if ((v == null || v.isEmpty) &&
-                                category != 'guest') {
-                              return 'กรุณากรอกหมายเลขบัตร หมายเหตุ : แก้ไขไม่ได้หลังจากบันทึก ';
-                            }
-                            return null;
+                            if (isGuest) return null;
+                            return validateId(v);
                           },
                         ),
-
                         const Divider(
                           color: AppColors.backgroundMain,
                           height: 32,
                         ),
-
                         const SizedBox(height: 32),
-
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -385,8 +381,6 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                   ),
                 ),
               ),
-
-              // ─── รูปโปรไฟล์ลอยด้านบน ───
               Positioned(
                 top: -70,
                 left: 0,
@@ -446,12 +440,4 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
       ),
     );
   }
-
-  Widget _sectionLabel(String text) => Padding(
-    padding: const EdgeInsets.only(bottom: 4),
-    child: Text(
-      text,
-      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-    ),
-  );
 }

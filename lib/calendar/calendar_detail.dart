@@ -9,17 +9,17 @@ import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-class CalendraDetail extends StatefulWidget {
+class CalendarDetail extends StatefulWidget {
   // final calendarlistItem calendarlist;
   final Map<String, dynamic> calendarlist;
   // news;
-  const CalendraDetail({super.key, required this.calendarlist});
+  const CalendarDetail({super.key, required this.calendarlist});
 
   @override
-  State<CalendraDetail> createState() => _CalendraDetailState();
+  State<CalendarDetail> createState() => _CalendarDetailState();
 }
 
-class _CalendraDetailState extends State<CalendraDetail> {
+class _CalendarDetailState extends State<CalendarDetail> {
   void goBack() {
     Navigator.pop(context);
   }

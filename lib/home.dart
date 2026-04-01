@@ -2,15 +2,14 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/carousel.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/textfield.dart';
-import 'package:dsd/license_page.dart';
+import 'package:dsd/license/license_page.dart';
 import 'package:dsd/login.dart';
-import 'package:dsd/model/service_data.dart';
+import 'package:dsd/service/service_data.dart';
 import 'package:dsd/news/new_all.dart';
 import 'package:dsd/news/new_detail.dart';
-import 'package:dsd/notification.dart';
 import 'package:dsd/privilege/privilege_all.dart';
 import 'package:dsd/privilege/privilege_detail.dart';
-import 'package:dsd/service_allpage.dart';
+import 'package:dsd/service/service_allpage.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +17,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class HomePage extends StatefulWidget {
   final Function(int) onTabChange;
-  const HomePage({Key? key, required this.onTabChange})
-    : super(key: key); // ✅ แก้ตรงนี้
+  const HomePage({super.key, required this.onTabChange});
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -27,77 +25,79 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   final storage = FlutterSecureStorage();
+
   String _imageUrl = '';
   String _code = '';
   String category = '';
+  String idcard = '';
 
   final txtFirstName = TextEditingController();
   final txtLastName = TextEditingController();
-  TextEditingController searchController = TextEditingController();
+  final searchController = TextEditingController();
 
   @override
   void initState() {
-    _registerRead();
-    ischeck();
     super.initState();
+    loadData();
   }
 
-  void refreshPage() {
-    setState(() {
-      _code = '';
-      _imageUrl = '';
-      category = '';
+  /*===============================>> LOAD DATA <<=============================== */
 
-      txtFirstName.clear();
-      txtLastName.clear();
-    });
-    _registerRead();
-    ischeck();
-  }
-
-  /*===============================>> API <<=============================== */
-
-  ischeck() async {
+  Future<void> loadData() async {
     final code = await storage.read(key: 'profileCode');
     final profileCategory = await storage.read(key: 'profileCategory');
 
-    setState(() {
-      _code = code ?? '';
-      category = profileCategory ?? '';
-    });
+    if (code == null || code.isEmpty) {
+      if (!mounted) return;
+      setState(() {
+        _code = '';
+        category = '';
+        _imageUrl = '';
+        txtFirstName.clear();
+        txtLastName.clear();
+      });
+      return;
+    }
+
+    _code = code;
+    category = profileCategory ?? '';
+
+    final value = await postLoginRegister('${register}read', {"code": _code});
+
+    if (value != null &&
+        value['objectData'] != null &&
+        value['objectData'].isNotEmpty) {
+      var user = value['objectData'][0];
+
+      if (!mounted) return;
+      setState(() {
+        _imageUrl = user['imageUrl'] ?? '';
+        txtFirstName.text = user['firstName'] ?? '';
+        txtLastName.text = user['lastName'] ?? '';
+        idcard = user['idcard'] ?? '';
+      });
+    }
   }
+
+  /*===============================>> REFRESH <<=============================== */
+
+  Future<void> refreshPage() async {
+    await loadData();
+  }
+
+  /*===============================>> API LIST <<=============================== */
 
   Future<List<Map<String, dynamic>>> _futureNews() async {
     final data = await postDio('${newsApi}read', {'limit': 10});
-
     return (data as List).cast<Map<String, dynamic>>();
   }
 
   Future<List<Map<String, dynamic>>> _futurePrivilege() async {
     final data = await postDio('${privilegeApi}read', {'limit': 10});
-
     return (data as List).cast<Map<String, dynamic>>();
   }
 
-  Future<void> _registerRead() async {
-    // var value = await storage.read(key: 'dataUserLoginDDPM') ?? ''; // local
-
-    final value = await postLoginRegister('${register}read', {
-      "code": _code,
-    }); // api
-
-    if (value.isNotEmpty) {
-      try {
-        var user = value['objectData'][0];
-        setState(() {
-          _imageUrl = user['imageUrl'] ?? '';
-          txtFirstName.text = user['firstName'] ?? '';
-          txtLastName.text = user['lastName'] ?? '';
-        });
-      } catch (_) {}
-    }
-  }
-  /*===============================>> API <<=============================== */
+  /*===============================>> UI <<=============================== */
 
   @override
   Widget build(BuildContext context) {
@@ -105,89 +105,53 @@ class HomePageState extends State<HomePage> {
       appBar: appBarHome(
         context: context,
         profileAction: () {
-          _code == ''
-              ? Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              )
-              : null;
+          if (_code.isEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+            );
+          } else {
+            widget.onTabChange(3); // ไปที่หน้า Notification
+          }
         },
         name:
-            _code != ''
+            _code.isNotEmpty
                 ? '${txtFirstName.text} ${txtLastName.text}'
                 : 'ท่านยังไม่ได้เข้าสู่ระบบ',
         memberType:
-            _code != ''
-                ? category == 'guest'
-                    ? 'ช่าง'
-                    : 'บุคคลทั่วไป'
+            _code.isNotEmpty
+                ? (idcard != '' ? 'ช่าง' : 'บุคคลทั่วไป')
                 : 'คลิกเพิ่อเข้าสู่ระบบ',
-        imagenetwork: _code != '' ? true : false,
-        imageUrl: _code != '' ? _imageUrl : 'assets/DSD/imgs/profile.png',
-
+        imagenetwork: _code.isNotEmpty,
+        imageUrl: _code.isNotEmpty ? _imageUrl : 'assets/DSD/imgs/profile.png',
         rightWidget:
-            _code != ''
+            _code.isNotEmpty
                 ? Row(
                   children: [
-                    category == 'guest'
+                    idcard != ''
                         ? GestureDetector(
-                          onTap:
-                              () => {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PageLicense(),
-                                  ),
-                                ),
-                              },
-                          child: Container(
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(18),
-                              color: Colors.white,
-                              border: Border.all(
-                                width: 1,
-                                color: const Color(0xFFDBDBDB),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PageLicense(),
                               ),
-                            ),
-                            child: Image.asset(
+                            );
+                          },
+                          child: _circleIcon(
+                            Image.asset(
                               "assets/DSD/imgs/qr_bg.png",
                               width: 35,
                               height: 35,
-                              // color: Colors.white,
                             ),
                           ),
                         )
                         : GestureDetector(
-                          onTap:
-                              () => {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => NotificationList(
-                                          pushedFromPage: true,
-                                        ),
-                                  ),
-                                ),
-                              },
-                          child: Container(
-                            padding: EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(18),
-                              color: Colors.white,
-                              border: Border.all(
-                                width: 1,
-                                color: const Color(0xFFDBDBDB),
-                              ),
-                            ),
-                            // child: Image.asset(
-                            //   "assets/DSD/imgs/qr_bg.png",
-                            //   width: 35,
-                            //   height: 35,
-                            //   // color: Colors.white,
-                            // ),
-                            child: Icon(
+                          onTap: () {
+                            widget.onTabChange(2); // ไปที่หน้า Notification
+                          },
+                          child: _circleIcon(
+                            Icon(
                               Icons.notification_add,
                               color: AppColors.primary,
                               size: 30,
@@ -196,7 +160,7 @@ class HomePageState extends State<HomePage> {
                         ),
                   ],
                 )
-                : SizedBox(),
+                : const SizedBox(),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -208,49 +172,41 @@ class HomePageState extends State<HomePage> {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               buildSearch(controller: searchController, hintText: "Search..."),
-              SizedBox(height: 16),
-              _buildRowText(
-                title: 'บริการ',
-                onTap: () {
-                  print('-----> บริการ');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              ServiceAllPage(onTabChange: widget.onTabChange),
-                    ),
-                  );
-                },
-              ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
+
+              _buildRowText('บริการ', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            ServiceAllPage(onTabChange: widget.onTabChange),
+                  ),
+                );
+              }),
+              const SizedBox(height: 16),
               _buildServiceSection(),
-              SizedBox(height: 16),
-              _buildRowText(
-                title: 'ข่าวประชาสัมพันธ์',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NewAll()),
-                  );
-                },
-              ),
-              SizedBox(height: 16),
+
+              const SizedBox(height: 16),
+              _buildRowText('ข่าวประชาสัมพันธ์', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NewAll()),
+                );
+              }),
+              const SizedBox(height: 16),
               _buildNew(),
-              SizedBox(height: 16),
-              _buildRowText(
-                title: 'สิทธิประโยชน์',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PrivilegeAll()),
-                  );
-                },
-              ),
-              SizedBox(height: 16),
+
+              const SizedBox(height: 16),
+              _buildRowText('สิทธิประโยชน์', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PrivilegeAll()),
+                );
+              }),
+              const SizedBox(height: 16),
               _buildPrivilege(),
             ],
           ),
@@ -259,21 +215,35 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  _buildRowText({required String title, required VoidCallback onTap}) {
+  /*===============================>> WIDGET <<=============================== */
+
+  Widget _circleIcon(Widget child) {
+    return Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        color: Colors.white,
+        border: Border.all(width: 1, color: const Color(0xFFDBDBDB)),
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildRowText(String title, VoidCallback onTap) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             fontFamily: 'Kanit',
           ),
         ),
         InkWell(
-          onTap: () => onTap(),
-          child: Text(
+          onTap: onTap,
+          child: const Text(
             "ดูทั้งหมด >",
             style: TextStyle(color: Colors.grey, fontFamily: 'Kanit'),
           ),
@@ -301,10 +271,7 @@ class HomePageState extends State<HomePage> {
           service.title,
           service.image,
           onTap: () {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              // ✅
-              service.onTap(context);
-            });
+            service.onTap(context, widget.onTabChange); // ✅ ส่งเพิ่มตรงนี้
           },
         );
       },
