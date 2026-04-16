@@ -42,63 +42,86 @@ class _NotificationListState extends State<NotificationList>
     }
   }
 
+  bool shownoti = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(
-        title: "การแจ้งเตือน",
+        title: "การแจ้งเตือน ",
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        child: Column(
-          children: [
-            // 🔥 อ่านทั้งหมด
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    showCustomDialog(
-                      context,
-                      title: 'อ่านทั้งหมด',
-                      description:
-                          "คุณต้องการทำเครื่องหมายว่าอ่านแล้ว สำหรับการแจ้งเตือนต่างๆหรือไม่ หากยืนยันจะไม่สามารถย้อนกลับได้",
-                      onConfirm: () {
-                        setState(() {
-                          for (var i in notifications) {
-                            i.isRead = true;
-                          }
-                        });
-                      },
-                    );
-                  },
-                  child: Text(
-                    notifications.where((e) => !e.isRead).isEmpty
-                        ? 'อ่านทั้งหมด'
-                        : 'อ่านทั้งหมด (${notifications.where((e) => !e.isRead).length})',
-                    style: TextStyle(fontSize: 12, color: AppColors.primary),
+        child:
+            !shownoti
+                ? SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "ยังไม่มีการแจ้งเตือน",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.textgrey,
+                          fontFamily: 'Kanit',
+                        ),
+                      ),
+                    ],
                   ),
+                )
+                : Column(
+                  children: [
+                    // 🔥 อ่านทั้งหมด
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showCustomDialog(
+                              context,
+                              title: 'อ่านทั้งหมด',
+                              description:
+                                  "คุณต้องการทำเครื่องหมายว่าอ่านแล้ว สำหรับการแจ้งเตือนต่างๆหรือไม่ หากยืนยันจะไม่สามารถย้อนกลับได้",
+                              onConfirm: () {
+                                setState(() {
+                                  for (var i in notifications) {
+                                    i.isRead = true;
+                                  }
+                                });
+                              },
+                            );
+                          },
+                          child: Text(
+                            notifications.where((e) => !e.isRead).isEmpty
+                                ? 'อ่านทั้งหมด'
+                                : 'อ่านทั้งหมด (${notifications.where((e) => !e.isRead).length})',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // 🔥 ต้องใช้ Expanded ตรงนี้ (ไม่อยู่ใน ScrollView)
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: notifications.length,
+                        itemBuilder: (context, index) {
+                          final i = notifications[index];
+                          return _notiList(item: i);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // 🔥 ต้องใช้ Expanded ตรงนี้ (ไม่อยู่ใน ScrollView)
-            Expanded(
-              child: ListView.builder(
-                itemCount: notifications.length,
-                itemBuilder: (context, index) {
-                  final i = notifications[index];
-                  return _notiList(item: i);
-                },
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

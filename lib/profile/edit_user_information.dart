@@ -93,7 +93,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
           _googleID = user['googleID'] ?? '';
           _status = user['status'] ?? 'N';
         });
-      } catch (_) {}
+      } catch (_) {} 
     }
   }
 
@@ -226,6 +226,18 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
     return null;
   }
 
+  String? validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'กรุณากรอกเบอร์โทรศัพท์';
+    }
+
+    if (!RegExp(r'^0\d{9}$').hasMatch(value)) {
+      return 'กรุณากรอกเบอร์โทร 10 หลัก';
+    }
+
+    return null;
+  }
+
   Widget _sectionLabel(String text) => Padding(
     padding: const EdgeInsets.only(bottom: 4),
     child: Text(
@@ -313,6 +325,14 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                           controller: txtPhone,
                           hint: 'เบอร์โทรศัพท์',
                           icon: Icons.phone_outlined,
+                          keybord: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                          ],
+                          validator: (v) {
+                            return validatePhone(v);
+                          },
                         ),
                         const SizedBox(height: 12),
                         buildTextField(

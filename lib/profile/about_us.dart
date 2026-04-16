@@ -140,7 +140,7 @@ class _AboutUsState extends State<AboutUs> {
                   label: 'นโยบายความเป็นส่วนตัว',
                   onTap:
                       () => _launchUrl(
-                        'https://www.dsd.go.th/privacy-policy', // ← เปลี่ยน URL จริง
+                        'https://webuild.co.th/policy/dsd_e_cert/index.html', // ← เปลี่ยน URL จริง
                       ),
                   isExternal: true,
                 ),

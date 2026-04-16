@@ -16,6 +16,8 @@ class _PageLicenseState extends State<PageLicense> {
     Navigator.pop(context, false);
   }
 
+  bool showLicenseList = false;
+
   @override
   Widget build(BuildContext context) {
     // return const Placeholder();
@@ -29,25 +31,45 @@ class _PageLicenseState extends State<PageLicense> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-        child: ListView.builder(
-          itemCount: licenseList.length,
-          itemBuilder: (context, index) {
-            final item = licenseList[index];
-
-            return _buildLicenseCard(
-              title: item.title,
-              date: item.issueDate,
-              ontap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LicenseDetailPage(license: item),
+        child:
+            !showLicenseList
+                ? SizedBox(
+                  // height: 85,
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "ยังไม่มีใบอนุญาต",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.textgrey,
+                          fontFamily: 'Kanit',
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            );
-          },
-        ),
+                )
+                : ListView.builder(
+                  itemCount: licenseList.length,
+                  itemBuilder: (context, index) {
+                    final item = licenseList[index];
+
+                    return _buildLicenseCard(
+                      title: item.title,
+                      date: item.issueDate,
+                      ontap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => LicenseDetailPage(license: item),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
       ),
     );
   }

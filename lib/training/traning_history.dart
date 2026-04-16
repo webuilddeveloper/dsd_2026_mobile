@@ -107,6 +107,8 @@ class _TrainingHistoryState extends State<TrainingHistory> {
     );
   }
 
+  bool showHistory = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,16 +124,17 @@ class _TrainingHistoryState extends State<TrainingHistory> {
               ? const Center(
                 child: CircularProgressIndicator(color: AppColors.primary),
               )
-              : training.isEmpty
+              // : training.isEmpty
+              : !showHistory
               ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.school_outlined,
-                      size: 56,
-                      color: AppColors.textgrey.withOpacity(0.4),
-                    ),
+                    // Icon(
+                    //   Icons.school_outlined,
+                    //   size: 56,
+                    //   color: AppColors.textgrey.withOpacity(0.4),
+                    // ),
                     const SizedBox(height: 12),
                     const Text(
                       'ยังไม่มีประวัติการอบรม',
