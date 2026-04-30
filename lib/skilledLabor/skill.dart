@@ -32,8 +32,6 @@ class _SkillPageState extends State<SkillPage> {
 
   /*===============================>> API <<=============================== */
   Future<void> _skilledLaborApi() async {
-    print('##########_skilledLaborApi###########');
-
     final profileCode = await storage.read(key: 'profileCode');
 
     final data = await postDio('${skilledLaborApi}read', {

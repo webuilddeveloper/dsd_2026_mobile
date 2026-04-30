@@ -62,11 +62,21 @@ class _RegsiterPageState extends State<RegsiterPage>
   String? _required(String? v) =>
       (v == null || v.trim().isEmpty) ? 'กรุณากรอกข้อมูล' : null;
 
-  // String? _validatePassword(String? v) {
-  //   if (v == null || v.isEmpty) return 'กรุณากรอกรหัสผ่าน';
-  //   if (v.length < 8) return 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร';
-  //   return null;
-  // }
+  String? _validatePassword(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'กรุณากรอกรหัสผ่าน';
+    }
+    if (value.length < 8) {
+      return 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
+    }
+    if (!value.contains(RegExp(r'[A-Z]'))) {
+      return 'ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว';
+    }
+    if (!value.contains(RegExp(r'[0-9]'))) {
+      return 'ต้องมีตัวเลขอย่างน้อย 1 ตัว';
+    }
+    return null;
+  }
 
   String? _validateConfirmPass(String? v) {
     if (v == null || v.isEmpty) return 'กรุณายืนยันรหัสผ่าน';
@@ -149,7 +159,7 @@ class _RegsiterPageState extends State<RegsiterPage>
                         hint: 'กรอกรหัสผ่าน ',
                         icon: Icons.lock_outline_rounded,
                         obscure: _obscurePassword,
-                        // validator: _validatePassword,
+                        validator: _validatePassword,
                         suffix: _eyeIcon(
                           _obscurePassword,
                           () => setState(
@@ -303,7 +313,7 @@ class _RegsiterPageState extends State<RegsiterPage>
   void _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
     try {
-      final result = await postLoginRegister('${register}create', {
+      final result = await postapi('${register}create', {
         'idcard': _idCardController.text,
         'username': _usernameController.text,
         'password': _passwordController.text,

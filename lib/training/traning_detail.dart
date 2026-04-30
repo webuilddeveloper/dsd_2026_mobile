@@ -39,7 +39,7 @@ class _TraningDetailState extends State<TraningDetail> {
 
   loadData() async {
     final _code = await storage.read(key: 'profileCode');
-    final value = await postLoginRegister('${register}read', {"code": _code});
+    final value = await postapi('${register}read', {"code": _code});
     if (value.isNotEmpty) {
       var user = value['objectData'][0];
       setState(() {

@@ -40,7 +40,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   void _onItemTapped(int index) async {
     if (index == _currentPage) return;
 
-    if (index == 3) {
+    if (index == 2 || index == 3) {
       final code = await storage.read(key: 'profileCode');
 
       if (code == null || code.isEmpty) {
@@ -126,6 +126,28 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               child: pages[_currentPage],
             ),
           ),
+          // child: AnimatedSwitcher(
+          //   duration: const Duration(milliseconds: 200),
+          //   transitionBuilder: (child, animation) {
+          //     // Fade + slide up เบาๆ
+          //     final offsetAnim = Tween<Offset>(
+          //       begin: const Offset(0, 0.02), // slide up นิดเดียว
+          //       end: Offset.zero,
+          //     ).animate(
+          //       CurvedAnimation(parent: animation, curve: Curves.bounceIn),
+          //     );
+          //     // easeOutCubic
+          //     return FadeTransition(
+          //       opacity: animation,
+          //       child: SlideTransition(position: offsetAnim, child: child),
+          //     );
+          //   },
+          //   // key สำคัญมาก — บอก AnimatedSwitcher ว่า widget เปลี่ยนแล้ว
+          //   child: KeyedSubtree(
+          //     key: ValueKey<int>(_currentPage),
+          //     child: pages.isNotEmpty ? pages[_currentPage] : const SizedBox(),
+          //   ),
+          // ),
         ),
       ),
       bottomNavigationBar: _buildBottomNavBar(),
@@ -198,7 +220,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                     color:
                         _currentPage == index
                             ? Theme.of(context).primaryColor
-                            : const Color(0xff484C52),
+                            : const Color(0xff877573),
                   ),
                   const SizedBox(height: 5),
                   Text(

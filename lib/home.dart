@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/carousel.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/textfield.dart';
+import 'package:dsd/course/course_all.dart';
 import 'package:dsd/license/license_page.dart';
 import 'package:dsd/login.dart';
 import 'package:dsd/service/service_data.dart';
@@ -47,6 +48,7 @@ class HomePageState extends State<HomePage> {
     final code = await storage.read(key: 'profileCode');
     final profileCategory = await storage.read(key: 'profileCategory');
 
+    print('-------- >> profileCode : $code');
     if (code == null || code.isEmpty) {
       if (!mounted) return;
       setState(() {
@@ -62,7 +64,7 @@ class HomePageState extends State<HomePage> {
     _code = code;
     category = profileCategory ?? '';
 
-    final value = await postLoginRegister('${register}read', {"code": _code});
+    final value = await postapi('${register}read', {"code": _code});
 
     if (value != null &&
         value['objectData'] != null &&
@@ -79,13 +81,117 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  /*===============================>> REFRESH <<=============================== */
+  List<Map<String, String>> mockCourse = [
+    {
+      "SITE": "สถาบันพัฒนาฝีมือแรงงาน 15 พระนครศรีอยุธยา",
+      "DEPT_ID": "14",
+      "TRAINING_ID": "0331887",
+      "TRAINING_OCCUPATION_ID": "2220017230213",
+      "COURSE":
+          "Content Marketing และการขายออนไลน์ด้วยเทคโนโลยีปัญญาประดิษฐ์ (AI)",
+      "PERIOD": "30",
+      "CLASS_NO": "1",
+      "DSD_START_DATE": "2026-05-07T17:00:00.000Z",
+      "DSD_END_DATE": "2026-05-21T17:00:00.000Z",
+      "ACTIVITY_ID": "2",
+      "PROVINCE_NAME": "พระนครศรีอยุธยา",
+      "BUDGET_YEAR": "2569",
+    },
+    {
+      "SITE": "สถาบันพัฒนาฝีมือแรงงาน 17 ระยอง",
+      "DEPT_ID": "21",
+      "TRAINING_ID": "0330725",
+      "TRAINING_OCCUPATION_ID": "0920222091102",
+      "COURSE": "การใช้เครื่องมือวัดละเอียดทางมิติ",
+      "PERIOD": "30",
+      "CLASS_NO": "2",
+      "DSD_START_DATE": "2026-05-08T17:00:00.000Z",
+      "DSD_END_DATE": "2026-05-16T17:00:00.000Z",
+      "ACTIVITY_ID": "2",
+      "PROVINCE_NAME": "ระยอง",
+      "BUDGET_YEAR": "2569",
+    },
+    {
+      "SITE": "สำนักงานพัฒนาฝีมือแรงงานกาฬสินธุ์",
+      "DEPT_ID": "46",
+      "TRAINING_ID": "0321762",
+      "TRAINING_OCCUPATION_ID": "0930014150101",
+      "COURSE": "การใช้เทคโนโลยีเพื่อจัดการน้ำสำหรับโรงเรือนเกษตรอัจฉริยะ",
+      "PERIOD": "18",
+      "CLASS_NO": "2",
+      "DSD_START_DATE": "2026-05-10T17:00:00.000Z",
+      "DSD_END_DATE": "2026-05-14T17:00:00.000Z",
+      "ACTIVITY_ID": "3",
+      "PROVINCE_NAME": "กาฬสินธุ์",
+      "BUDGET_YEAR": "2569",
+    },
+    {
+      "SITE": "สถาบันพัฒนาฝีมือแรงงาน 27 สมุทรสาคร",
+      "DEPT_ID": "74",
+      "TRAINING_ID": "0332033",
+      "TRAINING_OCCUPATION_ID": "7920183400103",
+      "COURSE": "การซ่อมบำรุงและดัดแปลงจักรยานยนต์ไฟฟ้า",
+      "PERIOD": "30",
+      "CLASS_NO": "2",
+      "DSD_START_DATE": "2026-05-10T17:00:00.000Z",
+      "DSD_END_DATE": "2026-05-14T17:00:00.000Z",
+      "ACTIVITY_ID": "2",
+      "PROVINCE_NAME": "สมุทรสาคร",
+      "BUDGET_YEAR": "2569",
+    },
+    {
+      "SITE": "สถาบันพัฒนาฝีมือแรงงาน 43 ตาก",
+      "DEPT_ID": "63",
+      "TRAINING_ID": "0325379",
+      "TRAINING_OCCUPATION_ID": "0920227460307",
+      "COURSE": "ภาษาเกาหลีสำหรับผู้ที่จะเดินทางหรือทำงานอยู่ในต่างประเทศ",
+      "PERIOD": "30",
+      "CLASS_NO": "1",
+      "DSD_START_DATE": "2026-05-17T17:00:00.000Z",
+      "DSD_END_DATE": "2026-05-21T17:00:00.000Z",
+      "ACTIVITY_ID": "2",
+      "PROVINCE_NAME": "ตาก",
+      "BUDGET_YEAR": "2569",
+    },
+
+    // 👉 ตัวอย่าง: ที่เหลือใช้ pattern เดิม (ตัดให้ไม่ยาวเกิน)
+    {
+      "SITE": "สถาบันพัฒนาฝีมือแรงงาน 37 บุรีรัมย์",
+      "DEPT_ID": "31",
+      "TRAINING_ID": "0328848",
+      "TRAINING_OCCUPATION_ID": "0920227230415",
+      "COURSE": "การบริหารสินค้าคงคลัง",
+      "PERIOD": "30",
+      "CLASS_NO": "2",
+      "DSD_START_DATE": "2026-05-17T17:00:00.000Z",
+      "DSD_END_DATE": "2026-05-21T17:00:00.000Z",
+      "ACTIVITY_ID": "2",
+      "PROVINCE_NAME": "บุรีรัมย์",
+      "BUDGET_YEAR": "2569",
+    },
+    {
+      "SITE": "สถาบันพัฒนาฝีมือแรงงาน 15 พระนครศรีอยุธยา",
+      "DEPT_ID": "14",
+      "TRAINING_ID": "0331831",
+      "TRAINING_OCCUPATION_ID": "1020014220601",
+      "COURSE": "AI Generative and Data for Marketing",
+      "PERIOD": "30",
+      "CLASS_NO": "1",
+      "DSD_START_DATE": "2026-05-17T17:00:00.000Z",
+      "DSD_END_DATE": "2026-05-25T17:00:00.000Z",
+      "ACTIVITY_ID": "2",
+      "PROVINCE_NAME": "พระนครศรีอยุธยา",
+      "BUDGET_YEAR": "2569",
+    },
+  ];
+
+  /*============================>> REFRESH <<============================= */
 
   Future<void> refreshPage() async {
     await loadData();
   }
 
-  /*===============================>> API LIST <<=============================== */
+  /*============================>> API LIST <<============================ */
 
   Future<List<Map<String, dynamic>>> _futureNews() async {
     final data = await postDio('${newsApi}read', {'limit': 10});
@@ -138,11 +244,21 @@ class HomePageState extends State<HomePage> {
                               ),
                             );
                           },
-                          child: _circleIcon(
-                            Image.asset(
-                              "assets/DSD/imgs/qr_bg.png",
-                              width: 35,
-                              height: 35,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(18),
+                              color: Color(0xFFBB439C),
+                              border: Border.all(
+                                width: 1,
+                                color: const Color(0xFFDBDBDB),
+                              ),
+                            ),
+                            child: Image.asset(
+                              "assets/DSD/icon/icon_portfolio.png",
+                              width: 30,
+                              height: 30,
                             ),
                           ),
                         )
@@ -188,6 +304,17 @@ class HomePageState extends State<HomePage> {
               }),
               const SizedBox(height: 16),
               _buildServiceSection(),
+              const SizedBox(height: 16),
+              _buildRowText('คอร์สอบรมแนะนำสำหรับคุณ', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CourseAll(
+                    course: mockCourse,
+                  )),
+                );
+              }),
+              const SizedBox(height: 16),
+              _buildCourse(),
 
               const SizedBox(height: 16),
               _buildRowText('ข่าวประชาสัมพันธ์', () {
@@ -262,7 +389,6 @@ class HomePageState extends State<HomePage> {
         crossAxisCount: 3,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        // childAspectRatio: 0.85,
       ),
       itemBuilder: (context, index) {
         final service = services[index];
@@ -297,13 +423,13 @@ class HomePageState extends State<HomePage> {
               right: 0,
               child: Container(
                 height: 35,
-                color: AppColors.primary,
+                color: AppColors.primarysecond,
                 alignment: Alignment.center,
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Kanit',
@@ -315,6 +441,163 @@ class HomePageState extends State<HomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCourse() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.28,
+      child: ListView.separated(
+        separatorBuilder:
+            (BuildContext context, int index) => const SizedBox(width: 12),
+        scrollDirection: Axis.horizontal,
+        itemCount: mockCourse.length,
+        itemBuilder: (context, index) {
+          final course = mockCourse[index];
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.28,
+            width: MediaQuery.of(context).size.width * 0.45,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 85,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    child: Image.asset(
+                      'assets/DSD/imgs/2.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(
+                    horizontal: 8,
+                    vertical: 6,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        course['COURSE'] ?? '',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/DSD/icon/icon date.png',
+                            width: 14,
+                            color: Color(0xFFBB439C),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            " ระยะเวลาที่ฝึก ${course['PERIOD'] ?? ''} ชั่วโมง",
+                            style: const TextStyle(
+                              color: AppColors.textDark,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Kanit',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/DSD/icon/icon_calendar_full.png',
+                            width: 14,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "วันเริ่ม ${formatDate(course['DSD_START_DATE'] ?? '')}",
+                            style: const TextStyle(
+                              color: AppColors.textDark,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Kanit',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/DSD/icon/icon_calendar_full.png',
+                            width: 14,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "วันสิ้นสุด ${formatDate(course['DSD_END_DATE'] ?? '')}",
+                            style: const TextStyle(
+                              color: AppColors.textDark,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Kanit',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Center(
+                        child: InkWell(
+                          onTap: () {},
+                          child: Container(
+                            width: double.infinity,
+
+                            decoration: BoxDecoration(
+                              color: Color(0xFF6FC546),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
+                                child: const Text(
+                                  "สมัคร",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Kanit',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

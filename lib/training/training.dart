@@ -31,7 +31,6 @@ class _TrainingServiceState extends State<TrainingService> {
 
   /*===============================>> API <<=============================== */
   Future<void> _trainingApi() async {
-    print('##########_skilledLaborApi###########');
     final profileCode = await storage.read(key: 'profileCode');
 
     final data = await postDio('${trainingApi}read', {

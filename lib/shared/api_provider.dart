@@ -23,9 +23,9 @@ const privilegeCategoryApi = '${dsd_server}m/privilege/category/';
 const privilegeGallery = '${dsd_server}m/privilege/gallery/';
 
 //eventCalendarApi
-const eventCalendarApi = '${dsd_server}m/eventCalendar//';
-const eventCalendarGallery = '${dsd_server}m/eventcalendar/gallery/';
-const eventCalendarCategory = '${dsd_server}m/eventcalendar/category/';
+const eventCalendarApi = '${dsd_server}m/eventCalendar/';
+const eventCalendarGallery = '${eventCalendarApi}gallery/';
+const eventCalendarCategory = '${eventCalendarApi}category/';
 
 //knowledge
 const knowledgeApi = '${dsd_server}m/knowledge/';
@@ -53,12 +53,11 @@ Future<dynamic> postDio(String url, dynamic criteria) async {
 
   Dio dio = Dio();
   var response = await dio.post(url, data: criteria);
-  // print(response.data.toString());
-  // print(response.data['objectData'].toString());
+
   return Future.value(response.data['objectData']);
 }
 
-Future<dynamic> postLoginRegister(String url, dynamic criteria) async {
+Future<dynamic> postapi(String url, dynamic criteria) async {
   var body = json.encode(criteria);
   var response = await http.post(
     Uri.parse(url),

@@ -20,6 +20,7 @@ class _TrainingHistoryState extends State<TrainingHistory> {
   final storage = FlutterSecureStorage();
 
   void goBack() => Navigator.pop(context);
+  bool showHistory = false;
 
   @override
   void initState() {
@@ -106,8 +107,6 @@ class _TrainingHistoryState extends State<TrainingHistory> {
       ],
     );
   }
-
-  bool showHistory = false;
 
   @override
   Widget build(BuildContext context) {

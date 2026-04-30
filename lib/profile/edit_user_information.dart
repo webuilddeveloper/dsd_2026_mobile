@@ -71,7 +71,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
 
     setState(() => category = profileCategory ?? '');
 
-    final value = await postLoginRegister('${register}read', {'code': code});
+    final value = await postapi('${register}read', {'code': code});
 
     if (value.isNotEmpty) {
       try {
@@ -93,7 +93,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
           _googleID = user['googleID'] ?? '';
           _status = user['status'] ?? 'N';
         });
-      } catch (_) {} 
+      } catch (_) {}
     }
   }
 
@@ -149,7 +149,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   }
 
   Widget _buildProfileImage() {
-    if (_pickedImage != null) {
+    if (_pickedImage != null && _pickedImage!.path.isNotEmpty) {
       return Image.file(File(_pickedImage!.path), fit: BoxFit.cover);
     } else if (_imageUrl.isNotEmpty) {
       return Image.network(_imageUrl, fit: BoxFit.cover);
@@ -165,7 +165,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
     final code = await storage.read(key: 'profileCode');
     await storage.write(key: 'idcard', value: txtIdcard.text);
     try {
-      final result = await postLoginRegister('${register}update', {
+      final result = await postapi('${register}update', {
         'code': code,
         'idcard': txtIdcard.text,
         'username': txtUsername.text,

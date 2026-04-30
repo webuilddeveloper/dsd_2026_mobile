@@ -1,12 +1,17 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/model/license_data.dart';
+import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
 class LicenseDetailPage extends StatefulWidget {
-  final LicenseData license;
+  final Map<String, dynamic> license;
+  final String title;
 
-  const LicenseDetailPage({super.key, required this.license});
+  const LicenseDetailPage({
+    super.key,
+    required this.license,
+    required this.title,
+  });
 
   @override
   State<LicenseDetailPage> createState() => _LicenseDetailPageState();
@@ -23,7 +28,7 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(
-        title: "ใบอนุญาต",
+        title: widget.title,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
@@ -131,16 +136,19 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
           const Divider(color: AppColors.backgroundMain),
 
           _buildtxt(
-            title: widget.license.title,
-            subtitle: widget.license.branch,
+            title: widget.license['COURSE'] ?? "",
+            subtitle: widget.license['SITE'] ?? "",
           ),
 
           const Divider(color: AppColors.backgroundMain),
-          _buildtxt(title: "วันออกบัตร", subtitle: widget.license.issueDate),
+          _buildtxt(
+            title: "วันออกบัตร",
+            subtitle: formatDate(widget.license['CERTIFICATE_DATE'] ?? ""),
+          ),
           const Divider(color: AppColors.backgroundMain),
           _buildtxtStatus(
             title: "สถานะใบอนุญาต",
-            subtitle: widget.license.status,
+            subtitle: widget.license['STATUS'] ?? "",
           ),
         ],
       ),

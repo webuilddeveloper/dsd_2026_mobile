@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, curly_braces_in_flow_control_structures
+// ignore_for_file: non_constant_identifier_names, curly_braces_in_flow_control_structures, sized_box_for_whitespace
 
 import "package:flutter/material.dart";
 import 'dart:math';
@@ -83,76 +83,70 @@ class _ColorLoader3State extends State<ColorLoader3>
       width: 100.0,
       height: 100.0,
       //color: Colors.black12,
-      child: new Center(
-        child: new RotationTransition(
+      child: Center(
+        child: RotationTransition(
           turns: animation_rotation,
-          child: new Container(
-            //color: Colors.limeAccent,
-            child: new Center(
-              child: Stack(
-                children: <Widget>[
-                  new Transform.translate(
-                    offset: Offset(0.0, 0.0),
-                    child: Dot(radius: radius, color: Colors.black12),
+          child: Center(
+            child: Stack(
+              children: <Widget>[
+                Transform.translate(
+                  offset: Offset(0.0, 0.0),
+                  child: Dot(radius: radius, color: Colors.black12),
+                ),
+                Transform.translate(
+                  offset: Offset(radius * cos(0.0), radius * sin(0.0)),
+                  child: Dot(radius: dotRadius, color: Colors.amber),
+                ),
+                Transform.translate(
+                  offset: Offset(
+                    radius * cos(0.0 + 1 * pi / 4),
+                    radius * sin(0.0 + 1 * pi / 4),
                   ),
-                  new Transform.translate(
-                    child: Dot(radius: dotRadius, color: Colors.amber),
-                    offset: Offset(radius * cos(0.0), radius * sin(0.0)),
+                  child: Dot(radius: dotRadius, color: Colors.deepOrangeAccent),
+                ),
+                Transform.translate(
+                  offset: Offset(
+                    radius * cos(0.0 + 2 * pi / 4),
+                    radius * sin(0.0 + 2 * pi / 4),
                   ),
-                  new Transform.translate(
-                    child: Dot(
-                      radius: dotRadius,
-                      color: Colors.deepOrangeAccent,
-                    ),
-                    offset: Offset(
-                      radius * cos(0.0 + 1 * pi / 4),
-                      radius * sin(0.0 + 1 * pi / 4),
-                    ),
+                  child: Dot(radius: dotRadius, color: Colors.pinkAccent),
+                ),
+                Transform.translate(
+                  offset: Offset(
+                    radius * cos(0.0 + 3 * pi / 4),
+                    radius * sin(0.0 + 3 * pi / 4),
                   ),
-                  new Transform.translate(
-                    child: Dot(radius: dotRadius, color: Colors.pinkAccent),
-                    offset: Offset(
-                      radius * cos(0.0 + 2 * pi / 4),
-                      radius * sin(0.0 + 2 * pi / 4),
-                    ),
+                  child: Dot(radius: dotRadius, color: Colors.purple),
+                ),
+                Transform.translate(
+                  offset: Offset(
+                    radius * cos(0.0 + 4 * pi / 4),
+                    radius * sin(0.0 + 4 * pi / 4),
                   ),
-                  new Transform.translate(
-                    child: Dot(radius: dotRadius, color: Colors.purple),
-                    offset: Offset(
-                      radius * cos(0.0 + 3 * pi / 4),
-                      radius * sin(0.0 + 3 * pi / 4),
-                    ),
+                  child: Dot(radius: dotRadius, color: Colors.yellow),
+                ),
+                Transform.translate(
+                  offset: Offset(
+                    radius * cos(0.0 + 5 * pi / 4),
+                    radius * sin(0.0 + 5 * pi / 4),
                   ),
-                  new Transform.translate(
-                    child: Dot(radius: dotRadius, color: Colors.yellow),
-                    offset: Offset(
-                      radius * cos(0.0 + 4 * pi / 4),
-                      radius * sin(0.0 + 4 * pi / 4),
-                    ),
+                  child: Dot(radius: dotRadius, color: Colors.lightGreen),
+                ),
+                Transform.translate(
+                  offset: Offset(
+                    radius * cos(0.0 + 6 * pi / 4),
+                    radius * sin(0.0 + 6 * pi / 4),
                   ),
-                  new Transform.translate(
-                    child: Dot(radius: dotRadius, color: Colors.lightGreen),
-                    offset: Offset(
-                      radius * cos(0.0 + 5 * pi / 4),
-                      radius * sin(0.0 + 5 * pi / 4),
-                    ),
+                  child: Dot(radius: dotRadius, color: Colors.orangeAccent),
+                ),
+                Transform.translate(
+                  offset: Offset(
+                    radius * cos(0.0 + 7 * pi / 4),
+                    radius * sin(0.0 + 7 * pi / 4),
                   ),
-                  new Transform.translate(
-                    child: Dot(radius: dotRadius, color: Colors.orangeAccent),
-                    offset: Offset(
-                      radius * cos(0.0 + 6 * pi / 4),
-                      radius * sin(0.0 + 6 * pi / 4),
-                    ),
-                  ),
-                  new Transform.translate(
-                    child: Dot(radius: dotRadius, color: Colors.blueAccent),
-                    offset: Offset(
-                      radius * cos(0.0 + 7 * pi / 4),
-                      radius * sin(0.0 + 7 * pi / 4),
-                    ),
-                  ),
-                ],
-              ),
+                  child: Dot(radius: dotRadius, color: Colors.blueAccent),
+                ),
+              ],
             ),
           ),
         ),
@@ -175,7 +169,7 @@ class Dot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Center(
+    return Center(
       child: Container(
         width: radius,
         height: radius,

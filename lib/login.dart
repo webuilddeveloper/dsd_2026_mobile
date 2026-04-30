@@ -1,11 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/blank_page/textfield.dart';
+import 'package:dsd/forgot.dart';
 import 'package:dsd/menu.dart';
 import 'package:dsd/register.dart';
 import 'package:dsd/shared/api_provider.dart';
-import 'package:dsd/shared/line.dart';
+import 'package:dsd/shared/apple_login.dart';
+import 'package:dsd/shared/line_login.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -192,7 +197,14 @@ class _LoginPageState extends State<LoginPage>
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ForgotPage(),
+                                    ),
+                                  );
+                                },
                                 style: TextButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 8,
@@ -315,7 +327,24 @@ class _LoginPageState extends State<LoginPage>
                             const SizedBox(width: 14),
                             _buildSocialButton(
                               imagePath: 'assets/images/apple.png',
-                              onTap: () {},
+                              onTap: () async {
+                                final credential = await loginApple();
+
+                                if (credential != null) {
+                                  final model = {
+                                    "userId": credential.userIdentifier ?? "",
+                                    "email": credential.email,
+                                    "firstName": credential.givenName,
+                                    "lastName": credential.familyName,
+                                  };
+                                  _handleSocail(
+                                    model: model,
+                                    category: "apple",
+                                  );
+                                } else {
+                                  print("Login failed");
+                                }
+                              },
                             ),
                           ],
                         ],
@@ -399,30 +428,31 @@ class _LoginPageState extends State<LoginPage>
     required Map<String, dynamic> model,
     required String category,
   }) async {
-    // ignore: unnecessary_brace_in_string_interps
-    final result = await postLoginRegister('${registerV2}${category}/login', {
-      'username': model['username'],
-      'lineID': model['lineID'],
-      'email': model['email'],
-      'imageUrl': model['imageUrl'],
-      'firstName': model['firstName'],
-      'lastName': model['lastName'],
-    });
+    final body = {
+      'username': model['username'] ?? '',
+      "appleID": model['userId'] ?? '',
+      'lineID': model['lineID'] ?? '',
+      'email': model['email'] ?? '',
+      'imageUrl': model['imageUrl'] ?? '',
+      'firstName': model['firstName'] ?? '',
+      'lastName': model['lastName'] ?? '',
+    };
+
+    final result = await postapi('$registerV2$category/login', body);
 
     if (result['status'] == 'S') {
       final data = result['objectData'] ?? {};
       await storage.write(key: 'profileCode', value: data['code'] ?? '');
       await storage.write(key: 'profileCategory', value: category);
+
       // await storage.write(key: 'token', value: result['jsonData']);
       // await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
-
       // await storage.write(key: 'username', value: data['username'] ?? '');
       // await storage.write(
       //   key: 'profileImageUrl',
       //   value: data['imageUrl'] ?? '',
       // );
       // await storage.write(key: 'idcard', value: data['idcard'] ?? '');
-
       // await storage.write(
       //   key: 'profileFirstName',
       //   value: data['firstName'] ?? '',
@@ -472,7 +502,7 @@ class _LoginPageState extends State<LoginPage>
     try {
       final url = '${register}login';
 
-      final result = await postLoginRegister(url, {
+      final result = await postapi(url, {
         'username': username,
         'password': password,
         'category': 'guest',
@@ -483,7 +513,7 @@ class _LoginPageState extends State<LoginPage>
       // ✅ LOGIN SUCCESS
       if (result['status'] == 'S') {
         final data = result['objectData'] ?? {};
-
+        print('code : ${data['code']}');
         await storage.write(key: 'token', value: result['jsonData']);
         await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
         await storage.write(key: 'profileCode', value: data['code'] ?? '');

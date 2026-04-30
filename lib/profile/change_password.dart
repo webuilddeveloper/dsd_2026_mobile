@@ -1,8 +1,10 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/blank_page/textfield.dart';
+import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -12,10 +14,13 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
+  final storage = FlutterSecureStorage();
+  final txtOldPassword = TextEditingController();
   final txtPassword = TextEditingController();
   final txtConfirmPassword = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  bool _obscureOld = true;
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   bool _isLoading = false;
@@ -93,33 +98,72 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   void goBack() => Navigator.pop(context);
 
-  void _submitUpdate() async {
+  Future<void> _submitUpdate() async {
+    FocusScope.of(context).unfocus();
+
     if (!_formKey.currentState!.validate()) return;
+    final _code = await storage.read(key: 'profileCode');
 
     setState(() => _isLoading = true);
 
-    // TODO: call your API here
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final value = await postapi('${register}change', {
+        "code": _code.toString(),
+        "password": txtOldPassword.text.trim(),
+        "newpassword": txtPassword.text.trim(),
+      });
 
-    setState(() => _isLoading = false);
+      if (value['status'] == 'S') {
+        showCustomDialog(
+          context,
+          title: 'เปลี่ยนรหัสผ่านสำเร็จ',
+          description: 'รหัสผ่านของคุณได้รับการเปลี่ยนแปลงเรียบร้อยแล้ว',
+          onConfirm: () {
+            Navigator.pop(context);
+          },
+        );
+      } else {
+        showCustomDialog(
+          context,
+          title: 'ไม่สำเร็จ',
+          description: 'รหัสผ่านเดิมไม่ถูกต้อง\nกรุณาลองใหม่อีกครั้ง',
+          onConfirm: () {},
+        );
+      }
+    } catch (e) {
+      showCustomDialog(
+        context,
+        title: 'เกิดข้อผิดพลาด',
+        description: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้\nกรุณาลองใหม่อีกครั้ง',
+        onConfirm: () {},
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
-    showCustomDialog(
-      context,
-      title: 'เปลี่ยนรหัสผ่านสำเร็จ',
-      description: 'รหัสผ่านของคุณได้รับการเปลี่ยนแปลงเรียบร้อยแล้ว',
-
-      onConfirm: () {
-        goBack();
-      },
-    );
+  String? _validateOldPassword(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'กรุณากรอกรหัสผ่าน';
+    }
+    if (value.length < 6) {
+      return 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
+    }
+    // if (!value.contains(RegExp(r'[A-Z]'))) {
+    //   return 'ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว';
+    // }
+    // if (!value.contains(RegExp(r'[0-9]'))) {
+    //   return 'ต้องมีตัวเลขอย่างน้อย 1 ตัว';
+    // }
+    return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'กรุณากรอกรหัสผ่าน';
     }
-    if (value.length < 8) {
-      return 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร';
+    if (value.length < 6) {
+      return 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
     }
     if (!value.contains(RegExp(r'[A-Z]'))) {
       return 'ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว';
@@ -142,6 +186,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   void dispose() {
+    txtOldPassword.dispose();
     txtPassword.dispose();
     txtConfirmPassword.dispose();
     super.dispose();
@@ -186,7 +231,6 @@ class _ChangePasswordState extends State<ChangePassword> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title
                   Row(
                     children: [
                       Container(
@@ -222,7 +266,37 @@ class _ChangePasswordState extends State<ChangePassword> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
+                  const Text(
+                    'รหัสผ่านเดิม',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontFamily: 'Kanit',
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  buildTextField(
+                    controller: txtOldPassword,
+                    hint: 'กรอกรหัสผ่านเดิม',
+                    icon: Icons.lock_outline,
+                    obscure: _obscureOld,
+                    validator: _validateOldPassword,
+                    suffix: IconButton(
+                      icon: Icon(
+                        _obscureOld
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        size: 20,
+                        color: AppColors.textgrey,
+                      ),
+                      onPressed:
+                          () => setState(() {
+                            _obscureOld = !_obscureOld;
+                          }),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   // Password field
                   const Text(
                     'รหัสผ่านใหม่',

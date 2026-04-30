@@ -57,7 +57,7 @@ class _SkillDetailPageState extends State<SkillDetailPage> {
 
   loadData() async {
     final _code = await storage.read(key: 'profileCode');
-    final value = await postLoginRegister('${register}read', {"code": _code});
+    final value = await postapi('${register}read', {"code": _code});
     if (value.isNotEmpty) {
       var user = value['objectData'][0];
       setState(() {
@@ -69,7 +69,7 @@ class _SkillDetailPageState extends State<SkillDetailPage> {
   /// ✅ API
   _sendSlll() async {
     var dio = Dio();
-    print('##########_skilledLaborApi###########');
+
     final profileCode = await storage.read(key: 'profileCode');
 
     var data = {

@@ -63,8 +63,8 @@ appBarHome({
                           image: DecorationImage(
                             image:
                                 imagenetwork == true
-                                    ? NetworkImage(imageUrl!)
-                                    : AssetImage(imageUrl!),
+                                    ? NetworkImage(imageUrl ?? '')
+                                    : AssetImage(imageUrl ?? ''),
                           ),
                         ),
                       ),

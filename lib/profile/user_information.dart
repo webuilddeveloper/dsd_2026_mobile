@@ -1,4 +1,5 @@
 import 'package:dsd/blank_page/appbar.dart';
+import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/license/license_page.dart';
 import 'package:dsd/notification/notification_settings.dart';
 import 'package:dsd/profile/about_us.dart';
@@ -6,7 +7,7 @@ import 'package:dsd/profile/change_password.dart';
 import 'package:dsd/profile/edit_user_information.dart';
 import 'package:dsd/profile/language_page.dart';
 import 'package:dsd/shared/api_provider.dart';
-import 'package:dsd/shared/line.dart';
+import 'package:dsd/shared/line_login.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:dsd/training/traning_history.dart';
 import 'package:flutter/material.dart';
@@ -50,9 +51,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
   Future<void> _registerRead() async {
     // var value = await storage.read(key: 'dataUserLoginDDPM') ?? ''; // local
     final _code = await storage.read(key: 'profileCode');
-    final value = await postLoginRegister('${register}read', {
-      "code": _code,
-    }); // api
+    final value = await postapi('${register}read', {"code": _code}); // api
 
     if (value.isNotEmpty) {
       try {
@@ -88,6 +87,20 @@ class _UserInformationPageState extends State<UserInformationPage> {
       }
     }
     widget.onTabChange?.call(0);
+  }
+
+  Future<void> deleteAccount(BuildContext context) async {
+    final storage = FlutterSecureStorage();
+    final code = await storage.read(key: 'profileCode');
+    final response = await postapi('${register}delete', {"code": code});
+
+    if (response != null && response['status'] == 'S') {
+      print("✅ Delete success");
+      await storage.deleteAll();
+      widget.onTabChange?.call(0);
+    } else {
+      print("❌ Delete failed: ${response?['message']}");
+    }
   }
 
   @override
@@ -293,7 +306,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                             ),
                             child: ClipOval(
                               child:
-                                  _imageUrl.isNotEmpty
+                                  _imageUrl.isNotEmpty && _imageUrl != ''
                                       ? Image.network(
                                         _imageUrl,
                                         fit: BoxFit.cover,
@@ -311,6 +324,29 @@ class _UserInformationPageState extends State<UserInformationPage> {
                 ],
               ),
               SizedBox(height: 16),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    showCustomDialog(
+                      context,
+                      title: 'คุณต้องการลบบัญชีหรือไม่?',
+                      description: 'การลบบัญชีจะทำให้ข้อมูลของคุณหายไปทั้งหมด',
+                      onConfirm: () {
+                        deleteAccount(context);
+                      },
+                    );
+                  },
+                  child: Text(
+                    'ลบบัญชี',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ),
               InkWell(
                 onTap: () {
                   logout(context);
