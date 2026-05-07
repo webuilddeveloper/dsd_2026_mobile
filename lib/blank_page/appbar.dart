@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -5,6 +7,8 @@ appBarHome({
   String? name = "",
   String? memberType = "",
   String? imageUrl = "",
+
+  bool? imagenetwork,
   Widget? rightWidget,
   Function? rightAction,
   Function? profileAction,
@@ -37,7 +41,7 @@ appBarHome({
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: () => profileAction,
+                onTap: () => profileAction!(),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -56,7 +60,12 @@ appBarHome({
                         height: 32,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
-                          image: DecorationImage(image: AssetImage(imageUrl!)),
+                          image: DecorationImage(
+                            image:
+                                imagenetwork == true
+                                    ? NetworkImage(imageUrl!)
+                                    : AssetImage(imageUrl!),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -165,29 +174,49 @@ appBar({
               // / 🔔 RIGHT
               // ignore: unrelated_type_equality_checks
               rightBtn
+                  // ? GestureDetector(
+                  //   onTap: () => rightAction!(),
+                  //   child: Container(
+                  //     width: 40,
+                  //     height: 40,
+                  //     alignment: Alignment.center,
+                  //     decoration: BoxDecoration(
+                  //       color: const Color(0xFFFAFAFA),
+                  //       shape: BoxShape.circle,
+                  //       border: Border.all(
+                  //         width: 1,
+                  //         color: const Color(0xFFDBDBDB),
+                  //       ),
+                  //     ),
+                  //     child: Icon(Icons.list_rounded, size: 18),
+                  //   ),
+                  // )
                   ? GestureDetector(
                     onTap: () => rightAction!(),
                     child: Container(
-                      width: 40,
-                      height: 40,
-                      alignment: Alignment.center,
-                      // padding: const EdgeInsets.symmetric(
-                      //   horizontal: 12,
-                      //   vertical: 10,
-                      // ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFAFAFA),
-                        // borderRadius: BorderRadius.circular(22),
-                        shape: BoxShape.circle,
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           width: 1,
                           color: const Color(0xFFDBDBDB),
                         ),
                       ),
-                      child: const Icon(Icons.favorite_border, size: 15),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.list_rounded, size: 18),
+                          SizedBox(width: 4),
+                          Text('รายการ', style: TextStyle(fontSize: 10)),
+                        ],
+                      ),
                     ),
                   )
-                  : SizedBox(),
+                  : SizedBox(width: 40),
             ],
           ),
         ),

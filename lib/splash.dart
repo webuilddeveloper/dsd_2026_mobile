@@ -1,12 +1,8 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously
-
 import 'dart:async';
-
 import 'package:dsd/blank_page/dialog_fail.dart';
-import 'package:dsd/login.dart';
 import 'package:dsd/menu.dart';
+import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -45,20 +41,24 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   _callNavigatorPage() async {
-    final storage = FlutterSecureStorage();
-    String? value = await storage.read(key: 'token');
+    // final storage = FlutterSecureStorage();
+    // String? value = await storage.read(key: 'token');
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => Menu(pageIndex: null)),
+      (Route<dynamic> route) => false,
+    );
 
-    if (value != null && value.isNotEmpty) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => Menu(pageIndex: null)),
-        (Route<dynamic> route) => false,
-      );
-    } else {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => LoginPage()),
-        (Route<dynamic> route) => false,
-      );
-    }
+    // if (value != null && value.isNotEmpty) {
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //     MaterialPageRoute(builder: (context) => Menu(pageIndex: null)),
+    //     (Route<dynamic> route) => false,
+    //   );
+    // } else {
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //     MaterialPageRoute(builder: (context) => LoginPage()),
+    //     (Route<dynamic> route) => false,
+    //   );
+    // }
   }
 
   @override
@@ -82,16 +82,66 @@ class _SplashPageState extends State<SplashPage> {
 
               return snapshot.data.length > 0
                   ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 250,
-                          width: 250,
-                          child: Image.asset('assets/DSD/imgs/logo.png'),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // โลโก้
+                          Container(
+                            height: 140,
+                            width: 140,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  'assets/DSD/imgs/logo_app.png',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 30),
+
+                          // ชื่อแอป
+                          Text(
+                            'DSD E-Certification',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          // subtitle
+                          Text(
+                            'Professional Certification Platform',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+
+                          const SizedBox(height: 40),
+
+                          // loading
+                          // const CircularProgressIndicator(),
+                        ],
+                      ),
                     ),
                   )
                   : Container();
