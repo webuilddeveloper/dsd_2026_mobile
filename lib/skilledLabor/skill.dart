@@ -41,7 +41,7 @@ class _SkillPageState extends State<SkillPage> {
     });
     setState(() {
       skills = (data as List).cast<Map<String, dynamic>>();
-      print(skills);
+
       isLoading = false;
     });
   }

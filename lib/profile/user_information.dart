@@ -1,5 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/dialog_fail.dart';
+import 'package:dsd/interests.dart';
 import 'package:dsd/license/license_page.dart';
 import 'package:dsd/notification/notification_settings.dart';
 import 'package:dsd/profile/about_us.dart';
@@ -217,12 +218,24 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
                           _rowtxt(
-                            title: 'ประวัติการอบรม',
+                            title: 'ตรวจสอบผลการสมัครฝึกอบรม',
                             ontap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => TrainingHistory(),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(height: 8),
+                          _rowtxt(
+                            title: 'ความสนใจของคุณ',
+                            ontap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Interests(isEdit: true),
                                 ),
                               );
                             },

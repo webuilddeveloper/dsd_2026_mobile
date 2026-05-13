@@ -31,7 +31,7 @@ class _ColorLoader3State extends State<ColorLoader3>
     radius = widget.radius;
     dotRadius = widget.dotRadius;
 
-    // print(dotRadius);
+    
 
     controller = AnimationController(
       lowerBound: 0.0,

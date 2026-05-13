@@ -31,15 +31,10 @@ class _TrainingServiceState extends State<TrainingService> {
 
   /*===============================>> API <<=============================== */
   Future<void> _trainingApi() async {
-    final profileCode = await storage.read(key: 'profileCode');
-
-    final data = await postDio('${trainingApi}read', {
-      'limit': 10,
-      "username": profileCode,
-    });
+    final data = await postDio('${trainingApi}readAPI', {"keySearch": "2569"});
     setState(() {
       training = (data as List).cast<Map<String, dynamic>>();
-      print(training);
+
       isLoading = false;
     });
   }
@@ -78,20 +73,19 @@ class _TrainingServiceState extends State<TrainingService> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item['title'],
+                      item['course'],
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-
                     const SizedBox(height: 6),
                     Text(
-                      'รุ่นที่ ${item['generation'] ?? '-'}',
+                      'รุ่นที่ ${item['classNo'] ?? '-'}',
                       style: const TextStyle(fontSize: 15),
                     ),
                     const SizedBox(height: 4),
-                    Text(item['agency'], style: const TextStyle(fontSize: 15)),
+                    Text(item['site'], style: const TextStyle(fontSize: 15)),
                     const SizedBox(height: 12),
                     Row(
                       children: [
@@ -104,8 +98,8 @@ class _TrainingServiceState extends State<TrainingService> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              // exam.examDate,
-                              formatDate(item['dateStart']),
+                          
+                              formatDate(item['dsdStartDate']),
                               style: const TextStyle(fontSize: 13),
                             ),
                           ],
@@ -120,8 +114,8 @@ class _TrainingServiceState extends State<TrainingService> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              // exam.examDate,
-                              formatDate(item['dateEnd']),
+         
+                              formatDate(item['dsdEndDate']),
                               style: const TextStyle(fontSize: 13),
                             ),
                           ],
@@ -138,7 +132,7 @@ class _TrainingServiceState extends State<TrainingService> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'ระยะเวลาที่ฝึก : ${item['duration']} ชั่วโมง',
+                          'ระยะเวลาที่ฝึก : ${item['period']} ชั่วโมง',
                           style: const TextStyle(fontSize: 13),
                         ),
                       ],

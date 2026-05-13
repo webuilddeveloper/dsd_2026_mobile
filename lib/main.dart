@@ -9,7 +9,7 @@ import 'package:provider/provider.dart'; // ← 1. เพิ่ม import
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LineSDK.instance.setup('2009618460').then((_) {
-    print('LineSDK Prepared');
+
   });
   runApp(
     ChangeNotifierProvider(

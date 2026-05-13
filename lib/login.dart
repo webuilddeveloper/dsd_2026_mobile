@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/forgot.dart';
+import 'package:dsd/interests.dart';
 import 'package:dsd/menu.dart';
 import 'package:dsd/register.dart';
 import 'package:dsd/shared/api_provider.dart';
@@ -33,6 +34,7 @@ class _LoginPageState extends State<LoginPage>
   late final AnimationController _animCtrl;
   late final Animation<double> _fadeAnim;
   late final Animation<Offset> _slideAnim;
+  late bool isInterests;
 
   @override
   void initState() {
@@ -471,7 +473,6 @@ class _LoginPageState extends State<LoginPage>
 
   Future<void> _handleLogin() async {
     final storage = FlutterSecureStorage();
-
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -513,7 +514,7 @@ class _LoginPageState extends State<LoginPage>
       // ✅ LOGIN SUCCESS
       if (result['status'] == 'S') {
         final data = result['objectData'] ?? {};
-        print('code : ${data['code']}');
+     
         await storage.write(key: 'token', value: result['jsonData']);
         await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
         await storage.write(key: 'profileCode', value: data['code'] ?? '');
@@ -533,10 +534,18 @@ class _LoginPageState extends State<LoginPage>
           value: data['lastName'] ?? '',
         );
 
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => Menu()),
-          (route) => false,
-        );
+        await readRegister();
+        if (isInterests == false) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => Interests(isEdit: false)),
+            (route) => false,
+          );
+        } else {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => Menu()),
+            (route) => false,
+          );
+        }
       } else {
         // ❌ LOGIN FAIL
         showDialogFail(
@@ -566,6 +575,19 @@ class _LoginPageState extends State<LoginPage>
       );
     } finally {
       if (mounted) {}
+    }
+  }
+
+  Future<void> readRegister() async {
+    final storage = FlutterSecureStorage();
+    final profileCode = await storage.read(key: 'profileCode') ?? '';
+    final result = await postapi('${register}read', {"code": profileCode});
+    if (result['status'] == 'S') {
+      final data = result['objectData'];
+      if (data.isNotEmpty) {
+        isInterests = data[0]['isInterest'];
+   
+      }
     }
   }
 

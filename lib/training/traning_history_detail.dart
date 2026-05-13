@@ -9,35 +9,84 @@ class TrainingHistoryDetail extends StatelessWidget {
 
   const TrainingHistoryDetail({super.key, required this.item});
 
-  bool get _isDone =>
-      item['status2'] == true ||
-      item['status2'] == 1 ||
-      item['status2'] == 'done';
+  /* ================= HELPERS ================= */
 
-  // สี theme ตาม status
-  Color get _bgColor =>
-      _isDone ? const Color(0xFFEAF3DE) : const Color(0xFFFAEEDA);
-  Color get _iconColor =>
-      _isDone ? const Color(0xFF3B6D11) : const Color(0xFF854F0B);
-  Color get _badgeBg =>
-      _isDone ? const Color(0xFFEAF3DE) : const Color(0xFFFAEEDA);
-  Color get _badgeText =>
-      _isDone ? const Color(0xFF27500A) : const Color(0xFF633806);
-  String get _badgeLabel => _isDone ? 'ผ่านแล้ว' : 'กำลังอบรม';
+  int toInt(dynamic value) {
+    return int.tryParse(value.toString()) ?? 0;
+  }
 
-  Future<void> _openCertificate(BuildContext context) async {
+  int get status => toInt(item['statusCheck']);
+
+  bool get isSuccess => status == 6;
+
+  /* ================= STATUS UI ================= */
+
+  String get statusLabel {
+    switch (status) {
+      case 1:
+        return 'รอการตรวจสอบ';
+      case 2:
+        return 'รออนุมัติ';
+      case 3:
+        return 'รอคัดเลือก';
+      case 4:
+        return 'ไม่ผ่าน';
+      case 5:
+        return 'ยกเลิกรุ่น';
+      case 6:
+        return 'ติดต่อแล้ว';
+      case 7:
+        return 'ติดต่อไม่ได้';
+      default:
+        return 'ไม่ทราบสถานะ';
+    }
+  }
+
+  Color get badgeBg {
+    switch (status) {
+      case 6:
+        return const Color(0xFFEAF3DE);
+      case 4:
+      case 5:
+      case 7:
+        return const Color(0xFFF8D7DA);
+      default:
+        return const Color(0xFFF1EFE8);
+    }
+  }
+
+  Color get badgeText {
+    switch (status) {
+      case 6:
+        return const Color(0xFF27500A);
+      case 4:
+      case 5:
+      case 7:
+        return const Color(0xFF721C24);
+      default:
+        return const Color(0xFF5F5E5A);
+    }
+  }
+
+  /* ================= CERTIFICATE ================= */
+
+  Future<void> openCertificate(BuildContext context) async {
     final url = item['certificateUrl'] as String?;
+
     if (url == null || url.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ไม่พบลิงก์ใบประกาศนียบัตร')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('ไม่พบใบประกาศ')));
       return;
     }
+
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
+
+  /* ================= UI ================= */
 
   @override
   Widget build(BuildContext context) {
@@ -50,19 +99,19 @@ class TrainingHistoryDetail extends StatelessWidget {
         backAction: () => Navigator.pop(context),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+        padding: const EdgeInsets.all(16),
         children: [
-          // ── Main info card ──
+          /// 🔥 main card
           Container(
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
             ),
-            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title + badge
+                /// title + status
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -71,193 +120,107 @@ class TrainingHistoryDetail extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item['title'] ?? '-',
+                            item['course'] ?? '-',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              fontFamily: 'Kanit',
-                              color: AppColors.textDark,
-                              height: 1.4,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'รุ่นที่ ${item['generation'] ?? '-'}',
+                            'รุ่นที่ ${item['classNo'] ?? '-'}',
                             style: const TextStyle(
                               fontSize: 12,
-                              fontFamily: 'Kanit',
                               color: AppColors.textgrey,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 10),
+
+                    /// status badge
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: _badgeBg,
+                        color: badgeBg,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        _badgeLabel,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Kanit',
-                          color: _badgeText,
-                        ),
+                        statusLabel,
+                        style: TextStyle(fontSize: 11, color: badgeText),
                       ),
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 16),
                 const Divider(height: 1, color: AppColors.backgroundMain),
                 const SizedBox(height: 16),
 
-                // Info rows
+                /// info
                 _infoRow(
-                  icon: Icons.apartment_outlined,
-                  label: 'หน่วยงาน',
-                  value: item['agency'] ?? '-',
+                  Icons.apartment_outlined,
+                  'หน่วยงาน',
+                  item['provinceName'] ?? '-',
                 ),
                 const SizedBox(height: 12),
+
                 _infoRow(
-                  icon: Icons.calendar_today_outlined,
-                  label: 'วันที่อบรม',
-                  value:
-                      '${formatDate(item['dateStart'])} – ${formatDate(item['dateEnd'])}',
+                  Icons.calendar_today_outlined,
+                  'วันที่อบรม',
+                  '${formatDate(item['dsdStartDate'] ?? '')} - ${formatDate(item['dsdEndDate'] ?? '')}',
                 ),
                 const SizedBox(height: 12),
+
                 _infoRow(
-                  icon: Icons.access_time_outlined,
-                  label: 'ระยะเวลา',
-                  value: '${item['duration'] ?? '-'} ชั่วโมง',
+                  Icons.access_time_outlined,
+                  'ระยะเวลา',
+                  '${toInt(item['period'])} ชั่วโมง',
                 ),
               ],
             ),
           ),
+
           const SizedBox(height: 12),
 
-          // ── Certificate section ──
-          if (_isDone) _certificateCard(context) else _pendingCard(),
+          /// 🔥 certificate
+          isSuccess ? _certificateCard(context) : _pendingCard(),
         ],
       ),
     );
   }
 
-  Widget _infoRow({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
+  Widget _infoRow(IconData icon, String label, String value) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: _bgColor,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, size: 15, color: _iconColor),
+        Icon(icon, size: 16, color: AppColors.primary),
+        const SizedBox(width: 8),
+        Text(
+          '$label : ',
+          style: const TextStyle(fontSize: 12, color: AppColors.textgrey),
         ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontFamily: 'Kanit',
-                  color: AppColors.textgrey,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontFamily: 'Kanit',
-                  color: AppColors.textDark,
-                ),
-              ),
-            ],
-          ),
-        ),
+        Expanded(child: Text(value, style: const TextStyle(fontSize: 13))),
       ],
     );
   }
 
   Widget _certificateCard(BuildContext context) {
     return GestureDetector(
-      onTap: () => _openCertificate(context),
+      onTap: () => openCertificate(context),
       child: Container(
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
         ),
-        padding: const EdgeInsets.all(16),
-        child: Row(
+        child: const Row(
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: const Color(0xFFEAF3DE),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.description_outlined,
-                size: 22,
-                color: Color(0xFF3B6D11),
-              ),
-            ),
-            const SizedBox(width: 14),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'ใบประกาศนียบัตร',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Kanit',
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  SizedBox(height: 2),
-                  Text(
-                    'กดเพื่อดูหรือดาวน์โหลด',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontFamily: 'Kanit',
-                      color: AppColors.textgrey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: const Color(0xFFEAF3DE),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.open_in_new_rounded,
-                size: 15,
-                color: Color(0xFF3B6D11),
-              ),
-            ),
+            Icon(Icons.description),
+            SizedBox(width: 10),
+            Text('ดูใบประกาศนียบัตร'),
           ],
         ),
       ),
@@ -266,30 +229,14 @@ class TrainingHistoryDetail extends StatelessWidget {
 
   Widget _pendingCard() {
     return Container(
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: const Color(0xFFF1EFE8),
         borderRadius: BorderRadius.circular(12),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          Icon(
-            Icons.info_outline_rounded,
-            size: 16,
-            color: const Color(0xFF888780),
-          ),
-          const SizedBox(width: 10),
-          const Expanded(
-            child: Text(
-              'ใบประกาศจะออกให้หลังผ่านการอบรม',
-              style: TextStyle(
-                fontSize: 12,
-                fontFamily: 'Kanit',
-                color: Color(0xFF5F5E5A),
-              ),
-            ),
-          ),
-        ],
+      child: const Text(
+        'ยังไม่สามารถออกใบประกาศได้',
+        style: TextStyle(fontSize: 12),
       ),
     );
   }

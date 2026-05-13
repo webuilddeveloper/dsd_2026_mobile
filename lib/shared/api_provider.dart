@@ -38,6 +38,7 @@ const sendskill = '${dsd_server}m/skilledLabor/register/';
 //trainingApi
 const trainingApi = '${dsd_server}m/training/';
 const sendtraining = '${dsd_server}m/training/register/';
+const trainingCategoryApi = '${trainingApi}category/';
 
 //register
 const register = '${dsd_server}m/Register/';
