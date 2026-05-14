@@ -49,7 +49,6 @@ class HomePageState extends State<HomePage> {
   Future<void> loadData() async {
     final code = await storage.read(key: 'profileCode');
     final profileCategory = await storage.read(key: 'profileCategory');
-    print('-------- >> profileCode : $code');
     if (code == null || code.isEmpty) {
       if (!mounted) return;
       setState(() {

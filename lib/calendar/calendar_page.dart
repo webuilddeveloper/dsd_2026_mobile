@@ -75,6 +75,7 @@ class _CalendarPageState extends State<CalendarPage> {
       "isHighlight": false,
       "category": "",
     });
+    if (!mounted) return;
     setState(() {
       eventCalendar = (data as List).cast<Map<String, dynamic>>();
     });
@@ -84,6 +85,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Future<void> _eventCalendarCategoryApi() async {
     final data = await postDio('${eventCalendarCategory}read', {'limit': 10});
+    if (!mounted) return;
     setState(() {
       // ✅ เพิ่ม "ทั้งหมด" ไว้ตัวแรกเสมอ
       category = [

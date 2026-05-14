@@ -1,30 +1,32 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:dsd/main.dart';
+import 'package:dsd/blank_page/textfield.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('Widget Unit Tests', () {
+    testWidgets('ตรวจสอบการทำงานของ buildTextField', (WidgetTester tester) async {
+      // สร้าง Controller จำลอง
+      final controller = TextEditingController();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      // เรนเดอร์ Widget ที่ต้องการทดสอบ
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: buildTextField(
+            key: const Key('test_field'),
+            controller: controller,
+            hint: 'กรอกข้อมูล',
+            icon: Icons.person,
+          ),
+        ),
+      ));
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      // 1. ตรวจสอบว่ามีช่องกรอกข้อมูลโผล่ขึ้นมาบนจอ
+      final textField = find.byKey(const Key('test_field'));
+      expect(textField, findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      // 2. ลองพิมพ์ข้อความลงไป แล้วเช็คว่า Controller รับค่าถูกต้องไหม
+      await tester.enterText(textField, 'Hello DSD');
+      expect(controller.text, 'Hello DSD');
+    });
   });
 }
