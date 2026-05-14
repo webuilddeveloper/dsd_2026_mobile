@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/menu.dart';
-import 'package:dsd/style_theme.dart';
+import 'package:dsd/shared/api_provider.dart';
+// import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
   }
 
-  _callRead() {
+  _callRead() async {
     futureModel = _loadDemoData();
 
     // postDio(server + 'm/splash/read', {
@@ -30,9 +31,11 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<List<Map<String, dynamic>>> _loadDemoData() async {
     await Future.delayed(Duration(seconds: 1)); // จำลองโหลดข้อมูล
-    return [
-      {"timeOut": "2000"}, // ตัวอย่างข้อมูลจำลอง
-    ];
+    final data = await postDio("${splash}read", {});
+    return (data as List).cast<Map<String, dynamic>>();
+    // return [
+    //   {"timeOut": "2000"}, // ตัวอย่างข้อมูลจำลอง
+    // ];
   }
 
   _callTimer(time) async {
@@ -79,69 +82,13 @@ class _SplashPageState extends State<SplashPage> {
                         : 0)
                     .round(),
               );
-
               return snapshot.data.length > 0
-                  ? Center(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // โลโก้
-                          Container(
-                            height: 140,
-                            width: 140,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  'assets/DSD/imgs/logo_app.png',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 30),
-
-                          // ชื่อแอป
-                          Text(
-                            'DSD E-Certification',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // subtitle
-                          Text(
-                            'Professional Certification Platform',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-
-                          const SizedBox(height: 40),
-
-                          // loading
-                          // const CircularProgressIndicator(),
-                        ],
-                      ),
+                  ? SizedBox.expand(
+                    child: Image.network(
+                      snapshot.data[0]['imageUrl'],
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
                     ),
                   )
                   : Container();

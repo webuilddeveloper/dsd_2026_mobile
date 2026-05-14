@@ -66,9 +66,7 @@ class _RegsiterPageState extends State<RegsiterPage>
     if (value == null || value.trim().isEmpty) {
       return 'กรุณากรอกรหัสผ่าน';
     }
-    if (value.length < 8) {
-      return 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
-    }
+    if (value.length < 6) {}
     if (!value.contains(RegExp(r'[A-Z]'))) {
       return 'ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว';
     }
@@ -337,14 +335,12 @@ class _RegsiterPageState extends State<RegsiterPage>
       if (!mounted) return;
 
       if (result['status'] == 'S') {
-        // ✅ สมัครสำเร็จ
         showCustomDialog(
           context,
           title: 'สมัครสมาชิกสำเร็จ',
           description: "บัญชีของคุณพร้อมใช้งานแล้ว",
           onConfirm: () {
             Navigator.pop(context);
-
             // 👉 ตัวเลือก: ไปหน้า Login หรือ Home
             // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginPage()));
           },

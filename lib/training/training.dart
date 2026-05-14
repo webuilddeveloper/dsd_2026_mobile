@@ -2,7 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
 
 import 'package:dsd/shared/api_provider.dart';
-import 'package:dsd/training/traning_detail.dart';
+// import 'package:dsd/training/traning_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -98,7 +98,6 @@ class _TrainingServiceState extends State<TrainingService> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                          
                               formatDate(item['dsdStartDate']),
                               style: const TextStyle(fontSize: 13),
                             ),
@@ -114,7 +113,6 @@ class _TrainingServiceState extends State<TrainingService> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-         
                               formatDate(item['dsdEndDate']),
                               style: const TextStyle(fontSize: 13),
                             ),
@@ -143,17 +141,17 @@ class _TrainingServiceState extends State<TrainingService> {
 
                     /// Button
                     InkWell(
-                      onTap:
-                          item['status2'] == true
-                              ? null
-                              : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => TraningDetail(item: item),
-                                  ),
-                                );
-                              },
+                      onTap: () {},
+                      // item['status2'] == true
+                      //     ? null
+                      //     : () {
+                      //       Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //           builder: (_) => TraningDetail(item: item),
+                      //         ),
+                      //       );
+                      //     },
                       child: Container(
                         height: 48,
                         decoration: BoxDecoration(

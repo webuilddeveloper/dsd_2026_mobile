@@ -514,7 +514,7 @@ class _LoginPageState extends State<LoginPage>
       // ✅ LOGIN SUCCESS
       if (result['status'] == 'S') {
         final data = result['objectData'] ?? {};
-     
+
         await storage.write(key: 'token', value: result['jsonData']);
         await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
         await storage.write(key: 'profileCode', value: data['code'] ?? '');
@@ -586,7 +586,6 @@ class _LoginPageState extends State<LoginPage>
       final data = result['objectData'];
       if (data.isNotEmpty) {
         isInterests = data[0]['isInterest'];
-   
       }
     }
   }

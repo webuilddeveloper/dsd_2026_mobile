@@ -131,24 +131,27 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildtxt(title: 'เลขประจำตัวผู้ถือบัตร', subtitle: '1-2564-16577'),
+          _buildtxt(
+            title: 'เลขประจำตัวผู้ถือบัตร',
+            subtitle: widget.license['personalId'],
+          ),
 
           const Divider(color: AppColors.backgroundMain),
 
           _buildtxt(
-            title: widget.license['COURSE'] ?? "",
-            subtitle: widget.license['SITE'] ?? "",
+            title: widget.license['course'] ?? "",
+            subtitle: widget.license['site'] ?? "",
           ),
 
           const Divider(color: AppColors.backgroundMain),
           _buildtxt(
             title: "วันออกบัตร",
-            subtitle: formatDate(widget.license['CERTIFICATE_DATE'] ?? ""),
+            subtitle: formatDate(widget.license['certificateDate'] ?? ""),
           ),
           const Divider(color: AppColors.backgroundMain),
           _buildtxtStatus(
             title: "สถานะใบอนุญาต",
-            subtitle: widget.license['STATUS'] ?? "",
+            subtitle: widget.license['cerExpire'] ?? "-",
           ),
         ],
       ),

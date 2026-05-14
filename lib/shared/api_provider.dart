@@ -12,6 +12,12 @@ const dsd_server = 'https://gateway.we-builds.com/dsd-e-api/';
 const serverUpload =
     'https://khubdeedlt.we-builds.com/khubdeedlt-document/upload';
 
+//splash
+const splash = "$dsd_server/splash/";
+
+// Getcert
+const getCert = "$dsd_server/m/Register/GetCret";
+
 //new
 const newsApi = "${dsd_server}m/news/";
 const newsCategoryApi = '${dsd_server}m/news/category/';
@@ -42,7 +48,8 @@ const trainingCategoryApi = '${trainingApi}category/';
 
 //register
 const register = '${dsd_server}m/Register/';
-const registerV2 = '${dsd_server}m/v2/Register/';
+const registerV2 = '${dsd_server}m/v2/Register/'; 
+
 
 Future<dynamic> postDio(String url, dynamic criteria) async {
   final storage = FlutterSecureStorage();

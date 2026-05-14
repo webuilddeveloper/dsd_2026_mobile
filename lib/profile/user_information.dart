@@ -30,7 +30,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
 
   final storage = FlutterSecureStorage();
   String _imageUrl = '';
-  String idcard = '';
+  bool? isCert;
 
   final txtFirstName = TextEditingController();
   final txtLastName = TextEditingController();
@@ -62,7 +62,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
           _imageUrl = user['imageUrl'] ?? '';
           txtFirstName.text = user['firstName'] ?? '';
           txtLastName.text = user['lastName'] ?? '';
-          idcard = user['idcard'] ?? '';
+          isCert = user['isCert'] ?? '';
         });
       } catch (_) {}
     }
@@ -176,10 +176,10 @@ class _UserInformationPageState extends State<UserInformationPage> {
                               });
                             },
                           ),
-                          SizedBox(height: 16),
-                          idcard != ''
+                          SizedBox(height: 8),
+                          isCert == true
                               ? _rowtxt(
-                                title: 'ใบอนุญาติ',
+                                title: 'ประวัติผลงาน',
                                 ontap: () {
                                   Navigator.push(
                                     context,
