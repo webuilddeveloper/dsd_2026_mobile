@@ -4,6 +4,7 @@ import 'package:dsd/menu.dart';
 import 'package:dsd/shared/api_provider.dart';
 // import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -18,7 +19,31 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     _callRead();
+    requestLocationPermission();
     super.initState();
+  }
+
+  Future<void> requestLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!serviceEnabled) {
+      debugPrint('Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      debugPrint('Location permissions are permanently denied.');
+      return;
+    }
   }
 
   _callRead() async {

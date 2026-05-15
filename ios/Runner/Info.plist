@@ -40,7 +40,9 @@
 	<string>LaunchScreen</string>
 
 	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
+	<string>Main</string> 
+	<key>NSLocationWhenInUseUsageDescription</key>
+<string>แอปพลิเคชันต้องการเข้าถึงตำแหน่งของท่านเพื่อแสดงข้อมูลแผนที่และบริการที่เกี่ยวข้อง</string>
 
 	<!-- Network (ถ้าไม่จำเป็น แนะนำให้ปิดใน production) -->
 	<key>NSAppTransportSecurity</key>

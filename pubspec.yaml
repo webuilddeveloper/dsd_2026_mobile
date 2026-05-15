@@ -54,6 +54,10 @@ dependencies:
   package_info_plus: ^9.0.1
   provider: ^6.1.5+1
   sign_in_with_apple: ^7.0.1
+  google_maps_flutter: ^2.14.0
+  geolocator: ^14.0.2
+  gestures: ^1.0.0
+  foundation: ^0.0.5
 
 
 
