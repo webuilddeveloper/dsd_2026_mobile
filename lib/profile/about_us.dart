@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -39,9 +40,7 @@ class _AboutUsState extends State<AboutUs> {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('ไม่สามารถเปิดลิงก์ได้')));
+        ScaffoldMessenger.of(context);
       }
     }
   }
@@ -53,10 +52,11 @@ class _AboutUsState extends State<AboutUs> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
-        title: 'เกี่ยวกับเรา',
+        title: language.aboutUs,
         backBtn: true,
         rightBtn: false,
         backAction: () => Navigator.pop(context),
@@ -70,7 +70,7 @@ class _AboutUsState extends State<AboutUs> {
             );
           }
           if (snapshot.hasError) {
-            return const Center(child: Text('โหลดข้อมูลไม่สำเร็จ'));
+            return Center(child: Text(language.loaddata));
           }
 
           final item = snapshot.data!.first;
@@ -81,17 +81,17 @@ class _AboutUsState extends State<AboutUs> {
               _buildHeroCard(item),
               const SizedBox(height: 24),
 
-              _sectionLabel('เกี่ยวกับแอป'),
+              _sectionLabel(language.aboutapp),
               const SizedBox(height: 8),
               _buildAppLinksCard(item),
               const SizedBox(height: 24),
 
-              _sectionLabel('ข้อมูลการติดต่อ'),
+              _sectionLabel(language.contactinfo),
               const SizedBox(height: 8),
               _buildContactCard(item),
               const SizedBox(height: 24),
 
-              _sectionLabel('ช่องทางออนไลน์'),
+              _sectionLabel(language.onlineplatforms),
               const SizedBox(height: 8),
               _buildSocialCard(item),
               const SizedBox(height: 24),
@@ -164,12 +164,13 @@ class _AboutUsState extends State<AboutUs> {
 
   // ── เกี่ยวกับแอป ──────────────────────────────────
   Widget _buildAppLinksCard(Map<String, dynamic> item) {
+    final language = AppStrings.of(context);
     return _card([
       _externalRow(
         icon: Icons.shield_outlined,
         iconColor: AppColors.primary,
         iconBg: AppColors.primaryShade,
-        label: 'นโยบายความเป็นส่วนตัว',
+        label: language.privacypolicy,
         onTap: () => _launchUrl(item['policyUrl']),
         isFirst: true,
       ),
@@ -178,7 +179,7 @@ class _AboutUsState extends State<AboutUs> {
         icon: Icons.chat_bubble_outline_rounded,
         iconColor: AppColors.primary,
         iconBg: AppColors.primaryShade,
-        label: 'ติดต่อเรา',
+        label: language.contactUs,
         onTap: () => _launchUrl(item['site']),
         isLast: true,
       ),
@@ -187,12 +188,13 @@ class _AboutUsState extends State<AboutUs> {
 
   // ── ข้อมูลการติดต่อ ───────────────────────────────
   Widget _buildContactCard(Map<String, dynamic> item) {
+    final language = AppStrings.of(context);
     return _card([
       _infoRow(
         icon: Icons.phone_outlined,
         iconColor: AppColors.primary,
         iconBg: AppColors.primaryShade,
-        title: 'โทรศัพท์',
+        title: language.phone,
         value: item['telephone'],
         onTap: () => _launchUrl('tel:${item['telephone']}'),
         isFirst: true,
@@ -202,7 +204,7 @@ class _AboutUsState extends State<AboutUs> {
         icon: Icons.mail_outline_rounded,
         iconColor: AppColors.primary,
         iconBg: AppColors.primaryShade,
-        title: 'อีเมล',
+        title: language.email,
         value: item['email'],
         onTap: () => _launchUrl('mailto:${item['email']}'),
       ),
@@ -211,7 +213,7 @@ class _AboutUsState extends State<AboutUs> {
         icon: Icons.location_on_outlined,
         iconColor: AppColors.primary,
         iconBg: AppColors.primaryShade,
-        title: 'ที่อยู่',
+        title: language.address,
         value: item['address'],
         onTap: () {},
         isLast: true,
@@ -302,6 +304,7 @@ class _AboutUsState extends State<AboutUs> {
 
   // ── Map placeholder ───────────────────────────────
   Widget _buildMapPlaceholder(Map<String, dynamic> item) {
+    final language = AppStrings.of(context);
     LatLng position = LatLng(
       double.tryParse(item['latitude'].toString()) ?? 0.0,
       double.tryParse(item['longitude'].toString()) ?? 0.0,
@@ -399,8 +402,8 @@ class _AboutUsState extends State<AboutUs> {
                 _launchUrl(url);
               },
               icon: const Icon(Icons.navigation_rounded, size: 20),
-              label: const Text(
-                'นำทาง',
+              label: Text(
+                language.navigate,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,

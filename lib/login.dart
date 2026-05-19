@@ -10,6 +10,7 @@ import 'package:dsd/interests.dart';
 import 'package:dsd/menu.dart';
 import 'package:dsd/register.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/apple_login.dart';
 import 'package:dsd/shared/line_login.dart';
 import 'package:dsd/style_theme.dart';
@@ -66,6 +67,7 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final bottomPad = MediaQuery.of(context).padding.bottom;
+    final language = AppStrings.of(context);
 
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
@@ -145,8 +147,8 @@ class _LoginPageState extends State<LoginPage>
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                const Text(
-                                  'เข้าสู่ระบบ',
+                                Text(
+                                  language.login,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -159,21 +161,21 @@ class _LoginPageState extends State<LoginPage>
                             const SizedBox(height: 24),
 
                             // Username
-                            _buildLabel('ชื่อผู้ใช้งาน'),
+                            _buildLabel(language.user),
                             const SizedBox(height: 6),
                             buildTextField(
                               controller: _usernameController,
-                              hint: 'กรอกชื่อผู้ใช้งาน',
+                              hint: language.please + language.user,
                               icon: Icons.person_outline_rounded,
                             ),
                             const SizedBox(height: 16),
 
                             // Password
-                            _buildLabel('รหัสผ่าน'),
+                            _buildLabel(language.password),
                             const SizedBox(height: 6),
                             buildTextField(
                               controller: _passwordController,
-                              hint: 'กรอกรหัสผ่าน',
+                              hint: language.please + language.password,
                               icon: Icons.lock_outline_rounded,
                               obscure: _obscurePassword,
                               suffix: GestureDetector(
@@ -215,8 +217,8 @@ class _LoginPageState extends State<LoginPage>
                                   tapTargetSize:
                                       MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                child: const Text(
-                                  'ลืมรหัสผ่าน?',
+                                child: Text(
+                                  '${language.forgot}?',
                                   style: TextStyle(
                                     color: AppColors.primary,
                                     fontFamily: 'Kanit',
@@ -240,8 +242,8 @@ class _LoginPageState extends State<LoginPage>
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: const Text(
-                                  'เข้าสู่ระบบ',
+                                child: Text(
+                                  language.login,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -254,104 +256,100 @@ class _LoginPageState extends State<LoginPage>
                         ),
                       ),
 
-                      const SizedBox(height: 28),
+                      // const SizedBox(height: 28),
+                      // // ── Divider ───────────────────────────────────────
+                      // Row(
+                      //   children: [
+                      //     const Expanded(
+                      //       child: Divider(
+                      //         color: AppColors.borderColor,
+                      //         thickness: 1,
+                      //       ),
+                      //     ),
+                      //     Padding(
+                      //       padding: const EdgeInsets.symmetric(horizontal: 14),
+                      //       child: Text(
+                      //         'หรือเข้าสู่ระบบด้วย',
+                      //         style: TextStyle(
+                      //           color: AppColors.textgrey,
+                      //           fontSize: 12,
+                      //           fontFamily: 'Kanit',
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     const Expanded(
+                      //       child: Divider(
+                      //         color: AppColors.borderColor,
+                      //         thickness: 1,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      // const SizedBox(height: 20),
+                      // // ── Social buttons ────────────────────────────────
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     _buildSocialButton(
+                      //       imagePath: 'assets/images/facebook.png',
+                      //       onTap: () {},
+                      //     ),
+                      //     const SizedBox(width: 14),
+                      //     _buildSocialButton(
+                      //       imagePath: 'assets/images/google.png',
+                      //       onTap: () {},
+                      //     ),
+                      //     const SizedBox(width: 14),
+                      //     _buildSocialButton(
+                      //       imagePath: 'assets/images/line.png',
+                      //       onTap: () async {
+                      //         final result = await loginLine();
 
-                      // ── Divider ───────────────────────────────────────
-                      Row(
-                        children: [
-                          const Expanded(
-                            child: Divider(
-                              color: AppColors.borderColor,
-                              thickness: 1,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            child: Text(
-                              'หรือเข้าสู่ระบบด้วย',
-                              style: TextStyle(
-                                color: AppColors.textgrey,
-                                fontSize: 12,
-                                fontFamily: 'Kanit',
-                              ),
-                            ),
-                          ),
-                          const Expanded(
-                            child: Divider(
-                              color: AppColors.borderColor,
-                              thickness: 1,
-                            ),
-                          ),
-                        ],
-                      ),
+                      //         final model = {
+                      //           "username": result.userProfile?.userId ?? "",
+                      //           "lineID": result.userProfile?.userId ?? "",
+                      //           "email": result.accessToken.email ?? "",
+                      //           "imageUrl":
+                      //               result.userProfile?.pictureUrl ?? "",
+                      //           "firstName":
+                      //               result.userProfile?.displayName ?? "",
+                      //           "lastName": "",
+                      //         };
 
-                      const SizedBox(height: 20),
+                      //         if (result.userProfile != null) {
+                      //           // ยิง API ได้เลย
+                      //           _handleSocail(model: model, category: "line");
+                      //         } else {
+                      //           print("Login failed");
+                      //         }
+                      //       },
+                      //     ),
+                      //     if (Platform.isIOS) ...[
+                      //       const SizedBox(width: 14),
+                      //       _buildSocialButton(
+                      //         imagePath: 'assets/images/apple.png',
+                      //         onTap: () async {
+                      //           final credential = await loginApple();
 
-                      // ── Social buttons ────────────────────────────────
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildSocialButton(
-                            imagePath: 'assets/images/facebook.png',
-                            onTap: () {},
-                          ),
-                          const SizedBox(width: 14),
-                          _buildSocialButton(
-                            imagePath: 'assets/images/google.png',
-                            onTap: () {},
-                          ),
-                          const SizedBox(width: 14),
-                          _buildSocialButton(
-                            imagePath: 'assets/images/line.png',
-                            onTap: () async {
-                              final result = await loginLine();
-
-                              final model = {
-                                "username": result.userProfile?.userId ?? "",
-                                "lineID": result.userProfile?.userId ?? "",
-                                "email": result.accessToken.email ?? "",
-                                "imageUrl":
-                                    result.userProfile?.pictureUrl ?? "",
-                                "firstName":
-                                    result.userProfile?.displayName ?? "",
-                                "lastName": "",
-                              };
-
-                              if (result.userProfile != null) {
-                                // ยิง API ได้เลย
-                                _handleSocail(model: model, category: "line");
-                              } else {
-                                print("Login failed");
-                              }
-                            },
-                          ),
-                          if (Platform.isIOS) ...[
-                            const SizedBox(width: 14),
-                            _buildSocialButton(
-                              imagePath: 'assets/images/apple.png',
-                              onTap: () async {
-                                final credential = await loginApple();
-
-                                if (credential != null) {
-                                  final model = {
-                                    "userId": credential.userIdentifier ?? "",
-                                    "email": credential.email,
-                                    "firstName": credential.givenName,
-                                    "lastName": credential.familyName,
-                                  };
-                                  _handleSocail(
-                                    model: model,
-                                    category: "apple",
-                                  );
-                                } else {
-                                  print("Login failed");
-                                }
-                              },
-                            ),
-                          ],
-                        ],
-                      ),
-
+                      //           if (credential != null) {
+                      //             final model = {
+                      //               "userId": credential.userIdentifier ?? "",
+                      //               "email": credential.email,
+                      //               "firstName": credential.givenName,
+                      //               "lastName": credential.familyName,
+                      //             };
+                      //             _handleSocail(
+                      //               model: model,
+                      //               category: "apple",
+                      //             );
+                      //           } else {
+                      //             print("Login failed");
+                      //           }
+                      //         },
+                      //       ),
+                      //     ],
+                      //   ],
+                      // ),
                       const SizedBox(height: 28),
 
                       // ── Sign up row ───────────────────────────────────
@@ -359,7 +357,7 @@ class _LoginPageState extends State<LoginPage>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'ยังไม่มีบัญชี? ',
+                            language.noAccount,
                             style: TextStyle(
                               color: AppColors.textgrey,
                               fontFamily: 'Kanit',
@@ -375,8 +373,8 @@ class _LoginPageState extends State<LoginPage>
                                 ),
                               );
                             },
-                            child: const Text(
-                              'สมัครสมาชิก',
+                            child: Text(
+                              language.signUp,
                               style: TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
@@ -411,7 +409,7 @@ class _LoginPageState extends State<LoginPage>
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'กลับหน้าก่อนหน้า',
+                  language.backToPreviousPage,
                   style: TextStyle(
                     color: AppColors.textgrey,
                     fontFamily: 'Kanit',
@@ -475,12 +473,12 @@ class _LoginPageState extends State<LoginPage>
     final storage = FlutterSecureStorage();
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
-
+    final language = AppStrings.of(context);
     if (username.isEmpty) {
       showDialogFail(
         context,
-        title: 'เกิดข้อผิดพลาด',
-        description: 'กรุณากรอกชื่อผู้ใช้',
+        title: language.failed,
+        description: language.please + language.user,
         onConfirm: () {
           Navigator.pop(context);
         },
@@ -491,8 +489,9 @@ class _LoginPageState extends State<LoginPage>
     if (password.isEmpty) {
       showDialogFail(
         context,
-        title: 'เกิดข้อผิดพลาด',
-        description: 'กรุณากรอกรหัสผ่าน',
+
+        title: language.failed,
+        description: language.please + language.password,
         onConfirm: () {
           Navigator.pop(context);
         },
@@ -550,12 +549,12 @@ class _LoginPageState extends State<LoginPage>
         // ❌ LOGIN FAIL
         showDialogFail(
           context,
-          title: 'เกิดข้อผิดพลาด',
+          title: language.failed,
           description:
               (result['message'] != null &&
                       result['message'].toString().isNotEmpty)
                   ? result['message']
-                  : 'เข้าสู่ระบบไม่สำเร็จ',
+                  : language.loginFailed,
           onConfirm: () {
             Navigator.pop(context);
           },
@@ -567,8 +566,8 @@ class _LoginPageState extends State<LoginPage>
       // ❌ NETWORK ERROR
       showDialogFail(
         context,
-        title: 'เกิดข้อผิดพลาด',
-        description: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง',
+        title: language.failed,
+        description: language.skipchangePassword5,
         onConfirm: () {
           Navigator.pop(context);
         },

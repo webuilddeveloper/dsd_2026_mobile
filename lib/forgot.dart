@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/dialog_fail.dart' show showCustomDialog;
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -29,10 +30,10 @@ class _ForgotPageState extends State<ForgotPage> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-
+    final language = AppStrings.of(context);
     return Scaffold(
       appBar: appBar(
-        title: 'ลืมรหัสผ่าน',
+        title: language.forgot,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
@@ -76,8 +77,8 @@ class _ForgotPageState extends State<ForgotPage> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      const Text(
-                        'ลืมรหัสผ่าน',
+                      Text(
+                        language.forgot,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -94,7 +95,7 @@ class _ForgotPageState extends State<ForgotPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 14),
                     child: Text(
-                      'กรอกอีเมลที่คุณใช้สมัคร\nเราจะส่งลิงก์ตั้งรหัสผ่านใหม่ให้คุณ',
+                      language.skipforgot,
                       style: TextStyle(
                         fontSize: 12,
                         fontFamily: 'Kanit',
@@ -106,8 +107,8 @@ class _ForgotPageState extends State<ForgotPage> {
                   const SizedBox(height: 24),
 
                   /// Email
-                  const Text(
-                    'อีเมล',
+                  Text(
+                    language.email,
                     style: TextStyle(
                       fontSize: 13,
                       fontFamily: 'Kanit',
@@ -125,12 +126,12 @@ class _ForgotPageState extends State<ForgotPage> {
                     obscure: false,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'กรุณากรอกอีเมล';
+                        return language.please + language.email;
                       }
                       if (!RegExp(
                         r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
                       ).hasMatch(value)) {
-                        return 'รูปแบบอีเมลไม่ถูกต้อง';
+                        return language.invalidemail;
                       }
                       return null;
                     },
@@ -167,8 +168,8 @@ class _ForgotPageState extends State<ForgotPage> {
                                   color: Colors.white,
                                 ),
                               )
-                              : const Text(
-                                'ยืนยันอีเมล',
+                              : Text(
+                                language.confirmemail,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,

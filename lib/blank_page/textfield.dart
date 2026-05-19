@@ -1,6 +1,8 @@
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 Widget buildSearch({
   required TextEditingController controller,
@@ -13,13 +15,11 @@ Widget buildSearch({
     controller: controller,
     onChanged: onChanged, // 👈
     decoration: InputDecoration(
-      // 🔍 ซ้าย
       prefixIcon: Padding(
         padding: const EdgeInsets.all(10),
         child: Image.asset('assets/DSD/icon/icon_search.png', width: 24),
       ),
 
-      // 🔥 ขวา (filter)
       suffixIcon:
           rightBtn
               ? GestureDetector(
@@ -58,8 +58,7 @@ Widget buildSearch({
     ),
   );
 }
- 
- 
+
 Widget buildTextField({
   required TextEditingController controller,
   required String hint,
@@ -138,13 +137,15 @@ Widget buildDateField({
   String? Function(String?)? validator,
 }) {
   Future<void> pickDate() async {
+    final provider = context.read<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
       initialDate: now,
       firstDate: firstDate ?? DateTime(1900),
       lastDate: lastDate ?? DateTime(2100),
-      locale: const Locale('th', 'TH'),
+      locale: Locale(selectedCode),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -173,7 +174,7 @@ Widget buildDateField({
       final day = picked.day.toString().padLeft(2, '0');
       final month = picked.month.toString().padLeft(2, '0');
 
-      controller.text = '$year$month$day';
+      controller.text = '$day-$month-$year';
       onDateSelected?.call(picked);
     }
   }

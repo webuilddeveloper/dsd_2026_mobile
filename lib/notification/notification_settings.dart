@@ -1,4 +1,5 @@
 import 'package:dsd/blank_page/appbar.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,10 +57,11 @@ class _NotificationSettingsState extends State<NotificationSettings> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
-        title: 'ตั้งค่าการแจ้งเตือน',
+        title: language.notificationSettings,
         backBtn: true,
         rightBtn: false,
         backAction: () => Navigator.pop(context),
@@ -68,23 +70,23 @@ class _NotificationSettingsState extends State<NotificationSettings> {
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
         children: [
           _sectionCard(
-            title: 'การแจ้งเตือนทั่วไป',
+            title: language.generalNoti,
             items: [
               _SwitchItem(
-                label: 'รับการแจ้งเตือนทั้งหมด',
-                subtitle: 'เปิด/ปิดการแจ้งเตือนทั้งหมด',
+                label: language.enablenoti,
+                subtitle: language.skipenablenoti,
                 value: _allNotifications,
                 onChanged: (v) => _toggle(v, (x) => _allNotifications = x),
               ),
               _SwitchItem(
-                label: 'เสียงแจ้งเตือน',
-                subtitle: 'เล่นเสียงเมื่อมีการแจ้งเตือน',
+                label: language.notificationsound,
+                subtitle: language.skipnotisound,
                 value: _sound,
                 onChanged: (v) => _toggle(v, (x) => _sound = x),
               ),
               _SwitchItem(
-                label: 'การสั่น',
-                subtitle: 'สั่นเมื่อมีการแจ้งเตือน',
+                label: language.vibration,
+                subtitle: language.skipvibration,
                 value: _vibration,
                 onChanged: (v) => _toggle(v, (x) => _vibration = x),
               ),
@@ -92,26 +94,26 @@ class _NotificationSettingsState extends State<NotificationSettings> {
           ),
           const SizedBox(height: 12),
           _sectionCard(
-            title: 'ประเภทการแจ้งเตือน',
+            title: language.typenoti,
             items: [
               _SwitchItem(
-                label: 'การอบรม',
-                subtitle: 'แจ้งเตือนหลักสูตรใหม่และกำหนดการ',
+                label: language.training,
+                subtitle: language.skiptraining,
                 value: _training,
                 onChanged: (v) => _toggle(v, (x) => _training = x),
               ),
               _SwitchItem(
-                label: 'ข่าวสารและประกาศ',
-                subtitle: 'ข่าวสารจากหน่วยงาน',
+                label: language.news,
+                subtitle: language.skipnews,
                 value: _news,
                 onChanged: (v) => _toggle(v, (x) => _news = x),
               ),
-              _SwitchItem(
-                label: 'การแจ้งเตือนระบบ',
-                subtitle: 'อัปเดตและการบำรุงรักษาระบบ',
-                value: _system,
-                onChanged: (v) => _toggle(v, (x) => _system = x),
-              ),
+              // _SwitchItem(
+              //   label: 'การแจ้งเตือนระบบ',
+              //   subtitle: 'อัปเดตและการบำรุงรักษาระบบ',
+              //   value: _system,
+              //   onChanged: (v) => _toggle(v, (x) => _system = x),
+              // ),
             ],
           ),
         ],

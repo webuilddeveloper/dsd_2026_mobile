@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/license/license_detail_page.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -65,9 +66,10 @@ class _PageLicenseState extends State<PageLicense> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       appBar: appBar(
-        title: "ประวัติผลงาน",
+        title: language.workhistory,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
@@ -116,7 +118,7 @@ class _PageLicenseState extends State<PageLicense> {
                       children: [
                         _buildLicenseCard(
                           index: 0,
-                          title: "ผลการฝึกอบรม",
+                          title: language.trainingresults,
                           dataList: training,
                           colorMain: const Color(0xffE7C882),
                           colorTitle: Colors.black,
@@ -127,7 +129,7 @@ class _PageLicenseState extends State<PageLicense> {
                         ),
                         _buildLicenseCard(
                           index: 1,
-                          title: "ผลการทดสอบมาตรฐานฝีมือแรงงาน",
+                          title: language.skillresult,
                           dataList: testing,
                           colorMain: const Color(0xffBB439C),
                           colorTitle: Colors.white,
@@ -138,7 +140,7 @@ class _PageLicenseState extends State<PageLicense> {
                         ),
                         _buildLicenseCard(
                           index: 2,
-                          title: "ผลการประเมิน",
+                          title: language.evaluationresults,
                           dataList: evaluations,
                           colorMain: const Color(0xff4F1964),
                           colorTitle: Colors.white,

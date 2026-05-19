@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/menu.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -126,28 +127,29 @@ class _InterestsState extends State<Interests> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar:
           widget.isEdit
               ? appBar(
-                title: 'ความสนใจของคุณ',
+                title: language.interest,
                 rightBtn: false,
                 backAction: () => Navigator.pop(context),
               )
               : AppBar(
                 backgroundColor: Colors.white,
-                title: const Column(
+                title: Column(
                   children: [
                     Text(
-                      'เลือกความสนใจของคุณ',
+                      language.selectinterests,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      'การแนะนำที่ตรงกับความชอบ',
+                      language.recommendations,
                       style: TextStyle(fontSize: 14),
                     ),
                   ],
@@ -156,7 +158,7 @@ class _InterestsState extends State<Interests> {
                   TextButton(
                     onPressed: isLoading ? null : skipAll,
                     child: Text(
-                      'ข้าม',
+                      language.skip,
                       style: TextStyle(color: AppColors.textgrey),
                     ),
                   ),
@@ -252,7 +254,7 @@ class _InterestsState extends State<Interests> {
                   isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
-                        widget.isEdit ? 'บันทึก' : 'ถัดไป',
+                        widget.isEdit ? language.save : language.next,
 
                         style: const TextStyle(
                           fontSize: 16,

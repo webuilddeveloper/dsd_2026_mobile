@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/news/new_detail.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -73,9 +74,10 @@ class _NewAllState extends State<NewAll> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       appBar: appBar(
-        title: "ข่าวประชาสัมพันธ์",
+        title: language.pressrelease,
         rightBtn: false,
         backBtn: true,
         backAction: () => goBack(),
@@ -93,7 +95,7 @@ class _NewAllState extends State<NewAll> {
                     buildSearch(
                       hintText: "Search",
                       controller: newSearch,
-                      rightBtn: true,
+                      rightBtn: false,
                       onFilterTap: () {},
                       onChanged: (value) => setState(() {}),
                     ),

@@ -3,6 +3,7 @@ import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/privilege/privilege_detail.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -77,9 +78,10 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       appBar: appBar(
-        title: "สิทธิประโยชน์ ",
+        title: language.privilege,
         rightBtn: false,
         backBtn: true,
         backAction: () => goBack(),
@@ -93,7 +95,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
             buildSearch(
               hintText: "Search",
               controller: privilegeSearch,
-              rightBtn: true,
+              rightBtn: false,
               onFilterTap: () {},
               onChanged: (value) {
                 setState(() {}); // 🔥 ตัวนี้สำคัญสุด

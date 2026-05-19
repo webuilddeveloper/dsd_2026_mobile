@@ -1,5 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/skilledLabor/skill_detail.dart';
 
 import 'package:dsd/shared/api_provider.dart';
@@ -50,9 +51,10 @@ class _SkillPageState extends State<SkillPage> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context); // ← ดึง strings ตาม locale
     return Scaffold(
       appBar: appBar(
-        title: "กำหนดการทดสอบมาตรฐานฝีมือแรงงาน",
+        title: language.skillTestSchedule,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),

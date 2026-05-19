@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -74,9 +75,10 @@ class _TrainingAllState extends State<TrainingAll> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       appBar: appBar(
-        title: "คอร์สอบรมแนะนำสำหรับคุณ",
+        title: language.recommended,
         rightBtn: false,
         backBtn: true,
         backAction: () => goBack(),
@@ -89,7 +91,7 @@ class _TrainingAllState extends State<TrainingAll> {
             buildSearch(
               hintText: "Search",
               controller: courseSearch,
-              rightBtn: true,
+              rightBtn: false,
               onFilterTap: () {},
               onChanged: (value) {
                 setState(() {});

@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/carousel.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/textfield.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/training/training_all.dart';
 import 'package:dsd/license/license_page.dart';
 import 'package:dsd/login.dart';
@@ -154,6 +155,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context); // ← ดึง strings ตาม locale
     final bool isLoggedIn = _code.isNotEmpty;
     final bool hasIdCard = idcard.isNotEmpty;
     final bool isCertified = isCert;
@@ -161,16 +163,16 @@ class HomePageState extends State<HomePage> {
     final String name =
         isLoggedIn
             ? '${txtFirstName.text} ${txtLastName.text}'
-            : 'ท่านยังไม่ได้เข้าสู่ระบบ';
+            : language.logged;
 
     final String memberType =
         !isLoggedIn
-            ? 'คลิกเพิ่อเข้าสู่ระบบ'
+            ? language.tologin
             : !hasIdCard
-            ? 'ท่านยังไม่ได้ยืนยันตัวตน'
+            ? language.verified
             : isCertified
-            ? 'ช่างที่ได้รับการรับรอง'
-            : 'บุคคลทั่วไป';
+            ? language.certified
+            : language.general;
 
     final String imageUrl = isLoggedIn ? _imageUrl : '';
     return Scaffold(
@@ -206,10 +208,13 @@ class HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildSearch(controller: searchController, hintText: "Search..."),
+              buildSearch(
+                controller: searchController,
+                hintText: "${language.search}...",
+              ),
               const SizedBox(height: 16),
 
-              _buildRowText('บริการ', () {
+              _buildRowText(language.service, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -222,7 +227,7 @@ class HomePageState extends State<HomePage> {
               const SizedBox(height: 16),
               _buildServiceSection(),
               const SizedBox(height: 16),
-              _buildRowText('คอร์สอบรมแนะนำสำหรับคุณ', () async {
+              _buildRowText(language.recommended, () async {
                 final data = await _futureTraining(); // 🔥 รอก่อน
 
                 Navigator.push(
@@ -234,7 +239,7 @@ class HomePageState extends State<HomePage> {
               _buildCourse(),
 
               const SizedBox(height: 16),
-              _buildRowText('ข่าวประชาสัมพันธ์', () {
+              _buildRowText(language.pressrelease, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => NewAll()),
@@ -244,7 +249,7 @@ class HomePageState extends State<HomePage> {
               _buildNew(),
 
               const SizedBox(height: 16),
-              _buildRowText('สิทธิประโยชน์', () {
+              _buildRowText(language.privilege, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => PrivilegeAll()),
@@ -274,6 +279,7 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget _buildRowText(String title, VoidCallback onTap) {
+    final language = AppStrings.of(context); // ← ดึง strings ตาม locale
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -287,8 +293,8 @@ class HomePageState extends State<HomePage> {
         ),
         InkWell(
           onTap: onTap,
-          child: const Text(
-            "ดูทั้งหมด >",
+          child: Text(
+            "${language.seeall} >",
             style: TextStyle(color: Colors.grey, fontFamily: 'Kanit'),
           ),
         ),
@@ -301,14 +307,14 @@ class HomePageState extends State<HomePage> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(top: 10),
-      itemCount: services.length,
+      itemCount: services(context).length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
       itemBuilder: (context, index) {
-        final service = services[index];
+        final service = services(context)[index];
 
         return _buildServiceCard(
           service.title,

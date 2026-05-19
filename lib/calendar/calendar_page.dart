@@ -3,9 +3,12 @@ import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/calendar/calendar_detail.dart';
 
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:provider/provider.dart';
 
 import 'package:table_calendar/table_calendar.dart';
 
@@ -55,6 +58,21 @@ class _CalendarPageState extends State<CalendarPage> {
     'ตุลาคม',
     'พฤศจิกายน',
     'ธันวาคม',
+  ];
+  static const months = [
+    '',
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   @override
@@ -127,14 +145,22 @@ class _CalendarPageState extends State<CalendarPage> {
     return "${date.day} ${_thaiMonths[date.month]} ${date.year + 543}";
   }
 
+  String formatEngDate(DateTime date) {
+    return "${date.day} ${months[date.month]} ${date.year}";
+  }
+
   @override
   Widget build(BuildContext context) {
     final events = getEventsByDate(selectedDay);
+    final language = AppStrings.of(context);
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar(
-        title: "ปฏิทินกิจกรรม",
+        title: language.calendar,
+        righttitle: language.list,
         backBtn: true,
         rightBtn: true,
         backAction: () => goBack(),
@@ -168,7 +194,11 @@ class _CalendarPageState extends State<CalendarPage> {
                           titleCentered: true,
                           formatButtonVisible: false,
                           titleTextFormatter: (date, locale) {
-                            return '${_thaiMonths[date.month]} ${date.year + 543}';
+                            if (selectedCode == 'th') {
+                              return '${_thaiMonths[date.month]} ${date.year + 543}';
+                            }
+
+                            return '${months[date.month]} ${date.year}';
                           },
                         ),
 
@@ -232,14 +262,17 @@ class _CalendarPageState extends State<CalendarPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            formatThaiDate(selectedDay),
+                            selectedCode == 'th'
+                                ? formatThaiDate(selectedDay)
+                                : formatEngDate(selectedDay),
+
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
                           Text(
-                            '${events.length} กิจกรรม',
+                            '${events.length} ${language.activity}',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,

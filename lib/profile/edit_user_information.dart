@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -117,6 +118,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   }
 
   void _showImagePicker() {
+    final language = AppStrings.of(context);
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -128,7 +130,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.photo_library_outlined),
-                  title: const Text('อัลบั้มรูปภาพ'),
+                  title: Text(language.photo),
                   onTap: () {
                     Navigator.pop(context);
                     _pickImage(ImageSource.gallery);
@@ -136,7 +138,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.photo_camera_outlined),
-                  title: const Text('กล้องถ่ายรูป'),
+                  title: Text(language.camera),
                   onTap: () {
                     Navigator.pop(context);
                     _pickImage(ImageSource.camera);
@@ -158,6 +160,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
   }
 
   Future<void> _submitUpdate() async {
+    final language = AppStrings.of(context);
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     setState(() => _isLoading = true);
@@ -192,21 +195,21 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
       final isSuccess = result['status'] == 'S';
       showCustomDialog(
         context,
-        title: isSuccess ? 'บันทึกสำเร็จ' : 'เกิดข้อผิดพลาด',
+        title: isSuccess ? language.successfully : language.failed,
         description:
             isSuccess
-                ? 'ข้อมูลของคุณได้รับการอัปเดตเรียบร้อยแล้ว'
+                ? language.updateSuccess
                 : (result['message']?.isNotEmpty == true
                     ? result['message']
-                    : 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง'),
+                    : language.updateFailed),
         onConfirm: () => Navigator.pop(context),
       );
     } catch (_) {
       if (!mounted) return;
       showCustomDialog(
         context,
-        title: 'เกิดข้อผิดพลาด',
-        description: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง',
+        title: language.failed,
+        description: language.skipchangePassword5,
         onConfirm: () => Navigator.pop(context),
       );
     } finally {
@@ -248,10 +251,11 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
-        title: 'บัญชีผู้ใช้งาน',
+        title: language.useraccount,
         backBtn: true,
         rightBtn: false,
         backAction: () => Navigator.pop(context),
@@ -296,34 +300,34 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        _sectionLabel('ข้อมูลส่วนตัว'),
+                        _sectionLabel(language.personal),
                         const SizedBox(height: 12),
                         buildTextField(
                           controller: txtPrefixName,
-                          hint: 'คำนำหน้า เช่น นาย / นาง / นางสาว',
+                          hint: language.prefix,
                           icon: Icons.person_outline,
                         ),
                         const SizedBox(height: 12),
                         buildTextField(
                           controller: txtFirstName,
-                          hint: 'ชื่อจริง',
+                          hint: language.name,
                           icon: Icons.badge_outlined,
                           validator:
                               (v) =>
                                   (v == null || v.isEmpty)
-                                      ? 'กรุณากรอกชื่อ'
+                                      ? "${language.personal}${language.name}"
                                       : null,
                         ),
                         const SizedBox(height: 12),
                         buildTextField(
                           controller: txtLastName,
-                          hint: 'นามสกุล',
+                          hint: language.lastname,
                           icon: Icons.badge_outlined,
                         ),
                         const SizedBox(height: 12),
                         buildTextField(
                           controller: txtPhone,
-                          hint: 'เบอร์โทรศัพท์',
+                          hint: language.phoneNumber,
                           icon: Icons.phone_outlined,
                           keybord: TextInputType.number,
                           inputFormatters: [
@@ -337,7 +341,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                         const SizedBox(height: 12),
                         buildTextField(
                           controller: txtEmail,
-                          hint: 'อีเมล',
+                          hint: language.email,
                           icon: Icons.email_outlined,
                           keybord: TextInputType.emailAddress,
                           isSelect: false,
@@ -345,7 +349,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                         const SizedBox(height: 12),
                         buildTextField(
                           controller: txtIdcard,
-                          hint: 'เลขบัตรประชาชน \n(แก้ไขไม่ได้หลังจากบันทึก)',
+                          hint: language.idcard,
                           icon: Icons.badge_outlined,
                           keybord: TextInputType.number,
                           inputFormatters: [
@@ -386,8 +390,8 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                                         color: Colors.white,
                                       ),
                                     )
-                                    : const Text(
-                                      'บันทึกข้อมูล',
+                                    : Text(
+                                      language.save,
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,

@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/notification/notification_detail.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -168,9 +169,10 @@ class _NotificationListState extends State<NotificationList>
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       appBar: appBar(
-        title: "การแจ้งเตือน",
+        title: language.notification,
         backBtn: true,
         rightBtn: false,
         backAction: goBack,

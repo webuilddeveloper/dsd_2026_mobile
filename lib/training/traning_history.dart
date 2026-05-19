@@ -1,3 +1,4 @@
+import 'package:dsd/shared/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dsd/blank_page/appbar.dart';
@@ -55,45 +56,53 @@ class _TrainingHistoryState extends State<TrainingHistory> {
     String label;
     Color bg;
     Color text;
+    final language = AppStrings.of(context);
 
     switch (status) {
       case 1:
-        label = 'รอการตรวจสอบ';
+        label = language.statusPendingReview;
         bg = const Color(0xFFF1EFE8);
         text = const Color(0xFF5F5E5A);
         break;
+
       case 2:
-        label = 'รออนุมัติ';
+        label = language.statusPendingApproval;
         bg = const Color(0xFFFFF3CD);
         text = const Color(0xFF856404);
         break;
+
       case 3:
-        label = 'รอคัดเลือก';
+        label = language.statusPendingSelection;
         bg = const Color(0xFFD1ECF1);
         text = const Color(0xFF0C5460);
         break;
+
       case 4:
-        label = 'ไม่ผ่าน';
+        label = language.statusFailed;
         bg = const Color(0xFFF8D7DA);
         text = const Color(0xFF721C24);
         break;
+
       case 5:
-        label = 'ยกเลิกรุ่น';
+        label = language.statusCancelled;
         bg = const Color(0xFFE2E3E5);
         text = const Color(0xFF383D41);
         break;
+
       case 6:
-        label = 'ติดต่อแล้ว';
+        label = language.statusContacted;
         bg = const Color(0xFFEAF3DE);
         text = const Color(0xFF27500A);
         break;
+
       case 7:
-        label = 'ติดต่อไม่ได้';
+        label = language.statusNotContacted;
         bg = const Color(0xFFFFE5E5);
         text = const Color(0xFFB00020);
         break;
+
       default:
-        label = 'ไม่ทราบสถานะ';
+        label = language.statusUnknown;
         bg = Colors.grey.shade200;
         text = Colors.grey;
     }
@@ -156,6 +165,7 @@ class _TrainingHistoryState extends State<TrainingHistory> {
   }
 
   Widget trainingCard(Map<String, dynamic> item) {
+    final language = AppStrings.of(context);
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -190,7 +200,7 @@ class _TrainingHistoryState extends State<TrainingHistory> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'รุ่นที่ ${item['classNo'] ?? '-'} · ${item['provinceName'] ?? '-'}',
+                        '${language.batchNo} ${item['classNo'] ?? '-'} · ${item['provinceName'] ?? '-'}',
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textgrey,
@@ -219,7 +229,7 @@ class _TrainingHistoryState extends State<TrainingHistory> {
                 ),
                 infoRow(
                   Icons.access_time_outlined,
-                  '${item['period'] ?? 0} ชม.',
+                  '${item['period'] ?? 0} ${language.hours}',
                 ),
               ],
             ),
@@ -233,10 +243,11 @@ class _TrainingHistoryState extends State<TrainingHistory> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
-        title: 'ประวัติการอบรม',
+        title: language.trainingHistory,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
@@ -245,7 +256,7 @@ class _TrainingHistoryState extends State<TrainingHistory> {
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : training.isEmpty
-              ? const Center(child: Text('ยังไม่มีข้อมูล'))
+              ? Center(child: Text(language.noData))
               : ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -254,7 +265,7 @@ class _TrainingHistoryState extends State<TrainingHistory> {
                     children: [
                       Expanded(
                         child: summaryCard(
-                          'หลักสูตรทั้งหมด',
+                          language.allcourse,
                           '${training.length}',
                           AppColors.textDark,
                         ),
@@ -262,7 +273,7 @@ class _TrainingHistoryState extends State<TrainingHistory> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: summaryCard(
-                          'รวมชั่วโมง',
+                          language.totalhours,
                           '$totalHours',
                           AppColors.primary,
                         ),
@@ -273,8 +284,8 @@ class _TrainingHistoryState extends State<TrainingHistory> {
                   const SizedBox(height: 20),
 
                   /// 🔥 title
-                  const Text(
-                    'รายการอบรม',
+                  Text(
+                    language.trainingList,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   ),
 

@@ -1,4 +1,5 @@
 import 'package:dsd/blank_page/appbar.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -49,9 +50,10 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       appBar: appBar(
-        title: 'สมัครรับรองความรู้ตามมาตรฐาน',
+        title: language.certifiedTitle,
         rightBtn: false,
         backAction: () => Navigator.pop(context),
       ),
@@ -79,6 +81,7 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
 
   // ── Download Card ──────────────────────────────────────────────────────────
   Widget _downloadCard() {
+    final language = AppStrings.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -95,8 +98,8 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-            child: const Text(
-              'คู่มือการใช้งานสำหรับประชาชน',
+            child: Text(
+              language.userManual,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -112,7 +115,7 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
             storeLabel: 'GET IT ON',
             storeName: 'Google Play',
             qrPath: 'assets/DSD/imgs/dsd_playstore.png',
-            qrCaption: 'สแกนสำหรับ Android',
+            qrCaption: language.scanAndroid,
             onTap: () => _launch(_androidUrl),
           ),
           const Padding(
@@ -126,7 +129,7 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
             storeLabel: 'Download on the',
             storeName: 'App Store',
             qrPath: 'assets/DSD/imgs/dsd_appstroe.png',
-            qrCaption: 'สแกนสำหรับ iOS',
+            qrCaption: language.scanIos,
             onTap: () => _launch(_iosUrl),
           ),
           const SizedBox(height: 8),
@@ -145,6 +148,7 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
     required String qrCaption,
     required VoidCallback onTap,
   }) {
+    final language = AppStrings.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
@@ -201,11 +205,14 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
             child: Column(
               children: [
                 Container(width: 1, height: 28, color: const Color(0xFFE0E0E0)),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    'หรือ',
-                    style: TextStyle(fontSize: 11, color: Color(0xFF9E9E9E)),
+                    language.or,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Color(0xFF9E9E9E),
+                    ),
                   ),
                 ),
                 Container(width: 1, height: 28, color: const Color(0xFFE0E0E0)),
@@ -245,6 +252,7 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
 
   // ── Requirements Card ──────────────────────────────────────────────────────
   Widget _requirementsCard() {
+    final language = AppStrings.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -263,8 +271,8 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title
-          const Text(
-            'ข้อกำหนดเบื้องต้นของการใช้งานระบบ',
+          Text(
+            language.requirementTitle,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
@@ -273,46 +281,12 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
           ),
           const SizedBox(height: 10),
           // Paragraph
-          RichText(
-            text: const TextSpan(
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF424242),
-                height: 1.8,
-              ),
-              children: [
-                TextSpan(
-                  text:
-                      'การเข้าใช้งานแพลตฟอร์มระบบ Mobile Application รับรองความรู้ความสามารถสำหรับประชาชน สามารถใช้งานผ่านโทรศัพท์มือถือเคลื่อนที่ (Smart Phone) หรือแท็บเล็ต บนระบบปฏิบัติการ iOS เวอร์ชั่น 13.0 ขึ้นไป และระบบปฏิบัติการ Android เวอร์ชั่น 8.0 ขึ้นไป โดยสามารถดาวโหลดได้จากแพลตฟอร์ม ',
-                ),
-                TextSpan(
-                  text: 'App Store',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
-                TextSpan(text: ' และ '),
-                TextSpan(
-                  text: 'Google Play',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
-                TextSpan(text: ' และจำเป็นที่จะต้องมี Application '),
-                TextSpan(
-                  text: 'ThaID',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFFE65100),
-                  ),
-                ),
-                TextSpan(
-                  text:
-                      ' เพื่อยืนยันตัวตนเข้าสู่ระบบสำหรับกลุ่มผู้ใช้งานประชาชน',
-                ),
-              ],
+          Text(
+            language.requirementDescription,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF424242),
+              height: 1.8,
             ),
           ),
         ],

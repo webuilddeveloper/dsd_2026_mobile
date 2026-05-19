@@ -1,5 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -121,6 +122,7 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
 
   /// DETAIL CARD
   Widget _buildDetailCard() {
+    final language = AppStrings.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -132,7 +134,7 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildtxt(
-            title: 'เลขประจำตัวผู้ถือบัตร',
+            title: language.cardholdernumber,
             subtitle: widget.license['personalId'],
           ),
 
@@ -145,12 +147,12 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
 
           const Divider(color: AppColors.backgroundMain),
           _buildtxt(
-            title: "วันออกบัตร",
+            title: language.dateIssue,
             subtitle: formatDate(widget.license['certificateDate'] ?? ""),
           ),
           const Divider(color: AppColors.backgroundMain),
           _buildtxtStatus(
-            title: "สถานะใบอนุญาต",
+            title: language.licenseStatus,
             subtitle: widget.license['cerExpire'] ?? "-",
           ),
         ],

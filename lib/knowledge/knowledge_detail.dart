@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,11 +29,11 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
     );
 
     final model = widget.model;
-
+    final language = AppStrings.of(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: appBar(
-        title: 'คลังความรู้',
+        title: language.knowledge,
         rightBtn: false,
         backAction: () => goBack(),
       ),
@@ -43,25 +44,6 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
             // ── รูปหลัก ──
             Stack(
               children: [
-                // Padding(
-                //   padding: EdgeInsets.only(
-                //     top: MediaQuery.of(context).padding.top + 55,
-                //   ),
-                //   child:
-                //       (model['imageUrl'] != null && model['imageUrl'] != '')
-                //           ? Image.network(
-                //             model['imageUrl'],
-                //             width: double.infinity,
-                //             height: 350,
-                //             fit: BoxFit.cover,
-                //             errorBuilder:
-                //                 (_, __, ___) => Container(
-                //                   height: 350,
-                //                   color: Colors.grey[300],
-                //                 ),
-                //           )
-                //           : Container(height: 350, color: Colors.grey[300]),
-                // ),
                 Padding(
                   padding: EdgeInsets.only(
                     top: MediaQuery.of(context).padding.top + 55,
@@ -155,7 +137,7 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'อ่าน',
+                                  language.read,
                                   style: TextStyle(
                                     color: AppColors.primary,
                                     fontSize: 14,
@@ -174,33 +156,44 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                     const SizedBox(height: 16),
                     // ── ข้อมูล ──
                     if ((model['author'] ?? '') != '')
-                      _InfoRow(label: 'ผู้แต่ง', value: model['author']),
+                      _InfoRow(label: language.author, value: model['author']),
+
                     if ((model['publisher'] ?? '') != '')
-                      _InfoRow(label: 'สำนักพิมพ์', value: model['publisher']),
+                      _InfoRow(
+                        label: language.publisher,
+                        value: model['publisher'],
+                      ),
+
                     if ((model['categoryList'] ?? []).isNotEmpty &&
                         (model['categoryList'][0]['title'] ?? '') != '')
                       _InfoRow(
-                        label: 'หมวดหมู่',
+                        label: language.category,
                         value: model['categoryList'][0]['title'],
                       ),
+
                     if ((model['bookType'] ?? '') != '')
                       _InfoRow(
-                        label: 'ประเภทหนังสือ',
+                        label: language.bookType,
                         value: model['bookType'],
                       ),
+
                     if ((model['numberOfPages']?.toString() ?? '') != '')
                       _InfoRow(
-                        label: 'จำนวนหน้า',
+                        label: language.numberOfPages,
                         value: model['numberOfPages'].toString(),
                       ),
+
                     if ((model['size']?.toString() ?? '') != '')
-                      _InfoRow(label: 'ขนาด', value: model['size'].toString()),
+                      _InfoRow(
+                        label: language.size,
+                        value: model['size'].toString(),
+                      ),
 
                     // ── วันที่ ──
                     if ((model['publishDate'] ?? '') != '' &&
                         model['publishDate'] != 'Invalid date')
                       Text(
-                        'วันที่เผยแพร่ :  ${dateStringToDate(model['publishDate'])}',
+                        '${language.publishDate} : ${dateStringToDate(model['publishDate'])}',
                         style: const TextStyle(fontFamily: 'Kanit'),
                       ),
 

@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -46,9 +47,15 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   Widget _buildStrengthBar(String value) {
     final strength = _getStrength(value);
+    final language = AppStrings.of(context);
     if (strength == 0) return const SizedBox.shrink();
 
-    final labels = ['', 'อ่อนแอ', 'ปานกลาง', 'แข็งแกร่ง'];
+    final labels = [
+      '',
+      (language.labelstrength1),
+      (language.labelstrength2),
+      (language.labelstrength3),
+    ];
     final colors = [
       Colors.transparent,
       Colors.redAccent,
@@ -81,7 +88,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: Text(
-              'ความแข็งแกร่ง: ${labels[strength]}',
+              '${language.strength}: ${labels[strength]}',
               key: ValueKey(strength),
               style: TextStyle(
                 fontSize: 12,
@@ -100,6 +107,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   Future<void> _submitUpdate() async {
     FocusScope.of(context).unfocus();
+    final language = AppStrings.of(context);
 
     if (!_formKey.currentState!.validate()) return;
     final _code = await storage.read(key: 'profileCode');
@@ -116,8 +124,8 @@ class _ChangePasswordState extends State<ChangePassword> {
       if (value['status'] == 'S') {
         showCustomDialog(
           context,
-          title: 'เปลี่ยนรหัสผ่านสำเร็จ',
-          description: 'รหัสผ่านของคุณได้รับการเปลี่ยนแปลงเรียบร้อยแล้ว',
+          title: language.changePassword + language.successfully,
+          description: language.skipchangePassword3,
           onConfirm: () {
             Navigator.pop(context);
           },
@@ -125,16 +133,16 @@ class _ChangePasswordState extends State<ChangePassword> {
       } else {
         showCustomDialog(
           context,
-          title: 'ไม่สำเร็จ',
-          description: 'รหัสผ่านเดิมไม่ถูกต้อง\nกรุณาลองใหม่อีกครั้ง',
+          title: language.failed,
+          description: language.skipchangePassword4,
           onConfirm: () {},
         );
       }
     } catch (e) {
       showCustomDialog(
         context,
-        title: 'เกิดข้อผิดพลาด',
-        description: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้\nกรุณาลองใหม่อีกครั้ง',
+        title: language.failed,
+        description: language.skipchangePassword5,
         onConfirm: () {},
       );
     } finally {
@@ -143,43 +151,41 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 
   String? _validateOldPassword(String? value) {
+    final language = AppStrings.of(context);
     if (value == null || value.trim().isEmpty) {
-      return 'กรุณากรอกรหัสผ่าน';
+      return language.please + language.password;
     }
     if (value.length < 6) {
-      return 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
+      return language.skipchangePassword;
     }
-    // if (!value.contains(RegExp(r'[A-Z]'))) {
-    //   return 'ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว';
-    // }
-    // if (!value.contains(RegExp(r'[0-9]'))) {
-    //   return 'ต้องมีตัวเลขอย่างน้อย 1 ตัว';
-    // }
+
     return null;
   }
 
   String? _validatePassword(String? value) {
+    final language = AppStrings.of(context);
     if (value == null || value.trim().isEmpty) {
-      return 'กรุณากรอกรหัสผ่าน';
+      return language.please + language.password;
     }
     if (value.length < 6) {
-      return 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
+      return language.skipchangePassword;
     }
     if (!value.contains(RegExp(r'[A-Z]'))) {
-      return 'ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว';
+      return language.skipchangePassword1;
     }
     if (!value.contains(RegExp(r'[0-9]'))) {
-      return 'ต้องมีตัวเลขอย่างน้อย 1 ตัว';
+      return language.skipchangePassword2;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
+    final language = AppStrings.of(context);
     if (value == null || value.trim().isEmpty) {
-      return 'กรุณายืนยันรหัสผ่าน';
+      return language.please + language.confirmNewpassword;
     }
     if (value != txtPassword.text) {
-      return 'รหัสผ่านไม่ตรงกัน';
+      return language.passwordsnotmatch;
     }
     return null;
   }
@@ -195,11 +201,12 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final language = AppStrings.of(context);
 
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
-        title: "เปลี่ยนรหัสผ่าน",
+        title: language.changePassword,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
@@ -242,8 +249,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      const Text(
-                        'เปลี่ยนรหัสผ่าน',
+                      Text(
+                        language.changePassword,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -257,7 +264,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   Padding(
                     padding: const EdgeInsets.only(left: 14),
                     child: Text(
-                      'รหัสผ่านต้องมีอย่างน้อย 8 ตัว มีตัวเลขและตัวพิมพ์ใหญ่',
+                      language.skipchangePassword,
                       style: TextStyle(
                         fontSize: 12,
                         fontFamily: 'Kanit',
@@ -266,8 +273,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'รหัสผ่านเดิม',
+                  Text(
+                    language.currentPassword,
                     style: TextStyle(
                       fontSize: 13,
                       fontFamily: 'Kanit',
@@ -278,7 +285,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   const SizedBox(height: 8),
                   buildTextField(
                     controller: txtOldPassword,
-                    hint: 'กรอกรหัสผ่านเดิม',
+                    hint: language.please + language.currentPassword,
                     icon: Icons.lock_outline,
                     obscure: _obscureOld,
                     validator: _validateOldPassword,
@@ -298,8 +305,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                   ),
                   const SizedBox(height: 8),
                   // Password field
-                  const Text(
-                    'รหัสผ่านใหม่',
+                  Text(
+                    language.newPassword,
                     style: TextStyle(
                       fontSize: 13,
                       fontFamily: 'Kanit',
@@ -310,7 +317,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   const SizedBox(height: 8),
                   buildTextField(
                     controller: txtPassword,
-                    hint: 'กรอกรหัสผ่านใหม่',
+                    hint: language.please + language.newPassword,
                     icon: Icons.lock_outline,
                     obscure: _obscurePassword,
                     validator: _validatePassword,
@@ -332,8 +339,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                   const SizedBox(height: 18),
 
                   // Confirm password field
-                  const Text(
-                    'ยืนยันรหัสผ่าน',
+                  Text(
+                    language.confirmNewpassword,
                     style: TextStyle(
                       fontSize: 13,
                       fontFamily: 'Kanit',
@@ -344,7 +351,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   const SizedBox(height: 8),
                   buildTextField(
                     controller: txtConfirmPassword,
-                    hint: 'กรอกรหัสผ่านอีกครั้ง',
+                    hint: language.please + language.confirmNewpassword,
                     icon: Icons.lock_outline,
                     obscure: _obscureConfirm,
                     validator: _validateConfirmPassword,
@@ -394,8 +401,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   color: Colors.white,
                                 ),
                               )
-                              : const Text(
-                                'บันทึกรหัสผ่าน',
+                              : Text(
+                                language.save,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,

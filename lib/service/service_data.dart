@@ -4,6 +4,7 @@ import 'package:dsd/certification.dart';
 import 'package:dsd/knowledge/Knowledge.dart';
 import 'package:dsd/login.dart';
 import 'package:dsd/profile/edit_user_information.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/skilledLabor/skill.dart';
 import 'package:dsd/privilege/privilege_all.dart';
 import 'package:dsd/training/training.dart';
@@ -43,73 +44,75 @@ Future<void> handleAuthNavigation(BuildContext context, Widget page) async {
   }
 }
 
-final List<ServiceItem> services = [
-  ServiceItem(
-    title: 'สมัครสอบมาตรฐาน\nที่นั่งทางวิชาชีพ',
-    image: 'assets/DSD/imgs/1.png',
-    onTap: (context, onTabChange) async {
-      await handleAuthNavigation(context, SkillPage());
-    },
-  ),
-  ServiceItem(
-    title: 'สมัครฝึกอบรม',
-    image: 'assets/DSD/imgs/2.png',
-    onTap: (context, onTabChange) async {
-      await handleAuthNavigation(context, TrainingService());
-    },
-  ),
-  ServiceItem(
-    title: 'สมัครรับรองความรู้\nตามมาตรฐาน',
-    image: 'assets/DSD/imgs/3.png',
-    onTap: (context, onTabChange) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => Cert()));
-    },
-  ),
-  // ServiceItem(
-  //   title: 'ปฏิทินกิจกรรม',
-  //   image: 'assets/DSD/imgs/4.png',
-  //   onTap: (context, onTabChange) {
-  //     onTabChange?.call(1);
-  //   },
-  // ),
-  ServiceItem(
-    title: 'ปฏิทินกิจกรรม',
-    image: 'assets/DSD/imgs/4.png',
-    onTap: (context, onTabChange) {
-      if (Navigator.canPop(context)) {
+List<ServiceItem> services(BuildContext context) {
+  final language = AppStrings.of(context);
+
+  return [
+    ServiceItem(
+      title: language.standtest,
+      image: 'assets/DSD/imgs/1.png',
+      onTap: (context, onTabChange) async {
+        await handleAuthNavigation(context, SkillPage());
+      },
+    ),
+
+    ServiceItem(
+      title: language.trainingapp,
+      image: 'assets/DSD/imgs/2.png',
+      onTap: (context, onTabChange) async {
+        await handleAuthNavigation(context, TrainingService());
+      },
+    ),
+
+    ServiceItem(
+      title: language.certifiedTitle,
+      image: 'assets/DSD/imgs/3.png',
+      onTap: (context, onTabChange) {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => Cert()));
+      },
+    ),
+
+    ServiceItem(
+      title: language.calendar,
+      image: 'assets/DSD/imgs/4.png',
+      onTap: (context, onTabChange) {
+        if (Navigator.canPop(context)) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (_) => CalendarPage(
+                    onTabChange: onTabChange,
+                    pushedFromPage: true,
+                  ),
+            ),
+          );
+        } else {
+          onTabChange?.call(1);
+        }
+      },
+    ),
+
+    ServiceItem(
+      title: language.knowledge,
+      image: 'assets/DSD/imgs/5.png',
+      onTap: (context, onTabChange) {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder:
-                (_) => CalendarPage(
-                  onTabChange: onTabChange,
-                  pushedFromPage: true,
-                ),
-          ),
+          MaterialPageRoute(builder: (_) => KnowledgePage()),
         );
-      } else {
-        onTabChange?.call(1);
-      }
-    },
-  ),
-  ServiceItem(
-    title: 'คลังความรู้',
-    image: 'assets/DSD/imgs/5.png',
-    onTap: (context, onTabChange) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => KnowledgePage()),
-      );
-    },
-  ),
-  ServiceItem(
-    title: 'สิทธิประโยชน์',
-    image: 'assets/DSD/imgs/6.png',
-    onTap: (context, onTabChange) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => PrivilegeAll()),
-      );
-    },
-  ),
-];
+      },
+    ),
+
+    ServiceItem(
+      title: language.privilege,
+      image: 'assets/DSD/imgs/6.png',
+      onTap: (context, onTabChange) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => PrivilegeAll()),
+        );
+      },
+    ),
+  ];
+}

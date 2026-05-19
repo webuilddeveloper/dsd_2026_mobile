@@ -1,5 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,24 +22,24 @@ class TrainingHistoryDetail extends StatelessWidget {
 
   /* ================= STATUS UI ================= */
 
-  String get statusLabel {
+  String statusLabel(AppStrings language) {
     switch (status) {
       case 1:
-        return 'รอการตรวจสอบ';
+        return language.statusPendingReview;
       case 2:
-        return 'รออนุมัติ';
+        return language.statusPendingApproval;
       case 3:
-        return 'รอคัดเลือก';
+        return language.statusPendingSelection;
       case 4:
-        return 'ไม่ผ่าน';
+        return language.statusFailed;
       case 5:
-        return 'ยกเลิกรุ่น';
+        return language.statusCancelled;
       case 6:
-        return 'ติดต่อแล้ว';
+        return language.statusContacted;
       case 7:
-        return 'ติดต่อไม่ได้';
+        return language.statusNotContacted;
       default:
-        return 'ไม่ทราบสถานะ';
+        return language.statusUnknown;
     }
   }
 
@@ -90,10 +91,11 @@ class TrainingHistoryDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
-        title: 'รายละเอียดการอบรม',
+        title: language.trainingDetails,
         backBtn: true,
         rightBtn: false,
         backAction: () => Navigator.pop(context),
@@ -128,7 +130,7 @@ class TrainingHistoryDetail extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'รุ่นที่ ${item['classNo'] ?? '-'}',
+                            '${language.batchNo} ${item['classNo'] ?? '-'}',
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.textgrey,
@@ -149,7 +151,7 @@ class TrainingHistoryDetail extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        statusLabel,
+                        statusLabel(language),
                         style: TextStyle(fontSize: 11, color: badgeText),
                       ),
                     ),
@@ -163,22 +165,22 @@ class TrainingHistoryDetail extends StatelessWidget {
                 /// info
                 _infoRow(
                   Icons.apartment_outlined,
-                  'หน่วยงาน',
+                  language.organization,
                   item['provinceName'] ?? '-',
                 ),
                 const SizedBox(height: 12),
 
                 _infoRow(
                   Icons.calendar_today_outlined,
-                  'วันที่อบรม',
+                  language.trainingDate,
                   '${formatDate(item['dsdStartDate'] ?? '')} - ${formatDate(item['dsdEndDate'] ?? '')}',
                 ),
                 const SizedBox(height: 12),
 
                 _infoRow(
                   Icons.access_time_outlined,
-                  'ระยะเวลา',
-                  '${toInt(item['period'])} ชั่วโมง',
+                  language.duration,
+                  '${toInt(item['period'])} ${language.hours}',
                 ),
               ],
             ),
@@ -187,7 +189,7 @@ class TrainingHistoryDetail extends StatelessWidget {
           const SizedBox(height: 12),
 
           /// 🔥 certificate
-          isSuccess ? _certificateCard(context) : _pendingCard(),
+          isSuccess ? _certificateCard(context) : _pendingCard(context),
         ],
       ),
     );
@@ -208,6 +210,7 @@ class TrainingHistoryDetail extends StatelessWidget {
   }
 
   Widget _certificateCard(BuildContext context) {
+    final language = AppStrings.of(context);
     return GestureDetector(
       onTap: () => openCertificate(context),
       child: Container(
@@ -216,26 +219,27 @@ class TrainingHistoryDetail extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
         ),
-        child: const Row(
+        child: Row(
           children: [
             Icon(Icons.description),
             SizedBox(width: 10),
-            Text('ดูใบประกาศนียบัตร'),
+            Text(language.viewCertificate),
           ],
         ),
       ),
     );
   }
 
-  Widget _pendingCard() {
+  Widget _pendingCard(BuildContext context) {
+    final language = AppStrings.of(context);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: const Color(0xFFF1EFE8),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Text(
-        'ยังไม่สามารถออกใบประกาศได้',
+      child: Text(
+        language.certificateNotAvailable,
         style: TextStyle(fontSize: 12),
       ),
     );

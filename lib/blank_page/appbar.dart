@@ -123,6 +123,7 @@ appBar({
   bool rightBtn = true,
   Function? rightAction,
   Function? backAction,
+  String righttitle = "",
 }) {
   return PreferredSize(
     preferredSize: const Size.fromHeight(80), // 🔻 ลดความสูง
@@ -222,7 +223,7 @@ appBar({
                         children: [
                           Icon(Icons.list_rounded, size: 18),
                           SizedBox(width: 4),
-                          Text('รายการ', style: TextStyle(fontSize: 10)),
+                          Text(righttitle, style: TextStyle(fontSize: 10)),
                         ],
                       ),
                     ),

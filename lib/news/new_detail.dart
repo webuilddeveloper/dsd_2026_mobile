@@ -4,6 +4,7 @@ import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -46,10 +47,11 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: appBar(
-        title: "ข่าวประชาสัมพันธ์",
+        title: language.pressrelease,
         rightBtn: false,
         backAction: () => goBack(),
       ),
@@ -172,7 +174,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                         ),
                       SizedBox(height: 16),
                       Text(
-                        'รายละเอียด มีดังนี้',
+                        language.thedetails,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,

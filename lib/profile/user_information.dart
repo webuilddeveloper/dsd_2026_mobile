@@ -8,7 +8,9 @@ import 'package:dsd/profile/change_password.dart';
 import 'package:dsd/profile/edit_user_information.dart';
 import 'package:dsd/profile/language_page.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/line_login.dart';
+
 import 'package:dsd/style_theme.dart';
 import 'package:dsd/training/traning_history.dart';
 import 'package:flutter/material.dart';
@@ -106,10 +108,12 @@ class _UserInformationPageState extends State<UserInformationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context); // ← ดึง strings ตาม locale
+
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
-        title: "โปรไฟล์",
+        title: language.titlerofile,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
@@ -155,7 +159,8 @@ class _UserInformationPageState extends State<UserInformationPage> {
                             ),
                           ),
                           Text(
-                            'บัญชีของฉัน',
+                            // 'บัญชีของฉัน',
+                            language.titleaccount,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -163,7 +168,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           ),
                           SizedBox(height: 16),
                           _rowtxt(
-                            title: 'บัญชีผู้ใช้งาน',
+                            title: language.useraccount,
                             ontap: () async {
                               await Navigator.push(
                                 context,
@@ -179,7 +184,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           SizedBox(height: 8),
                           isCert == true
                               ? _rowtxt(
-                                title: 'ประวัติผลงาน',
+                                title: language.workhistory,
                                 ontap: () {
                                   Navigator.push(
                                     context,
@@ -194,7 +199,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
                           _rowtxt(
-                            title: 'เปลี่ยนรหัสผ่าน',
+                            title: language.changePassword,
                             ontap: () {
                               Navigator.push(
                                 context,
@@ -206,7 +211,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           ),
                           SizedBox(height: 32),
                           Text(
-                            'กิจกรรมของคุณ',
+                            language.activities,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -215,10 +220,10 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           // SizedBox(height: 16),
                           // _rowtxt(title: 'การถูกใจ', ontap: () {}),
                           // SizedBox(height: 8),
-                          const Divider(color: AppColors.backgroundMain),
+                          // const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
                           _rowtxt(
-                            title: 'ตรวจสอบผลการสมัครฝึกอบรม',
+                            title: language.trainingapplication,
                             ontap: () {
                               Navigator.push(
                                 context,
@@ -230,7 +235,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           ),
                           SizedBox(height: 8),
                           _rowtxt(
-                            title: 'ความสนใจของคุณ',
+                            title: language.interest,
                             ontap: () {
                               Navigator.push(
                                 context,
@@ -245,7 +250,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           SizedBox(height: 8),
                           SizedBox(height: 32),
                           Text(
-                            'ตั้งค่า',
+                            language.settings,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -253,7 +258,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           ),
                           SizedBox(height: 16),
                           _rowtxt(
-                            title: 'ตั้งค่าการแจ้งเตือน',
+                            title: language.setupnoti,
                             ontap: () {
                               Navigator.push(
                                 context,
@@ -267,7 +272,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
                           _rowtxt(
-                            title: 'เปลี่ยนภาษา /  Language',
+                            title: language.changelanguage,
                             ontap: () {
                               Navigator.push(
                                 context,
@@ -282,7 +287,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                           const Divider(color: AppColors.backgroundMain),
                           SizedBox(height: 8),
                           _rowtxt(
-                            title: 'เกี่ยวกับเรา',
+                            title: language.aboutUs,
                             ontap: () {
                               Navigator.push(
                                 context,
@@ -336,22 +341,21 @@ class _UserInformationPageState extends State<UserInformationPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
                     showCustomDialog(
                       context,
-                      title: 'คุณต้องการลบบัญชีหรือไม่?',
-                      description: 'การลบบัญชีจะทำให้ข้อมูลของคุณหายไปทั้งหมด',
+                      title: language.confirmDeleteAccountTitle,
+                      description: language.confirmDeleteAccountDescription,
                       onConfirm: () {
                         deleteAccount(context);
                       },
                     );
                   },
                   child: Text(
-                    'ลบบัญชี',
+                    language.deleteaccount,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
@@ -375,7 +379,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                       vertical: 8,
                     ),
                     child: Text(
-                      'ออกจากระบบ',
+                      language.logout,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,

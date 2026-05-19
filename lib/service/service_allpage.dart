@@ -1,5 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/service/service_data.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +14,11 @@ class ServiceAllPage extends StatelessWidget {
       Navigator.pop(context, false);
     }
 
+    final language = AppStrings.of(context);
+
     return Scaffold(
       appBar: appBar(
-        title: "บริการ",
+        title: language.service,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
@@ -24,14 +27,14 @@ class ServiceAllPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: GridView.builder(
-          itemCount: services.length,
+          itemCount: services(context).length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
           ),
           itemBuilder: (context, index) {
-            final service = services[index];
+            final service = services(context)[index];
 
             return _serviceCard(service, context);
           },

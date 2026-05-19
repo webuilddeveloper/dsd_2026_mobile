@@ -3,6 +3,7 @@ import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/knowledge/knowledge_detail.dart';
 
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -86,10 +87,11 @@ class _KnowledgePageState extends State<KnowledgePage>
   @override
   Widget build(BuildContext context) {
     final filteredList = getFiltered();
+    final language = AppStrings.of(context);
 
     return Scaffold(
       appBar: appBar(
-        title: "คลังความรู้",
+        title: language.knowledge,
         rightBtn: false,
         backBtn: true,
         backAction: () => goBack(),
@@ -103,7 +105,7 @@ class _KnowledgePageState extends State<KnowledgePage>
             buildSearch(
               hintText: "Search",
               controller: knowledgeSearch,
-              rightBtn: true,
+              rightBtn: false,
               onFilterTap: () {},
               onChanged: (value) => setState(() {}),
             ),

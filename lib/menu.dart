@@ -5,6 +5,7 @@ import 'package:dsd/login.dart';
 import 'package:dsd/notification/notification.dart';
 import 'package:dsd/calendar/calendar_page.dart';
 import 'package:dsd/profile/user_information.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -170,6 +171,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildBottomNavBar() {
+    final language = AppStrings.of(context); // ← ดึง strings ตาม locale
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: Container(
@@ -188,10 +190,22 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildTap(0, 'Home', icon: 'assets/DSD/icon/icon_home.png'),
-            _buildTap(1, 'Calendar', icon: 'assets/DSD/icon/icon_calendar.png'),
-            _buildTap(2, 'Notification', icon: 'assets/DSD/icon/icon_noti.png'),
-            _buildTap(3, 'Profile', icon: 'assets/DSD/icon/icon_user.png'),
+            _buildTap(0, language.home, icon: 'assets/DSD/icon/icon_home.png'),
+            _buildTap(
+              1,
+              language.calendar,
+              icon: 'assets/DSD/icon/icon_calendar.png',
+            ),
+            _buildTap(
+              2,
+              language.notification,
+              icon: 'assets/DSD/icon/icon_noti.png',
+            ),
+            _buildTap(
+              3,
+              language.profile,
+              icon: 'assets/DSD/icon/icon_user.png',
+            ),
           ],
         ),
       ),

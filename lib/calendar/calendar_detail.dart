@@ -4,6 +4,7 @@ import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
@@ -47,10 +48,11 @@ class _CalendarDetailState extends State<CalendarDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: appBar(
-        title: "ปฏิทินกิจกรรม",
+        title: language.calendar,
         rightBtn: false,
         backAction: () => goBack(),
       ),
@@ -170,7 +172,7 @@ class _CalendarDetailState extends State<CalendarDetail> {
                       ),
                     SizedBox(height: 16),
                     Text(
-                      'รายละเอียด มีดังนี้',
+                      language.thedetails,
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -181,7 +183,7 @@ class _CalendarDetailState extends State<CalendarDetail> {
                             widget.calendarlist['dateStart'] != '' &&
                             widget.calendarlist['dateStart'] != 'Invalid date'
                         ? Text(
-                          'วันที่ลง : ${formatDate(widget.calendarlist['dateStart'])}',
+                          '${language.dateposting} : ${formatDate(widget.calendarlist['dateStart'])}',
                         )
                         : SizedBox(),
                     SizedBox(height: 16),

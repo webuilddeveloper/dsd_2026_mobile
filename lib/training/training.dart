@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
 
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 // import 'package:dsd/training/traning_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:dsd/style_theme.dart';
@@ -43,9 +44,10 @@ class _TrainingServiceState extends State<TrainingService> {
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context); // ← ดึง strings ตาม locale
     return Scaffold(
       appBar: appBar(
-        title: "หลักสูตรฝึกอบรม",
+        title: language.trainingCourses,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),

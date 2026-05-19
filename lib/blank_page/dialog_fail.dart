@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:dsd/shared/app_strings.dart' show AppStrings;
 import 'package:dsd/splash.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -63,6 +64,7 @@ void showCustomDialog(
   required VoidCallback onConfirm,
   bool cencelable = false,
 }) {
+  final language = AppStrings.of(context);
   showDialog(
     context: context,
     barrierDismissible: false, // กดนอกไม่ปิด
@@ -93,8 +95,8 @@ void showCustomDialog(
           actions: [
             // ❌ ยกเลิก
             CupertinoDialogAction(
-              child: const Text(
-                "ยกเลิก",
+              child: Text(
+                language.cancel,
                 style: TextStyle(
                   fontSize: 13,
                   fontFamily: 'Sarabun',
@@ -109,8 +111,8 @@ void showCustomDialog(
             // ✅ ยืนยัน
             CupertinoDialogAction(
               isDefaultAction: true,
-              child: const Text(
-                "ยืนยัน",
+              child: Text(
+                language.confirm,
                 style: TextStyle(
                   fontSize: 13,
                   fontFamily: 'Sarabun',

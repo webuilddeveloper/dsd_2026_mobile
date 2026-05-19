@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,56 +60,73 @@ class _RegsiterPageState extends State<RegsiterPage>
   }
 
   // ── Validation ───────────────────────────────────────────────────────────
-  String? _required(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'กรุณากรอกข้อมูล' : null;
+  String? _required(String? v) {
+    final language = AppStrings.of(context);
+
+    return (v == null || v.trim().isEmpty)
+        ? language.pleaseEnterInformation
+        : null;
+  }
 
   String? _validatePassword(String? value) {
+    final language = AppStrings.of(context);
     if (value == null || value.trim().isEmpty) {
-      return 'กรุณากรอกรหัสผ่าน';
+      return language.please + language.password;
     }
     if (value.length < 6) {}
     if (!value.contains(RegExp(r'[A-Z]'))) {
-      return 'ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว';
+      return language.skipchangePassword1;
     }
     if (!value.contains(RegExp(r'[0-9]'))) {
-      return 'ต้องมีตัวเลขอย่างน้อย 1 ตัว';
+      return language.skipchangePassword2;
     }
     return null;
   }
 
   String? _validateConfirmPass(String? v) {
-    if (v == null || v.isEmpty) return 'กรุณายืนยันรหัสผ่าน';
-    if (v != _passwordController.text) return 'รหัสผ่านไม่ตรงกัน';
+    final language = AppStrings.of(context);
+    if (v == null || v.isEmpty) {
+      return language.please + language.confirmpassword;
+    }
+    if (v != _passwordController.text) return language.passwordsnotmatch;
     return null;
   }
 
   String? _validateIdCard(String? v) {
-    if (v == null || v.isEmpty) return 'กรุณากรอกเลขบัตรประชาชน';
-    if (v.length != 13) return 'เลขบัตรประชาชนต้องมี 13 หลัก';
+    final language = AppStrings.of(context);
+    if (v == null || v.isEmpty) return language.pleaseEnterIdCardNumber;
+    if (v.length != 13) return language.idCardNumberMustBe13Digits;
     return null;
   }
 
   String? _validatePhone(String? v) {
-    if (v == null || v.isEmpty) return 'กรุณากรอกเบอร์โทรศัพท์';
-    if (v.length != 10) return 'เบอร์โทรศัพท์ต้องมี 10 หลัก';
+    final language = AppStrings.of(context);
+    if (v == null || v.isEmpty) return language.please + language.phoneNumber;
+    if (v.length != 10) return language.phoneNumberMustBe10Digits;
     return null;
   }
 
   String? _validateEmail(String? v) {
-    if (v == null || v.isEmpty) return 'กรุณากรอกอีเมล';
+    final language = AppStrings.of(context);
+    if (v == null || v.isEmpty) return language.please + language.email;
     final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(v)) return 'รูปแบบอีเมลไม่ถูกต้อง';
+    if (!emailRegex.hasMatch(v)) return language.invalidemail;
     return null;
   }
 
-  String? _validateDate(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'กรุณาเลือกวันเกิด' : null;
+  String? _validateDate(String? v) {
+    final language = AppStrings.of(context);
+    return (v == null || v.trim().isEmpty)
+        ? language.please + language.dateOfBirth
+        : null;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context); // ← ดึง strings ตาม locale
     return Scaffold(
       appBar: appBar(
-        title: 'สมัครสมาชิก',
+        title: language.signUp,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),
@@ -137,24 +155,24 @@ class _RegsiterPageState extends State<RegsiterPage>
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // ── Section: ข้อมูลผู้ใช้งาน ──────────────────────
-                      _sectionTitle('ข้อมูลผู้ใช้งาน'),
+                      _sectionTitle(language.userInformation),
                       const SizedBox(height: 24),
 
-                      _buildLabel('ชื่อผู้ใช้งาน'),
+                      _buildLabel(language.userInformation),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _usernameController,
-                        hint: 'กรอกชื่อผู้ใช้งาน',
+                        hint: language.please + language.user,
                         icon: Icons.person_outline_rounded,
                         validator: _required,
                       ),
                       const SizedBox(height: 16),
 
-                      _buildLabel('รหัสผ่าน'),
+                      _buildLabel(language.password),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _passwordController,
-                        hint: 'กรอกรหัสผ่าน ',
+                        hint: language.please + language.password,
                         icon: Icons.lock_outline_rounded,
                         obscure: _obscurePassword,
                         validator: _validatePassword,
@@ -167,11 +185,11 @@ class _RegsiterPageState extends State<RegsiterPage>
                       ),
                       const SizedBox(height: 16),
 
-                      _buildLabel('ยืนยันรหัสผ่าน'),
+                      _buildLabel(language.confirmpassword),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _confirmPassController,
-                        hint: 'กรอกยืนยันรหัสผ่าน',
+                        hint: language.please + language.confirmpassword,
                         icon: Icons.lock_outline_rounded,
                         obscure: _obscureConfirmPassword,
                         validator: _validateConfirmPass,
@@ -190,14 +208,14 @@ class _RegsiterPageState extends State<RegsiterPage>
                       const SizedBox(height: 24),
 
                       // ── Section: ข้อมูลส่วนตัว ─────────────────────────
-                      _sectionTitle('ข้อมูลส่วนตัว'),
+                      _sectionTitle(language.personal),
                       const SizedBox(height: 24),
 
-                      _buildLabel('เลขบัตรประชาชน'),
+                      _buildLabel(language.idcardNumber),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _idCardController,
-                        hint: 'กรอกเลขบัตรประชาชน 13 หลัก',
+                        hint: language.please + language.idcardNumber,
                         icon: Icons.credit_card_outlined,
                         keybord: TextInputType.number,
                         validator: _validateIdCard,
@@ -208,51 +226,51 @@ class _RegsiterPageState extends State<RegsiterPage>
                       ),
                       const SizedBox(height: 16),
 
-                      _buildLabel('คำนำหน้า'),
+                      _buildLabel(language.titlePrefix),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _prefixController,
-                        hint: 'กรอกคำนำหน้า',
+                        hint: language.prefix,
                         icon: Icons.person_outline_rounded,
                         validator: _required,
                       ),
                       const SizedBox(height: 16),
 
-                      _buildLabel('ชื่อ'),
+                      _buildLabel(language.name),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _firstNameController,
-                        hint: 'กรอกชื่อ',
+                        hint: language.please + language.name,
                         icon: Icons.person_outline_rounded,
                         validator: _required,
                       ),
                       const SizedBox(height: 16),
 
-                      _buildLabel('นามสกุล'),
+                      _buildLabel(language.lastname),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _lastNameController,
-                        hint: 'กรอกนามสกุล',
+                        hint: language.please + language.lastname,
                         icon: Icons.person_outline_rounded,
                         validator: _required,
                       ),
                       const SizedBox(height: 16),
 
-                      _buildLabel('วันเกิด'),
+                      _buildLabel(language.dateOfBirth),
                       const SizedBox(height: 6),
                       buildDateField(
                         context: context,
                         controller: _birthDateController,
-                        hint: 'เลือกวันเกิด',
+                        hint: language.please + language.dateOfBirth,
                         validator: _validateDate,
                       ),
                       const SizedBox(height: 16),
 
-                      _buildLabel('เบอร์โทรศัพท์ (10 หลัก)'),
+                      _buildLabel(language.phoneNumber),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _phoneController,
-                        hint: 'กรอกเบอร์โทรศัพท์',
+                        hint: language.please + language.phoneNumber,
                         icon: Icons.phone_outlined,
                         keybord: TextInputType.phone,
                         validator: _validatePhone,
@@ -263,11 +281,11 @@ class _RegsiterPageState extends State<RegsiterPage>
                       ),
                       const SizedBox(height: 16),
 
-                      _buildLabel('อีเมล'),
+                      _buildLabel(language.email),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _emailController,
-                        hint: 'กรอกอีเมล',
+                        hint: language.please + language.email,
                         icon: Icons.email_outlined,
                         keybord: TextInputType.emailAddress,
                         validator: _validateEmail,
@@ -287,8 +305,8 @@ class _RegsiterPageState extends State<RegsiterPage>
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'สมัคร',
+                          child: Text(
+                            language.signUp,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -309,6 +327,7 @@ class _RegsiterPageState extends State<RegsiterPage>
   }
 
   void _handleSubmit() async {
+    final language = AppStrings.of(context);
     if (!_formKey.currentState!.validate()) return;
     try {
       final result = await postapi('${register}create', {
@@ -337,8 +356,8 @@ class _RegsiterPageState extends State<RegsiterPage>
       if (result['status'] == 'S') {
         showCustomDialog(
           context,
-          title: 'สมัครสมาชิกสำเร็จ',
-          description: "บัญชีของคุณพร้อมใช้งานแล้ว",
+          title: language.registerSuccess,
+          description: language.accountReady,
           onConfirm: () {
             Navigator.pop(context);
             // 👉 ตัวเลือก: ไปหน้า Login หรือ Home
@@ -348,11 +367,11 @@ class _RegsiterPageState extends State<RegsiterPage>
       } else {
         showCustomDialog(
           context,
-          title: 'เกิดข้อผิดพลาด',
+          title: language.failed,
           description:
               (result['message'] != null && result['message'].isNotEmpty)
                   ? result['message']!
-                  : 'ไม่สามารถสมัครสมาชิกได้ กรุณาลองใหม่อีกครั้ง',
+                  : language.registerFailed,
           onConfirm: () {
             Navigator.pop(context);
           },
@@ -361,8 +380,8 @@ class _RegsiterPageState extends State<RegsiterPage>
     } catch (e) {
       showCustomDialog(
         context,
-        title: 'เกิดข้อผิดพลาด',
-        description: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง',
+        title: language.failed,
+        description: language.skipchangePassword5,
         onConfirm: () {
           Navigator.pop(context);
         },
