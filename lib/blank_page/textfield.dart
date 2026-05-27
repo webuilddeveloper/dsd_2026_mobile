@@ -60,6 +60,7 @@ Widget buildSearch({
 }
 
 Widget buildTextField({
+  Key? key,
   required TextEditingController controller,
   required String hint,
   required IconData icon,
@@ -72,6 +73,7 @@ Widget buildTextField({
   Widget? suffix,
 }) {
   return TextFormField(
+    key: key,
     controller: controller,
     obscureText: obscure,
     enabled: isSelect == true ? true : false,

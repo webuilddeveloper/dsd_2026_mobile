@@ -100,27 +100,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                 child: child,
               );
 
-              // หน้าเก่าถูกดัน/ค้างอยู่ข้างหลัง
-              return Stack(
-                children: [
-                  SlideTransition(
-                    position: Tween<Offset>(
-                      begin: Offset.zero,
-                      end:
-                          isGoingRight
-                              ? const Offset(-0.3, 0.0)
-                              : const Offset(0.3, 0.0),
-                    ).animate(
-                      CurvedAnimation(
-                        parent: animation,
-                        curve: Curves.easeInOut,
-                      ),
-                    ),
-                    child: pages[_previousPage],
-                  ),
-                  slideIn,
-                ],
-              );
+              return slideIn;
             },
             child: KeyedSubtree(
               key: ValueKey(_currentPage),
