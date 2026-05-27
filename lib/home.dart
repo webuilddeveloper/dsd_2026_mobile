@@ -3,6 +3,7 @@ import 'package:dsd/blank_page/carousel.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/training/training_all.dart';
 import 'package:dsd/license/license_page.dart';
 import 'package:dsd/login.dart';
@@ -16,6 +17,7 @@ import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   final Function(int) onTabChange;
@@ -155,7 +157,8 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final language = AppStrings.of(context); // ← ดึง strings ตาม locale
+    final language = AppStrings.of(context);
+
     final bool isLoggedIn = _code.isNotEmpty;
     final bool hasIdCard = idcard.isNotEmpty;
     final bool isCertified = isCert;
@@ -247,7 +250,6 @@ class HomePageState extends State<HomePage> {
               }),
               const SizedBox(height: 16),
               _buildNew(),
-
               const SizedBox(height: 16),
               _buildRowText(language.privilege, () {
                 Navigator.push(
@@ -545,19 +547,20 @@ class HomePageState extends State<HomePage> {
           return const SizedBox();
         }
         final newsList = snapshot.data!;
-
+        final provider = context.watch<LocaleProvider>();
+        final selectedCode = provider.locale.languageCode;
         return CarouselBanner<Map<String, dynamic>>(
           items: newsList,
           height: 200,
           itemBuilder: (context, news) {
             return InkWell(
-              onTap:
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => NewsDetailPage(news: news),
-                    ),
-                  ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => NewsDetailPage(news: news)),
+                );
+              },
+
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -583,7 +586,10 @@ class HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            news['title'] ?? '',
+                            // news['title'] ?? '',
+                            selectedCode == 'th'
+                                ? news['title']
+                                : news['titleEN'],
                             style: const TextStyle(
                               color: Colors.white,
                               fontFamily: 'Kanit',
@@ -635,6 +641,8 @@ class HomePageState extends State<HomePage> {
           return const SizedBox();
         }
         final privilege = snapshot.data!;
+        final provider = context.watch<LocaleProvider>();
+        final selectedCode = provider.locale.languageCode;
         return GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -649,7 +657,10 @@ class HomePageState extends State<HomePage> {
           itemBuilder: (context, index) {
             final item = privilege[index];
             return _buildPrivilegeCard(
-              item['title'] ?? '',
+              selectedCode == 'th'
+                  ? item['title'] ?? ''
+                  : item['titleEN'] ?? '',
+
               item['imageUrl'] ?? '',
               item['dateStart'] ?? '',
 

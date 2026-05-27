@@ -4,8 +4,10 @@ import 'package:dsd/knowledge/knowledge_detail.dart';
 
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class KnowledgePage extends StatefulWidget {
   const KnowledgePage({super.key});
@@ -52,7 +54,7 @@ class _KnowledgePageState extends State<KnowledgePage>
     setState(() {
       // ✅ เพิ่ม "ทั้งหมด" ไว้ตัวแรกเสมอ
       categoryknowlege = [
-        {'code': '', 'title': 'ทั้งหมด'},
+        {'code': '', 'title': 'ทั้งหมด', "titleEN": 'All'},
         ...(data as List).cast<Map<String, dynamic>>(),
       ];
       isLoading = false;
@@ -88,7 +90,8 @@ class _KnowledgePageState extends State<KnowledgePage>
   Widget build(BuildContext context) {
     final filteredList = getFiltered();
     final language = AppStrings.of(context);
-
+    final provider = context.watch<LocaleProvider>();
+    final selectedCodelanguage = provider.locale.languageCode;
     return Scaffold(
       appBar: appBar(
         title: language.knowledge,
@@ -138,7 +141,9 @@ class _KnowledgePageState extends State<KnowledgePage>
                           vertical: 6,
                         ),
                         child: Text(
-                          categoryknowlege[index]['title'],
+                          selectedCodelanguage == 'th'
+                              ? categoryknowlege[index]['title']
+                              : categoryknowlege[index]['titleEN'],
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight:

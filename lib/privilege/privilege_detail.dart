@@ -5,10 +5,12 @@ import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:provider/provider.dart';
 
 class PrivilegeDetail extends StatefulWidget {
   // final PrivilegeItem privilege;
@@ -51,6 +53,8 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context);
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: appBar(
@@ -130,7 +134,9 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.privilege['title'],
+                      selectedCode == 'th'
+                          ? widget.privilege['title'] ?? '-'
+                          : widget.privilege['titleEN'] ?? '-',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -185,12 +191,17 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
                             widget.privilege['dateStart'] != '' &&
                             widget.privilege['dateStart'] != 'Invalid date'
                         ? Text(
-                          'วันที่ลง : ${formatDate(widget.privilege['dateStart'])}',
+                          '${language.dateposting} : ${formatDate(widget.privilege['dateStart'])}',
                         )
                         : SizedBox(),
                     SizedBox(height: 16),
 
-                    Html(data: widget.privilege['description']),
+                    Html(
+                      data:
+                          selectedCode == 'th'
+                              ? widget.privilege['description'] ?? '-'
+                              : widget.privilege['descriptionEN'] ?? '-',
+                    ),
                     SizedBox(height: 32),
 
                     widget.privilege['textButton'] != ''
@@ -215,7 +226,9 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
                                   horizontal: 16,
                                 ),
                                 child: Text(
-                                  widget.privilege['textButton'],
+                                  selectedCode == 'th'
+                                      ? widget.privilege['textButton']
+                                      : widget.privilege['textButtonEN'],
                                   style: TextStyle(
                                     color: AppColors.primary,
                                     fontSize: 14,

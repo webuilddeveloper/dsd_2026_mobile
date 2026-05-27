@@ -3,10 +3,12 @@ import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class KnowledgeDetail extends StatefulWidget {
@@ -30,6 +32,8 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
 
     final model = widget.model;
     final language = AppStrings.of(context);
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: appBar(
@@ -56,7 +60,7 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                                   context,
                                   gallery: [
                                     {'imageUrl': model['imageUrl']},
-                                  ], // ✅ แปลงเป็น List เพราะ GalleryViewer สร้างเป็น list ไว้
+                                  ],
                                   initialIndex: 0,
                                 ),
                             child: ClipRRect(
@@ -98,7 +102,11 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                   children: [
                     // ── ชื่อ ──
                     Text(
-                      model['title'] ?? '',
+                      // model['title'] ?? '',
+                      selectedCode == 'th'
+                          ? model['title'] ?? ''
+                          : model['titleEN'],
+
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -156,19 +164,31 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                     const SizedBox(height: 16),
                     // ── ข้อมูล ──
                     if ((model['author'] ?? '') != '')
-                      _InfoRow(label: language.author, value: model['author']),
+                      _InfoRow(
+                        label: language.author,
+                        value:
+                            selectedCode == 'th'
+                                ? model['author'] ?? '-'
+                                : model['authorEN'] ?? '-',
+                      ),
 
                     if ((model['publisher'] ?? '') != '')
                       _InfoRow(
                         label: language.publisher,
-                        value: model['publisher'],
+                        value:
+                            selectedCode == 'th'
+                                ? model['publisher'] ?? '-'
+                                : model['publisherEN'] ?? '-',
                       ),
 
                     if ((model['categoryList'] ?? []).isNotEmpty &&
                         (model['categoryList'][0]['title'] ?? '') != '')
                       _InfoRow(
                         label: language.category,
-                        value: model['categoryList'][0]['title'],
+                        value:
+                            selectedCode == 'th'
+                                ? model['categoryList'][0]['title']
+                                : model['categoryList'][0]['titleEN'],
                       ),
 
                     if ((model['bookType'] ?? '') != '')
@@ -201,7 +221,10 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
 
                     // ── description ──
                     Html(
-                      data: model['description'] ?? '',
+                      data:
+                          selectedCode == 'th'
+                              ? model['description'] ?? ''
+                              : model['descriptionEN'] ?? '',
                       onLinkTap:
                           (url, attributes, element) =>
                               launchUrl(Uri.parse(url ?? '')),
@@ -232,7 +255,10 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                                   horizontal: 50,
                                 ),
                                 child: Text(
-                                  model['textButton'],
+                                  selectedCode == 'th'
+                                      ? model['textButton']
+                                      : model['textButtonEN'],
+
                                   style: TextStyle(
                                     color: AppColors.primary,
                                     fontSize: 14,

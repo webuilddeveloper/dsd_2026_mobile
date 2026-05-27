@@ -3,8 +3,10 @@ import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/news/new_detail.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NewAll extends StatefulWidget {
   const NewAll({super.key}); // ✅ ไม่รับค่าจากข้างนอก
@@ -40,12 +42,15 @@ class _NewAllState extends State<NewAll> {
 
   Future<void> _newsCategoryApi() async {
     final data = await postDio('${newsCategoryApi}read', {'limit': 10});
+
     setState(() {
       // ✅ เพิ่ม "ทั้งหมด" ไว้ตัวแรกเสมอ
       category = [
-        {'code': '', 'title': 'ทั้งหมด'},
+        {'code': '', 'title': 'ทั้งหมด', "titleEN": 'All'},
+
         ...(data as List).cast<Map<String, dynamic>>(),
       ];
+
       isLoading = false;
     });
   }
@@ -64,9 +69,12 @@ class _NewAllState extends State<NewAll> {
     if (newSearch.text.isNotEmpty) {
       final keyword = newSearch.text.toLowerCase();
       news =
-          news
-              .where((e) => (e['title'] ?? '').toLowerCase().contains(keyword))
-              .toList();
+          news.where((e) {
+            final title = (e['title'] ?? '').toString().toLowerCase();
+            final titleEN = (e['titleEN'] ?? '').toString().toLowerCase();
+
+            return title.contains(keyword) || titleEN.contains(keyword);
+          }).toList();
     }
 
     return news;
@@ -75,6 +83,8 @@ class _NewAllState extends State<NewAll> {
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context);
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     return Scaffold(
       appBar: appBar(
         title: language.pressrelease,
@@ -108,8 +118,9 @@ class _NewAllState extends State<NewAll> {
                           return Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: InkWell(
-                              onTap:
-                                  () => setState(() => selectedIndex = index),
+                              onTap: () {
+                                setState(() => selectedIndex = index);
+                              },
                               child: Container(
                                 decoration: BoxDecoration(
                                   color:
@@ -130,7 +141,10 @@ class _NewAllState extends State<NewAll> {
                                     vertical: 4,
                                   ),
                                   child: Text(
-                                    category[index]['title'],
+                                    selectedCode == "th"
+                                        ? category[index]['title']
+                                        : category[index]['titleEN'],
+
                                     style: TextStyle(
                                       fontSize: 14,
                                       color:
@@ -193,6 +207,8 @@ class _NewAllState extends State<NewAll> {
   }
 
   Widget buildHighlightNews(Map<String, dynamic> news) {
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     return InkWell(
       onTap:
           () => Navigator.push(
@@ -224,7 +240,7 @@ class _NewAllState extends State<NewAll> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                news['title'] ?? '',
+                selectedCode == 'th' ? news['title'] : news['titleEN'],
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -248,6 +264,8 @@ class _NewAllState extends State<NewAll> {
   }
 
   Widget buildNewsItem(Map<String, dynamic> news) {
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     return InkWell(
       onTap:
           () => Navigator.push(
@@ -277,7 +295,7 @@ class _NewAllState extends State<NewAll> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    news['title'] ?? '',
+                    selectedCode == 'th' ? news['title'] : news['titleEN'],
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),

@@ -150,6 +150,7 @@ class AppStrings {
   final String navigate;
   //interest
   final String selectinterests;
+  final String interestSkip;
   final String recommendations;
   final String skip;
   final String next;
@@ -350,6 +351,7 @@ class AppStrings {
     required this.recommendations,
     required this.skip,
     required this.next,
+    required this.interestSkip,
     //knowledge
     required this.read,
     required this.author,
@@ -545,6 +547,7 @@ class AppStrings {
     recommendations: "การแนะนำที่ตรงกับความชอบ",
     skip: "ข้าม",
     next: "ถัดไป",
+    interestSkip: "ข้อมูลความสนใจของคุณได้รับการบันทึกเรียบร้อยแล้ว",
 
     //knowledge
     read: "อ่าน",
@@ -742,6 +745,7 @@ class AppStrings {
     recommendations: "Personalized Recommendations",
     skip: "Skip",
     next: "Next",
+    interestSkip: "Your interests have been successfully recorded.",
     //knowledge
     read: "Read",
     author: "Author",

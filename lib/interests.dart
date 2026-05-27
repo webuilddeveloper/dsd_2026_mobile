@@ -3,9 +3,11 @@ import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/menu.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 class Interests extends StatefulWidget {
   const Interests({super.key, required this.isEdit});
@@ -83,6 +85,7 @@ class _InterestsState extends State<Interests> {
   }
 
   Future<void> updateInterests() async {
+    final language = AppStrings.of(context);
     if (isLoading) return;
     setState(() => isLoading = true);
 
@@ -101,8 +104,8 @@ class _InterestsState extends State<Interests> {
         widget.isEdit
             ? showCustomDialog(
               context,
-              title: 'บันทึกสำเร็จ',
-              description: 'ข้อมูลความสนใจของคุณได้รับการบันทึกเรียบร้อยแล้ว',
+              title: language.successfully,
+              description: language.interestSkip,
               cencelable: true,
               onConfirm: () {
                 Navigator.pop(context);
@@ -128,6 +131,8 @@ class _InterestsState extends State<Interests> {
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context);
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar:
@@ -231,7 +236,12 @@ class _InterestsState extends State<Interests> {
                               ],
                             ),
                             const SizedBox(height: 8),
-                            Text(item['title'], textAlign: TextAlign.center),
+                            Text(
+                              selectedCode == "th"
+                                  ? item['title']
+                                  : item['titleEN'] ?? "-",
+                              textAlign: TextAlign.center,
+                            ),
                           ],
                         ),
                       );

@@ -182,8 +182,6 @@ class _NotificationListState extends State<NotificationList>
         child:
             isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : notifications.isEmpty
-                ? const Center(child: Text("ยังไม่มีการแจ้งเตือน"))
                 : Column(
                   children: [
                     /// CATEGORY
@@ -268,12 +266,15 @@ class _NotificationListState extends State<NotificationList>
 
                     /// LIST
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: notifications.length,
-                        itemBuilder:
-                            (context, index) =>
-                                _notiList(item: notifications[index]),
-                      ),
+                      child:
+                          notifications.isNotEmpty
+                              ? ListView.builder(
+                                itemCount: notifications.length,
+                                itemBuilder:
+                                    (context, index) =>
+                                        _notiList(item: notifications[index]),
+                              )
+                              : Center(child: Text("ยังไม่มีการแจ้งเตือน")),
                     ),
                   ],
                 ),

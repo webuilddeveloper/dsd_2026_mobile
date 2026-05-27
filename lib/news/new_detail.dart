@@ -5,9 +5,11 @@ import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:provider/provider.dart';
 
 class NewsDetailPage extends StatefulWidget {
   final Map<String, dynamic> news; //
@@ -48,6 +50,8 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context);
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: appBar(
@@ -129,7 +133,10 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.news['title'],
+                        selectedCode == "th"
+                            ? widget.news['title']
+                            : widget.news['titleEN'] ?? "-",
+
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -181,7 +188,9 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                         ),
                       ),
                       SizedBox(height: 8),
-                      Text('วันที่ลง : ${formatDate(widget.news['docDate'])}'),
+                      Text(
+                        '${language.dateposting} : ${formatDate(widget.news['docDate'])}',
+                      ),
                       SizedBox(height: 16),
 
                       Html(data: widget.news['description']),
@@ -208,7 +217,9 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                                     horizontal: 16,
                                   ),
                                   child: Text(
-                                    widget.news['textButton'],
+                                    selectedCode == "th"
+                                        ? widget.news['title']
+                                        : widget.news['titleEN'] ?? "-",
                                     style: TextStyle(
                                       color: AppColors.primary,
                                       fontSize: 14,

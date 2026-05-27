@@ -4,8 +4,10 @@ import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/privilege/privilege_detail.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PrivilegeAll extends StatefulWidget {
   const PrivilegeAll({super.key});
@@ -44,7 +46,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
     setState(() {
       // ✅ เพิ่ม "ทั้งหมด" ไว้ตัวแรกเสมอ
       category = [
-        {'code': '', 'title': 'ทั้งหมด'},
+        {'code': '', 'title': 'ทั้งหมด', "titleEN": 'All'},
         ...(data as List).cast<Map<String, dynamic>>(),
       ];
       isLoading = false;
@@ -68,9 +70,12 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
       final keyword = privilegeSearch.text.toLowerCase();
 
       privilegeslist =
-          privilegeslist
-              .where((e) => e['title'].toLowerCase().contains(keyword))
-              .toList();
+          privilegeslist.where((e) {
+            final title = (e['title'] ?? '').toString().toLowerCase();
+            final titleEN = (e['titleEN'] ?? '').toString().toLowerCase();
+
+            return title.contains(keyword) || titleEN.contains(keyword);
+          }).toList();
     }
 
     return privilegeslist;
@@ -79,6 +84,8 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context);
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     return Scaffold(
       appBar: appBar(
         title: language.privilege,
@@ -136,7 +143,9 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
                             vertical: 4,
                           ),
                           child: Text(
-                            category[index]['title'],
+                            selectedCode == 'th'
+                                ? category[index]['title']
+                                : category[index]['titleEN'],
                             style: TextStyle(
                               fontSize: 14,
                               color: isSelected ? Colors.white : Colors.black,
@@ -209,7 +218,9 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  item['title'] ?? '',
+                                  selectedCode == 'th'
+                                      ? item['title'] ?? ''
+                                      : item['titleEN'] ?? '-',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(

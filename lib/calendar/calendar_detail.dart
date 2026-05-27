@@ -5,10 +5,12 @@ import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:provider/provider.dart';
 
 class CalendarDetail extends StatefulWidget {
   // final calendarlistItem calendarlist;
@@ -49,6 +51,8 @@ class _CalendarDetailState extends State<CalendarDetail> {
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context);
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: appBar(
@@ -128,7 +132,10 @@ class _CalendarDetailState extends State<CalendarDetail> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.calendarlist['title'],
+                      // widget.calendarlist['title'],
+                      selectedCode == 'th'
+                          ? widget.calendarlist['title']
+                          : widget.calendarlist['titleEN'],
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -188,7 +195,12 @@ class _CalendarDetailState extends State<CalendarDetail> {
                         : SizedBox(),
                     SizedBox(height: 16),
 
-                    Html(data: widget.calendarlist['description']),
+                    Html(
+                      data:
+                          selectedCode == 'th'
+                              ? widget.calendarlist['description']
+                              : widget.calendarlist['descriptionEN'],
+                    ),
                     SizedBox(height: 32),
 
                     widget.calendarlist['textButton'] != ''
@@ -213,7 +225,11 @@ class _CalendarDetailState extends State<CalendarDetail> {
                                   horizontal: 16,
                                 ),
                                 child: Text(
-                                  widget.calendarlist['textButton'],
+                                  // widget.calendarlist['textButton'],
+                                  selectedCode == 'th'
+                                      ? widget.calendarlist['textButton']
+                                      : widget.calendarlist['textButtonEN'],
+
                                   style: TextStyle(
                                     color: AppColors.primary,
                                     fontSize: 14,

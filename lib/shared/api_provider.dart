@@ -7,7 +7,10 @@ import 'package:image_picker/image_picker.dart';
 
 const server = 'https://ksp.we-builds.com/ksp-api/';
 
+// ignore: constant_identifier_names
 const dsd_server = 'https://gateway.we-builds.com/dsd-e-api/';
+
+// const dsd_server = 'https://untoasted-float-roving.ngrok-free.dev/';
 
 const serverUpload =
     'https://khubdeedlt.we-builds.com/khubdeedlt-document/upload';

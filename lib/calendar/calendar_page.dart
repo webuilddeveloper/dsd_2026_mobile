@@ -105,7 +105,7 @@ class _CalendarPageState extends State<CalendarPage> {
     setState(() {
       // ✅ เพิ่ม "ทั้งหมด" ไว้ตัวแรกเสมอ
       category = [
-        {'code': '', 'title': 'ทั้งหมด'},
+        {'code': '', 'title': 'ทั้งหมด', "titleEN": 'All'},
         ...(data as List).cast<Map<String, dynamic>>(),
       ];
       isLoading = false;
@@ -126,9 +126,12 @@ class _CalendarPageState extends State<CalendarPage> {
     if (calendarSearch.text.isNotEmpty) {
       final keyword = calendarSearch.text.toLowerCase();
       calendar =
-          calendar
-              .where((e) => (e['title'] ?? '').toLowerCase().contains(keyword))
-              .toList();
+          calendar.where((e) {
+            final title = (e['title'] ?? '').toString().toLowerCase();
+            final titleEN = (e['titleEN'] ?? '').toString().toLowerCase();
+
+            return title.contains(keyword) || titleEN.contains(keyword);
+          }).toList();
     }
 
     return calendar;
@@ -321,7 +324,11 @@ class _CalendarPageState extends State<CalendarPage> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          item['title'],
+                                          // item['title'],
+                                          selectedCode == 'th'
+                                              ? item['title']
+                                              : item['titleEN'],
+
                                           style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
@@ -364,7 +371,11 @@ class _CalendarPageState extends State<CalendarPage> {
                                       // ✅ description - ใช้ Text + strip HTML แทน Html widget
                                       Expanded(
                                         child: Html(
-                                          data: item['description'],
+                                          // data: item['description'],
+                                          data:
+                                              selectedCode == 'th'
+                                                  ? item['description']
+                                                  : item['descriptionEN'],
                                           style: {
                                             "body": Style(
                                               maxLines: 4,
@@ -437,7 +448,11 @@ class _CalendarPageState extends State<CalendarPage> {
                                     vertical: 4,
                                   ),
                                   child: Text(
-                                    category[index]['title'],
+                                    // category[index]['title'],
+                                    selectedCode == 'th'
+                                        ? category[index]['title']
+                                        : category[index]['titleEN'],
+
                                     style: TextStyle(
                                       fontSize: 14,
                                       color:
