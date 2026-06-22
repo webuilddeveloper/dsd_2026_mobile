@@ -1,5 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
@@ -291,7 +292,10 @@ class _TrainingAllState extends State<TrainingAll> {
                 const SizedBox(height: 12),
                 Center(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      final url = buildDsdUrl(item);
+                      await launchURL(url);
+                    },
                     child: Container(
                       width: double.infinity,
 

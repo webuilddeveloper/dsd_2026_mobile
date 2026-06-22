@@ -1,5 +1,7 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/blank_page/launch.dart';
+import 'package:dsd/blank_page/webview.dart';
 
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
@@ -143,7 +145,15 @@ class _TrainingServiceState extends State<TrainingService> {
 
                     /// Button
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        final url = buildDsdUrl(training[index]);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => WebViewPage(url: url),
+                          ),
+                        );
+                      },
                       // item['status2'] == true
                       //     ? null
                       //     : () {

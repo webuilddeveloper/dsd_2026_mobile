@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/carousel.dart';
 import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/blank_page/textfield.dart';
+import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/training/training_all.dart';
@@ -230,8 +234,6 @@ class HomePageState extends State<HomePage> {
               _buildServiceSection(),
               const SizedBox(height: 16),
               _buildRowText(language.recommended, () async {
-                final data = await _futureTraining(); // 🔥 รอก่อน
-
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => TrainingAll()),
@@ -492,7 +494,15 @@ class HomePageState extends State<HomePage> {
                           const SizedBox(height: 12),
                           Center(
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                final url = buildDsdUrl(training[index]);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => WebViewPage(url: url),
+                                  ),
+                                );
+                              },
                               child: Container(
                                 width: double.infinity,
 

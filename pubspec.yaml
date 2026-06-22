@@ -58,6 +58,7 @@ dependencies:
   geolocator: ^14.0.2
   gestures: ^1.0.0
   foundation: ^0.0.5
+  webview_flutter: ^4.13.1
 
 
 
