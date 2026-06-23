@@ -1,5 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
@@ -42,54 +43,55 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
               /// CARD / QR
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    showQR = !showQR;
-                  });
+                  // setState(() {
+                  //   showQR = !showQR;
+                  // });
                 },
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      showQR ? _buildQR() : _buildCard(),
-
+                      // showQR ?
+                      // _buildQR() :
+                      _buildCard(),
                       const SizedBox(height: 8),
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            width: showQR ? 24 : 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color:
-                                  showQR ? Colors.amber : Colors.grey.shade400,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            width: showQR ? 8 : 24,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color:
-                                  showQR ? Colors.grey.shade400 : Colors.amber,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     AnimatedContainer(
+                      //       duration: const Duration(milliseconds: 300),
+                      //       width: showQR ? 24 : 8,
+                      //       height: 8,
+                      //       decoration: BoxDecoration(
+                      //         color:
+                      //             showQR ? Colors.amber : Colors.grey.shade400,
+                      //         borderRadius: BorderRadius.circular(8),
+                      //       ),
+                      //     ),
+                      //     const SizedBox(width: 6),
+                      //     AnimatedContainer(
+                      //       duration: const Duration(milliseconds: 300),
+                      //       width: showQR ? 8 : 24,
+                      //       height: 8,
+                      //       decoration: BoxDecoration(
+                      //         color:
+                      //             showQR ? Colors.grey.shade400 : Colors.amber,
+                      //         borderRadius: BorderRadius.circular(8),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
 
               /// DETAIL
               _buildDetailCard(),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -102,22 +104,56 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
     return Container(
       key: const ValueKey("card"),
 
-      // height: 200,
-      width: double.infinity,
+      height: MediaQuery.of(context).size.height * 0.4,
+      width: MediaQuery.of(context).size.width * 0.6,
+      // width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Image.asset("assets/images/license.png", fit: BoxFit.cover),
+        child: GestureDetector(
+          onTap: () {
+            AssetImageViewer.open(
+              context,
+              imagePath: "assets/DSD/imgs/cer-test.jpg",
+            );
+          },
+          child: Image.asset(
+            "assets/DSD/imgs/cer-test.jpg",
+            fit: BoxFit.contain,
+          ),
+        ),
       ),
     );
   }
 
   /// QR
   Widget _buildQR() {
-    return Icon(Icons.qr_code_2, size: 200, color: AppColors.primary);
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.45,
+      width: MediaQuery.of(context).size.width * 0.8,
+      // width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Image.asset(
+            "assets/DSD/imgs/qr-test.png",
+            fit: BoxFit.contain,
+          ),
+        ),
+        // child: Icon(
+        //   Icons.qr_code_2,
+        //   color: AppColors.primary,
+        //   size: MediaQuery.of(context).size.height * 0.3,
+        // ),
+      ),
+    );
   }
 
   /// DETAIL CARD

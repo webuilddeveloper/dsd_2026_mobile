@@ -36,6 +36,7 @@ class _PageLicenseState extends State<PageLicense> {
   Future<List<Map<String, dynamic>>> _futureGetcert() async {
     final storage = FlutterSecureStorage();
     final idcard = await storage.read(key: 'idcard');
+    print("idcard: $idcard"); // Debugging line to check the value of idcard
     final data = await postDio(getCert, {"idcard": idcard});
     return (data as List).cast<Map<String, dynamic>>();
   }
@@ -55,6 +56,18 @@ class _PageLicenseState extends State<PageLicense> {
     }).toList();
   }
 
+  List<Map<String, dynamic>> mock_event = [
+    {
+      "personalId": "4700800001962",
+      "names": "นางสาวสุกัญญา แสวงสุข",
+      "course": "อาชีพด้านการแพทย์ และสุขภาพ สาขาพนักงานนวดไทย ระดับ 1",
+      "certificateNo": "06-000541/2569",
+      "certificateDate": "2026-04-20T02:02:38Z",
+      "site": "สถาบันพัฒนาทรัพยากรมนุษย์สำหรับอุตสาหกรรมบริการสุขภาพ",
+      "typeOfTrain": "3",
+      "cerExpire": "",
+    },
+  ];
   @override
   void dispose() {
     for (final c in _scrollControllers) {
@@ -111,7 +124,9 @@ class _PageLicenseState extends State<PageLicense> {
                   final allData = snapshot.data ?? [];
                   final training = _filtered(allData, "1");
                   final testing = _filtered(allData, "2");
-                  final evaluations = _filtered(allData, "3");
+                  // final evaluations = _filtered(allData, "3"); api ยังไม่มีข้อมูลประเภทนี้
+                  final evaluations =
+                      mock_event; // 👈 ใช้ mock data แทนชั่วคราว
 
                   return SingleChildScrollView(
                     child: Column(

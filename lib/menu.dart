@@ -72,6 +72,70 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   }
 
   @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     extendBody: true,
+  //     resizeToAvoidBottomInset: true,
+  //     backgroundColor: const Color(0xFF1E1E1E),
+  //     body: GestureDetector(
+  //       onTap: () => FocusScope.of(context).unfocus(),
+  //       child: WillPopScope(
+  //         onWillPop: confirmExit,
+  //         child: AnimatedSwitcher(
+  //           duration: const Duration(milliseconds: 300),
+  //           transitionBuilder: (child, animation) {
+  //             final isCurrentPage = child.key == ValueKey(_currentPage);
+  //             return SlideTransition(
+  //               position: Tween<Offset>(
+  //                 begin:
+  //                     isCurrentPage
+  //                         ? const Offset(1.0, 0.0) // หน้าใหม่เข้าจากขวา
+  //                         : Offset.zero,
+  //                 end:
+  //                     isCurrentPage
+  //                         ? Offset.zero
+  //                         : const Offset(-1.0, 0.0), // หน้าเก่าออกไปซ้าย
+  //               ).animate(
+  //                 CurvedAnimation(
+  //                   parent: animation,
+  //                   curve: Curves.easeOutCubic,
+  //                 ),
+  //               ),
+  //               child: child,
+  //             );
+  //           },
+  //           child: KeyedSubtree(
+  //             key: ValueKey(_currentPage),
+  //             child: pages[_currentPage],
+  //           ),
+  //         ),
+  //         // child: AnimatedSwitcher(
+  //         //   duration: const Duration(milliseconds: 200),
+  //         //   transitionBuilder: (child, animation) {
+  //         //     // Fade + slide up เบาๆ
+  //         //     final offsetAnim = Tween<Offset>(
+  //         //       begin: const Offset(0, 0.02), // slide up นิดเดียว
+  //         //       end: Offset.zero,
+  //         //     ).animate(
+  //         //       CurvedAnimation(parent: animation, curve: Curves.bounceIn),
+  //         //     );
+  //         //     // easeOutCubic
+  //         //     return FadeTransition(
+  //         //       opacity: animation,
+  //         //       child: SlideTransition(position: offsetAnim, child: child),
+  //         //     );
+  //         //   },
+  //         //   // key สำคัญมาก — บอก AnimatedSwitcher ว่า widget เปลี่ยนแล้ว
+  //         //   child: KeyedSubtree(
+  //         //     key: ValueKey<int>(_currentPage),
+  //         //     child: pages.isNotEmpty ? pages[_currentPage] : const SizedBox(),
+  //         //   ),
+  //         // ),
+  //       ),
+  //     ),
+  //     bottomNavigationBar: _buildBottomNavBar(),
+  //   );
+  // }
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
@@ -81,54 +145,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         onTap: () => FocusScope.of(context).unfocus(),
         child: WillPopScope(
           onWillPop: confirmExit,
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (child, animation) {
-              final isGoingRight = _currentPage > _previousPage;
-
-              // หน้าใหม่ slide เข้ามา
-              final slideIn = SlideTransition(
-                position: Tween<Offset>(
-                  begin:
-                      isGoingRight
-                          ? const Offset(1.0, 0.0)
-                          : const Offset(-1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-                ),
-                child: child,
-              );
-
-              return slideIn;
-            },
-            child: KeyedSubtree(
-              key: ValueKey(_currentPage),
-              child: pages[_currentPage],
-            ),
-          ),
-          // child: AnimatedSwitcher(
-          //   duration: const Duration(milliseconds: 200),
-          //   transitionBuilder: (child, animation) {
-          //     // Fade + slide up เบาๆ
-          //     final offsetAnim = Tween<Offset>(
-          //       begin: const Offset(0, 0.02), // slide up นิดเดียว
-          //       end: Offset.zero,
-          //     ).animate(
-          //       CurvedAnimation(parent: animation, curve: Curves.bounceIn),
-          //     );
-          //     // easeOutCubic
-          //     return FadeTransition(
-          //       opacity: animation,
-          //       child: SlideTransition(position: offsetAnim, child: child),
-          //     );
-          //   },
-          //   // key สำคัญมาก — บอก AnimatedSwitcher ว่า widget เปลี่ยนแล้ว
-          //   child: KeyedSubtree(
-          //     key: ValueKey<int>(_currentPage),
-          //     child: pages.isNotEmpty ? pages[_currentPage] : const SizedBox(),
-          //   ),
-          // ),
+          child: IndexedStack(index: _currentPage, children: pages),
         ),
       ),
       bottomNavigationBar: _buildBottomNavBar(),
