@@ -24,24 +24,24 @@ Future<void> handleAuthNavigation(BuildContext context, Widget page) async {
   final profileCode = await storage.read(key: 'profileCode');
   final idcard = await storage.read(key: 'idcard');
 
-  if (profileCode == null || profileCode.isEmpty) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => LoginPage()));
-  } else if (idcard == null || idcard.isEmpty) {
-    showCustomDialog(
-      context,
-      title: 'กรุณากรอกข้อมูล',
-      description:
-          "คุณยังไม่ได้กรอกเลขบัตรประชาชน กรุณาอัพเดตข้อมูลเพื่อใช้งานฟังก์ชันนี้",
-      onConfirm: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => EditUserInformationPage()),
-        );
-      },
-    );
-  } else {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
-  }
+  // if (profileCode == null || profileCode.isEmpty) {
+  //   Navigator.push(context, MaterialPageRoute(builder: (_) => LoginPage()));
+  // } else if (idcard == null || idcard.isEmpty) {
+  //   showCustomDialog(
+  //     context,
+  //     title: 'กรุณากรอกข้อมูล',
+  //     description:
+  //         "คุณยังไม่ได้กรอกเลขบัตรประชาชน กรุณาอัพเดตข้อมูลเพื่อใช้งานฟังก์ชันนี้",
+  //     onConfirm: () {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => EditUserInformationPage()),
+  //       );
+  //     },
+  //   );
+  // } else {
+  Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+  // }
 }
 
 List<ServiceItem> services(BuildContext context) {
@@ -49,18 +49,18 @@ List<ServiceItem> services(BuildContext context) {
 
   return [
     ServiceItem(
-      title: language.standtest,
-      image: 'assets/DSD/imgs/1.png',
-      onTap: (context, onTabChange) async {
-        await handleAuthNavigation(context, SkillPage());
-      },
-    ),
-
-    ServiceItem(
       title: language.trainingapp,
       image: 'assets/DSD/imgs/2.png',
       onTap: (context, onTabChange) async {
         await handleAuthNavigation(context, TrainingService());
+      },
+    ),
+
+    ServiceItem(
+      title: language.standtest,
+      image: 'assets/DSD/imgs/1.png',
+      onTap: (context, onTabChange) async {
+        await handleAuthNavigation(context, SkillPage());
       },
     ),
 

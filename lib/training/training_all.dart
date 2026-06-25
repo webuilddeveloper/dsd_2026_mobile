@@ -138,9 +138,7 @@ class _TrainingAllState extends State<TrainingAll> {
                         ),
                         child: Text(
                           category[index]['title'] ?? '',
-                          style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black,
-                          ),
+                          style: TextStyle(color: Colors.black),
                         ),
                       ),
                     ),

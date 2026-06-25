@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/carousel.dart';
@@ -19,6 +19,7 @@ import 'package:dsd/privilege/privilege_detail.dart';
 import 'package:dsd/service/service_allpage.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
+import 'package:dsd/verified/verified_thaid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
+// class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final storage = FlutterSecureStorage();
 
   String _imageUrl = '';
@@ -48,14 +50,20 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    loadData();
+
+    refreshPage();
   }
 
   /*===============================>> LOAD DATA <<=============================== */
 
+  Future<void> refreshPage() async {
+    await loadData();
+  }
+
   Future<void> loadData() async {
     final code = await storage.read(key: 'profileCode');
     final profileCategory = await storage.read(key: 'profileCategory');
+
     if (code == null || code.isEmpty) {
       if (!mounted) return;
       setState(() {
@@ -71,13 +79,15 @@ class HomePageState extends State<HomePage> {
     _code = code;
     category = profileCategory ?? '';
 
-    final value = await postapi('${register}read', {"code": _code});
+    final value = await postapi('${registerV2}read', {"code": _code});
 
     if (value != null &&
         value['objectData'] != null &&
         value['objectData'].isNotEmpty) {
       var user = value['objectData'][0];
 
+      print('${user['idcard'] ?? ''}');
+      print('${isCert = user['isCert']}');
       if (!mounted) return;
       setState(() {
         _imageUrl = user['imageUrl'] ?? '';
@@ -90,10 +100,6 @@ class HomePageState extends State<HomePage> {
   }
 
   /*============================>> REFRESH <<============================= */
-
-  Future<void> refreshPage() async {
-    await loadData();
-  }
 
   /*============================>> API LIST <<============================ */
 
@@ -136,13 +142,13 @@ class HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            color: const Color(0xFFBB439C),
+            color: const Color(0xFF6C4099),
             border: Border.all(width: 1, color: const Color(0xFFDBDBDB)),
           ),
           child: Image.asset(
             "assets/DSD/icon/icon_portfolio.png",
-            width: 30,
-            height: 30,
+            width: 40,
+            height: 40,
           ),
         ),
       );
@@ -163,22 +169,23 @@ class HomePageState extends State<HomePage> {
     final language = AppStrings.of(context);
 
     final bool isLoggedIn = _code.isNotEmpty;
-    final bool hasIdCard = idcard.isNotEmpty;
+    final bool hasIdCard = idcard.isNotEmpty; // ต้องแก้จาก is cert
     final bool isCertified = isCert;
 
     final String name =
         isLoggedIn
-            ? '${txtFirstName.text} ${txtLastName.text}'
+            ? txtFirstName
+                .text //${txtLastName.text}
             : language.logged;
 
     final String memberType =
         !isLoggedIn
             ? language.tologin
-            : !hasIdCard
+            : !isCertified
             ? language.verified
-            : isCertified
-            ? language.certified
-            : language.general;
+            : language.certified;
+    // ? language.certified
+    // : language.general;
 
     final String imageUrl = isLoggedIn ? _imageUrl : '';
     return Scaffold(
@@ -193,7 +200,12 @@ class HomePageState extends State<HomePage> {
               MaterialPageRoute(builder: (context) => LoginPage()),
             );
           } else {
-            widget.onTabChange(3);
+            // widget.onTabChange(3);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => verifiedThaiID()),
+            );
+            print('ยืนยันตัวตน]');
           }
         },
         rightWidget: _buildRightWidget(
@@ -214,12 +226,11 @@ class HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildSearch(
-                controller: searchController,
-                hintText: "${language.search}...",
-              ),
-              const SizedBox(height: 16),
-
+              // buildSearch(
+              //   controller: searchController,
+              //   hintText: "${language.search}...",
+              // ),
+              // const SizedBox(height: 16),
               _buildRowText(language.service, () {
                 Navigator.push(
                   context,
@@ -349,7 +360,7 @@ class HomePageState extends State<HomePage> {
               right: 0,
               child: Container(
                 height: 35,
-                color: AppColors.primarysecond,
+                color: AppColors.primary,
                 alignment: Alignment.center,
                 child: Text(
                   title,
@@ -384,7 +395,6 @@ class HomePageState extends State<HomePage> {
             itemCount: snapshot.data?.length ?? 0,
             itemBuilder: (context, index) {
               final training = snapshot.data!;
-
               return Container(
                 height: MediaQuery.of(context).size.height * 0.28,
                 width: MediaQuery.of(context).size.width * 0.45,
@@ -421,15 +431,28 @@ class HomePageState extends State<HomePage> {
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+
                         children: [
-                          Text(
-                            training[index]['course'] ?? '',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
+                          // Text(
+                          //   training[index]['course'] ?? '',
+                          //   style: const TextStyle(
+                          //     fontSize: 12,
+                          //     fontWeight: FontWeight.w400,
+                          //   ),
+                          //   maxLines: 2,
+                          //   overflow: TextOverflow.ellipsis,
+                          // ),
+                          SizedBox(
+                            height: 34,
+                            child: Text(
+                              training[index]['course'] ?? '',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 6),
                           Row(
@@ -492,37 +515,34 @@ class HomePageState extends State<HomePage> {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          Center(
-                            child: InkWell(
-                              onTap: () {
-                                final url = buildDsdUrl(training[index]);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => WebViewPage(url: url),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: double.infinity,
-
-                                decoration: BoxDecoration(
-                                  color: Color(0xFF6FC546),
-                                  borderRadius: BorderRadius.circular(16),
+                          InkWell(
+                            onTap: () {
+                              final url = buildDsdUrl(training[index]);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => WebViewPage(url: url),
                                 ),
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
-                                    child: const Text(
-                                      "สมัคร",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Kanit',
-                                      ),
+                              );
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF6FC546),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  child: const Text(
+                                    "สมัคร",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Kanit',
                                     ),
                                   ),
                                 ),

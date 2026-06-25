@@ -1,8 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-import 'dart:io';
+import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/forgot.dart';
@@ -11,12 +12,16 @@ import 'package:dsd/menu.dart';
 import 'package:dsd/register.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
-import 'package:dsd/shared/apple_login.dart';
-import 'package:dsd/shared/line_login.dart';
+// import 'package:dsd/shared/apple_login.dart';
+// import 'package:dsd/shared/line_login.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -36,11 +41,22 @@ class _LoginPageState extends State<LoginPage>
   late final Animation<double> _fadeAnim;
   late final Animation<Offset> _slideAnim;
   late bool isInterests;
+  bool _loadingSubmit = false;
+  String _thiaDCode = '';
 
   @override
   void initState() {
-    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
 
+      setState(() {
+        _thiaDCode = prefs.getString('thaiDCode') ?? '';
+        if (_thiaDCode.isNotEmpty) {
+          _loadingSubmit = true;
+          _getToken();
+        }
+      });
+    });
     _animCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -51,6 +67,7 @@ class _LoginPageState extends State<LoginPage>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut));
     _animCtrl.forward();
+    super.initState();
   }
 
   @override
@@ -255,6 +272,49 @@ class _LoginPageState extends State<LoginPage>
                           ],
                         ),
                       ),
+                      const SizedBox(height: 28),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              _callThaiID();
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              height: 50,
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Color(0xFF0C0F4F),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    'assets/DSD/icon/iocn_thaid.png',
+                                    width: 40,
+                                    height: 40,
+                                  ),
+                                  SizedBox(width: 12),
+                                  Text(
+                                    'เข้าสู่ระบบด้วย ThaID',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Kanit',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
 
                       // const SizedBox(height: 28),
                       // // ── Divider ───────────────────────────────────────
@@ -351,7 +411,6 @@ class _LoginPageState extends State<LoginPage>
                       //   ],
                       // ),
                       const SizedBox(height: 28),
-
                       // ── Sign up row ───────────────────────────────────
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -422,51 +481,6 @@ class _LoginPageState extends State<LoginPage>
         ),
       ),
     );
-  }
-
-  _handleSocail({
-    required Map<String, dynamic> model,
-    required String category,
-  }) async {
-    final body = {
-      'username': model['username'] ?? '',
-      "appleID": model['userId'] ?? '',
-      'lineID': model['lineID'] ?? '',
-      'email': model['email'] ?? '',
-      'imageUrl': model['imageUrl'] ?? '',
-      'firstName': model['firstName'] ?? '',
-      'lastName': model['lastName'] ?? '',
-    };
-
-    final result = await postapi('$registerV2$category/login', body);
-
-    if (result['status'] == 'S') {
-      final data = result['objectData'] ?? {};
-      await storage.write(key: 'profileCode', value: data['code'] ?? '');
-      await storage.write(key: 'profileCategory', value: category);
-
-      // await storage.write(key: 'token', value: result['jsonData']);
-      // await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
-      // await storage.write(key: 'username', value: data['username'] ?? '');
-      // await storage.write(
-      //   key: 'profileImageUrl',
-      //   value: data['imageUrl'] ?? '',
-      // );
-      // await storage.write(key: 'idcard', value: data['idcard'] ?? '');
-      // await storage.write(
-      //   key: 'profileFirstName',
-      //   value: data['firstName'] ?? '',
-      // );
-      // await storage.write(
-      //   key: 'profileLastName',
-      //   value: data['lastName'] ?? '',
-      // );
-
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => Menu()),
-        (route) => false,
-      );
-    }
   }
 
   Future<void> _handleLogin() async {
@@ -587,6 +601,227 @@ class _LoginPageState extends State<LoginPage>
         isInterests = data[0]['isInterest'];
       }
     }
+  }
+
+  String getRandomString({int length = 10}) {
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    Random _rnd = Random();
+    return String.fromCharCodes(
+      Iterable.generate(
+        length,
+        (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length)),
+      ),
+    );
+  }
+
+  _callThaiID() async {
+    try {
+      String responseType = 'code';
+      String clientId = 'b1lzRU9NcmxEWjFTdXRTMEtaZDhXaHFSTk0xc1hyc00';
+      String client_secret =
+          'UVpJMVZhUWN4dXBDNk9wY0xJNm9tcjJKZHFTZUJCZXVGOUlISDRKRw';
+      String redirectUri = 'https://gateway.we-builds.com/dsd/thaid';
+      String base = 'https://imauth.bora.dopa.go.th/api/v2/oauth2/auth/';
+      // Random string for state, '1' for login.
+      String state = '1${getRandomString()}';
+      // String state = 'mobile';
+      String scope = 'pid given_name family_name openid';
+      String parameter =
+          '?response_type=$responseType&client_id=$clientId&redirect_uri=$redirectUri&scope=$scope&state=$state';
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('thaiDState', state);
+      await prefs.setString(
+        'thaiDAction',
+        'login',
+      ); // Set state to 'login' instead of 'create'
+      await launchUrl(
+        Uri.parse('$base$parameter'),
+
+        mode: LaunchMode.externalApplication,
+      );
+      print('==================');
+      print('$base$parameter');
+      // _callLogin();
+    } catch (ex) {
+      Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด');
+    }
+  }
+
+  _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      await prefs.remove('thaiDCode');
+      await prefs.remove('thaiDState');
+
+      String clientId = 'b1lzRU9NcmxEWjFTdXRTMEtaZDhXaHFSTk0xc1hyc00';
+      String clientSecret =
+          'UVpJMVZhUWN4dXBDNk9wY0xJNm9tcjJKZHFTZUJCZXVGOUlISDRKRw';
+      String credentials = "$clientId:$clientSecret";
+      String encoded = base64Url.encode(utf8.encode(credentials));
+
+      Dio dio = Dio();
+
+      var formData = FormData.fromMap({
+        "grant_type": "authorization_code",
+        "redirect_uri": 'https://gateway.we-builds.com/dsd/thaid',
+        "code": _thiaDCode,
+      });
+
+      var res = await dio.post(
+        'https://imauth.bora.dopa.go.th/api/v2/oauth2/token/',
+        data: formData,
+        options: Options(
+          validateStatus: (_) => true,
+          contentType: 'application/x-www-form-urlencoded',
+          responseType: ResponseType.json,
+          headers: {
+            'Content-type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic $encoded',
+          },
+        ),
+      );
+
+      // Decode token to get user info
+      Map<String, dynamic> idData = JwtDecoder.decode(res.data['id_token']);
+
+      print('################# ID Data #################');
+      print(idData);
+
+      // Prepare data for login instead of registration
+      var _userData = {};
+
+      _userData['thaiID'] = {
+        'pid': idData['pid'],
+        'name': idData['given_name'],
+        'lastname': idData['family_name'],
+      };
+
+      _userData['firstName'] = idData['given_name'];
+      _userData['lastName'] = idData['family_name'];
+      // _userData['sex'] = idData['gender'];
+      _userData['idcard'] = idData['pid'];
+
+      print('##################################');
+      print(_userData);
+      print(_userData.runtimeType);
+
+      // Use _login instead of _register for login process
+      _handleSocail(category: "thaid", model: _userData['thaiID']);
+      // _login(_userData);
+    } catch (e) {
+      await prefs.remove('thaiDCode');
+      await prefs.remove('thaiDState');
+      Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด');
+    }
+  }
+
+  _handleSocail({
+    required Map<String, dynamic> model,
+    required String category,
+  }) async {
+    final body = {
+      // 'username': '',
+      // "appleID": '',
+      // 'lineID': '',
+      // 'email': '',
+      // 'imageUrl': '',
+      // 'idcard':
+      "idcard": "4700800001962", //model['idcard'],
+      "firstName": model['name'] ?? '',
+      "lastName": model['lastname'] ?? '',
+    };
+
+    print('======================>> _handleSocail');
+    // print(body);
+    // print("$registerV2$category/login");
+
+    final result = await postapi('$registerV2$category/login', body);
+
+    if (result['status'] == 'S') {
+      final data = result['objectData'] ?? {};
+
+      await storage.write(key: 'token', value: result['jsonData']);
+      await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
+      await storage.write(key: 'profileCode', value: data['code'] ?? '');
+      await storage.write(key: 'username', value: data['username'] ?? '');
+      await storage.write(
+        key: 'profileImageUrl',
+        value: data['imageUrl'] ?? '',
+      );
+      await storage.write(key: 'idcard', value: data['idcard'] ?? '');
+      await storage.write(key: 'profileCategory', value: 'guest');
+      await storage.write(
+        key: 'profileFirstName',
+        value: data['firstName'] ?? '',
+      );
+      await storage.write(
+        key: 'profileLastName',
+        value: data['lastName'] ?? '',
+      );
+
+      await readRegister();
+      // if (isInterests == false) {
+      //   Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(builder: (_) => Interests(isEdit: false)),
+      //     (route) => false,
+      //   );
+      // } else {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => Menu()),
+        (route) => false,
+      );
+      // }
+    }
+
+    // if (result['status'] == 'S') {
+    //   final data = result['objectData'] ?? {};
+    //   print('data : $data');
+    //   // await storage.write(key: 'profileCode', value: data['code'] ?? '');
+    //   // await storage.write(key: 'profileCategory', value: category);
+    //   await storage.write(key: 'token', value: result['jsonData']);
+    //   await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
+    //   await storage.write(key: 'profileCode', value: data['code'] ?? '');
+    //   await storage.write(key: 'username', value: data['username'] ?? '');
+    //   await storage.write(
+    //     key: 'profileImageUrl',
+    //     value: data['imageUrl'] ?? '',
+    //   );
+    //   await storage.write(key: 'idcard', value: data['idcard'] ?? '');
+    //   await storage.write(key: 'profileCategory', value: 'guest');
+    //   await storage.write(
+    //     key: 'profileFirstName',
+    //     value: data['firstName'] ?? '',
+    //   );
+    //   await storage.write(
+    //     key: 'profileLastName',
+    //     value: data['lastName'] ?? '',
+    //   );
+
+    //   await readRegister();
+
+    //   // await storage.write(key: 'token', value: result['jsonData']);
+    //   // await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
+    //   // await storage.write(key: 'username', value: data['username'] ?? '');
+    //   // await storage.write(
+    //   //   key: 'profileImageUrl',
+    //   //   value: data['imageUrl'] ?? '',
+    //   // );
+    //   // await storage.write(key: 'idcard', value: data['idcard'] ?? '');
+    //   // await storage.write(
+    //   //   key: 'profileFirstName',
+    //   //   value: data['firstName'] ?? '',
+    //   // );
+    //   // await storage.write(
+    //   //   key: 'profileLastName',
+    //   //   value: data['lastName'] ?? '',
+    //   // );
+
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //     MaterialPageRoute(builder: (_) => Menu()),
+    //     (route) => false,
+    //   );
+    // }
   }
 
   Widget _buildLabel(String text) {

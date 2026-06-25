@@ -80,7 +80,7 @@ Widget buildTextField({
     style: TextStyle(
       fontFamily: 'Kanit',
       fontSize: 14,
-      color: isSelect == true ? AppColors.textgrey : AppColors.primary,
+      color: isSelect == true ? AppColors.textgrey : Colors.black,
     ),
     keyboardType: keybord,
 

@@ -33,7 +33,7 @@ class _NewAllState extends State<NewAll> {
 
   /*===============================>> API <<=============================== */
   Future<void> _newsApi() async {
-    final data = await postDio('${newsApi}read', {'limit': 10});
+    final data = await postDio('${newsApi}read', {'limit': 999});
     setState(() {
       allNews = (data as List).cast<Map<String, dynamic>>();
       isLoading = false;
@@ -41,7 +41,7 @@ class _NewAllState extends State<NewAll> {
   }
 
   Future<void> _newsCategoryApi() async {
-    final data = await postDio('${newsCategoryApi}read', {'limit': 10});
+    final data = await postDio('${newsCategoryApi}read', {'limit': 999});
 
     setState(() {
       // ✅ เพิ่ม "ทั้งหมด" ไว้ตัวแรกเสมอ
@@ -147,10 +147,7 @@ class _NewAllState extends State<NewAll> {
 
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color:
-                                          isSelected
-                                              ? Colors.white
-                                              : Colors.black,
+                                      color: Colors.black,
                                     ),
                                   ),
                                 ),

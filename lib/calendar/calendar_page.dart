@@ -414,7 +414,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     buildSearch(
                       hintText: "Search",
                       controller: calendarSearch,
-                      rightBtn: true,
+                      rightBtn: false,
                       onFilterTap: () {},
                       onChanged: (value) => setState(() {}),
                     ),
@@ -457,10 +457,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color:
-                                          isSelected
-                                              ? Colors.white
-                                              : Colors.black,
+                                      color: Colors.black,
                                     ),
                                   ),
                                 ),

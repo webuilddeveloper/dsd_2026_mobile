@@ -1,5 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/dialog_fail.dart';
+import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/menu.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
@@ -19,6 +20,7 @@ class Interests extends StatefulWidget {
 
 class _InterestsState extends State<Interests> {
   final storage = FlutterSecureStorage();
+  final TextEditingController interestController = TextEditingController();
 
   List<dynamic> categories = [];
   List<String> selectedItems = [];
@@ -204,7 +206,7 @@ class _InterestsState extends State<Interests> {
                                     border: Border.all(
                                       color:
                                           isSelected
-                                              ? AppColors.primarysecond
+                                              ? AppColors.primary
                                               : Colors.grey.withOpacity(0.25),
                                       width: isSelected ? 2.5 : 1.5,
                                     ),
@@ -224,7 +226,7 @@ class _InterestsState extends State<Interests> {
                                       padding: const EdgeInsets.all(2),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: AppColors.primarysecond,
+                                        color: AppColors.primary,
                                       ),
                                       child: const Icon(
                                         Icons.check,
@@ -256,7 +258,7 @@ class _InterestsState extends State<Interests> {
           onTap: isLoading ? null : updateInterests,
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.primarysecond,
+              color: AppColors.primary,
               borderRadius: BorderRadius.circular(25),
             ),
             child: Center(
@@ -275,6 +277,18 @@ class _InterestsState extends State<Interests> {
           ),
         ),
       ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed:
+            () => showAddInterestDialog(
+              context,
+              controller: interestController,
+              onConfirm: () {},
+            ),
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

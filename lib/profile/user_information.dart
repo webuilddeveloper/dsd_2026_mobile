@@ -152,7 +152,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                             child: Text(
                               '${txtFirstName.text} ${txtLastName.text}',
                               style: TextStyle(
-                                color: AppColors.primary,
+                                color: Colors.black,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -370,7 +370,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.primary, width: 1),
+                    border: Border.all(color: Color(0xFF6C4099), width: 1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
@@ -383,7 +383,7 @@ class _UserInformationPageState extends State<UserInformationPage> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
+                        color: Color(0xFF6C4099),
                       ),
                     ),
                   ),

@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 class LicenseDetailPage extends StatefulWidget {
   final Map<String, dynamic> license;
   final String title;
+  final bool showLicenseCard; // 👈 เพิ่ม
 
   const LicenseDetailPage({
     super.key,
     required this.license,
     required this.title,
+    required this.showLicenseCard,
   });
 
   @override
@@ -54,7 +56,9 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
                     children: [
                       // showQR ?
                       // _buildQR() :
-                      _buildCard(),
+                      widget.showLicenseCard == true
+                          ? _buildCard()
+                          : SizedBox(),
                       const SizedBox(height: 8),
 
                       // Row(
@@ -130,6 +134,7 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
   }
 
   /// QR
+  // ignore: unused_element
   Widget _buildQR() {
     return Container(
       height: MediaQuery.of(context).size.height * 0.45,

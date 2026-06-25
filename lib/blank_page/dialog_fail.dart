@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/shared/app_strings.dart' show AppStrings;
 import 'package:dsd/splash.dart';
 import 'package:dsd/style_theme.dart';
@@ -196,6 +197,113 @@ void showDialogFail(
               },
             ),
           ],
+        ),
+      );
+    },
+  );
+}
+
+void showAddInterestDialog(
+  BuildContext context, {
+  required TextEditingController controller,
+  required VoidCallback onConfirm,
+}) {
+  final language = AppStrings.of(context);
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    barrierColor: Colors.black.withOpacity(0.4), // เปลี่ยนจากสีทอง
+    builder: (context) {
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: Dialog(
+          backgroundColor: Colors.white, // เพิ่มตรงนี้
+          surfaceTintColor: Colors.white, // กัน Material3 tint
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'เพิ่มความสนใจ',
+                  style: TextStyle(
+                    fontFamily: 'Sarabun',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'ระบุความสนใจที่ต้องการเพิ่ม',
+                  style: TextStyle(
+                    fontFamily: 'Sarabun',
+                    fontSize: 13,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                buildTextField(
+                  controller: controller,
+                  hint: 'กรอกความสนใจ',
+                  icon: Icons.favorite_border,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          foregroundColor: Colors.grey.shade600,
+                          side: BorderSide(color: Colors.grey.shade300),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          language.cancel,
+                          style: const TextStyle(fontFamily: 'Sarabun'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 0,
+                        ),
+                        onPressed: () {
+                          // final interest = controller.text.trim();
+                          // if (interest.isEmpty) return;
+                          Navigator.pop(context);
+                          // onConfirm();
+                        },
+                        child: Text(
+                          language.confirm,
+                          style: const TextStyle(
+                            fontFamily: 'Sarabun',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       );
     },

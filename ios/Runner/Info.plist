@@ -40,9 +40,10 @@
 	<string>LaunchScreen</string>
 
 	<key>UIMainStoryboardFile</key>
-	<string>Main</string> 
+	<string>Main</string>
+
 	<key>NSLocationWhenInUseUsageDescription</key>
-<string>แอปพลิเคชันต้องการเข้าถึงตำแหน่งของท่านเพื่อแสดงข้อมูลแผนที่และบริการที่เกี่ยวข้อง</string>
+	<string>แอปพลิเคชันต้องการเข้าถึงตำแหน่งของท่านเพื่อแสดงข้อมูลแผนที่และบริการที่เกี่ยวข้อง</string>
 
 	<!-- Network (ถ้าไม่จำเป็น แนะนำให้ปิดใน production) -->
 	<key>NSAppTransportSecurity</key>
@@ -74,24 +75,42 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<!-- Line --> 
-<key>LSApplicationQueriesSchemes</key>
+
+	<!-- LINE -->
+	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>line</string>
 		<string>lineauth2</string>
 		<string>line3rdp</string>
 	</array>
 
+	<!-- URL Schemes -->
 	<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-				</array>
-			</dict>
-		</array>
-		<!-- Line --> 
+	<array>
+
+		<!-- LINE Login -->
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			</array>
+		</dict>
+
+		<!-- Deep Link -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+
+			<key>CFBundleURLName</key>
+			<string>thaid</string>
+
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>dsdecert</string>
+			</array>
+		</dict>
+
+	</array>
 
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>

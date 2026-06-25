@@ -150,8 +150,7 @@ class _KnowledgePageState extends State<KnowledgePage>
                                 isSelected
                                     ? FontWeight.bold
                                     : FontWeight.normal,
-                            color:
-                                isSelected ? Colors.white : AppColors.primary,
+                            color: Colors.black,
                           ),
                         ),
                       ),

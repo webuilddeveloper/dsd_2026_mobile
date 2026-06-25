@@ -6,6 +6,7 @@ import 'package:dsd/notification/notification.dart';
 import 'package:dsd/calendar/calendar_page.dart';
 import 'package:dsd/profile/user_information.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -230,7 +231,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                     width: 30,
                     color:
                         _currentPage == index
-                            ? Theme.of(context).primaryColor
+                            ? AppColors.primarysecond
                             : const Color(0xff877573),
                   ),
                   const SizedBox(height: 5),
@@ -241,7 +242,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                       fontWeight: FontWeight.w400,
                       color:
                           _currentPage == index
-                              ? Theme.of(context).primaryColor
+                              ? AppColors.primary
                               : Colors.grey[600],
                     ),
                   ),

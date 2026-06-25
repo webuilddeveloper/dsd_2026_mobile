@@ -106,19 +106,19 @@ class _RegsiterPageState extends State<RegsiterPage>
     return null;
   }
 
+  String? _validateDate(String? v) {
+    final language = AppStrings.of(context);
+    return (v == null || v.trim().isEmpty)
+        ? language.please + language.dateOfBirth
+        : null;
+  }
+
   String? _validateEmail(String? v) {
     final language = AppStrings.of(context);
     if (v == null || v.isEmpty) return language.please + language.email;
     final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(v)) return language.invalidemail;
     return null;
-  }
-
-  String? _validateDate(String? v) {
-    final language = AppStrings.of(context);
-    return (v == null || v.trim().isEmpty)
-        ? language.please + language.dateOfBirth
-        : null;
   }
 
   @override
@@ -158,13 +158,15 @@ class _RegsiterPageState extends State<RegsiterPage>
                       _sectionTitle(language.userInformation),
                       const SizedBox(height: 24),
 
-                      _buildLabel(language.userInformation),
+                      _buildLabel(language.email),
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _usernameController,
-                        hint: language.please + language.user,
+                        // hint: language.please + language.email,
+                        hint: "example@gmail.com",
                         icon: Icons.person_outline_rounded,
-                        validator: _required,
+                        // validator: _required,
+                        validator: _validateEmail,
                       ),
                       const SizedBox(height: 16),
 
@@ -172,7 +174,8 @@ class _RegsiterPageState extends State<RegsiterPage>
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _passwordController,
-                        hint: language.please + language.password,
+                        // hint: language.please + language.password,
+                        hint: "Example1234",
                         icon: Icons.lock_outline_rounded,
                         obscure: _obscurePassword,
                         validator: _validatePassword,
@@ -189,7 +192,8 @@ class _RegsiterPageState extends State<RegsiterPage>
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _confirmPassController,
-                        hint: language.please + language.confirmpassword,
+                        // hint: language.please + language.confirmpassword,
+                        hint: "กรอกรหัสผ่านอีกครั้ง",
                         icon: Icons.lock_outline_rounded,
                         obscure: _obscureConfirmPassword,
                         validator: _validateConfirmPass,
@@ -203,94 +207,105 @@ class _RegsiterPageState extends State<RegsiterPage>
                         ),
                       ),
 
+                      const SizedBox(height: 16),
+                      _buildLabel(language.name),
+                      const SizedBox(height: 6),
+                      buildTextField(
+                        controller: _firstNameController,
+                        hint: " กรุณากรอกชื่อ",
+                        // hint: language.please + language.name,
+                        icon: Icons.person_outline_rounded,
+                        validator: _required,
+                      ),
+
                       const SizedBox(height: 24),
                       Divider(color: AppColors.backgroundMain, height: 10),
                       const SizedBox(height: 24),
 
                       // ── Section: ข้อมูลส่วนตัว ─────────────────────────
-                      _sectionTitle(language.personal),
-                      const SizedBox(height: 24),
+                      // _sectionTitle(language.personal),
+                      // const SizedBox(height: 24),
 
-                      _buildLabel(language.idcardNumber),
-                      const SizedBox(height: 6),
-                      buildTextField(
-                        controller: _idCardController,
-                        hint: language.please + language.idcardNumber,
-                        icon: Icons.credit_card_outlined,
-                        keybord: TextInputType.number,
-                        validator: _validateIdCard,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(13),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
+                      // _buildLabel(language.idcardNumber),
+                      // const SizedBox(height: 6),
+                      // buildTextField(
+                      //   controller: _idCardController,
+                      //   hint: language.please + language.idcardNumber,
+                      //   icon: Icons.credit_card_outlined,
+                      //   keybord: TextInputType.number,
+                      //   validator: _validateIdCard,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     LengthLimitingTextInputFormatter(13),
+                      //   ],
+                      // ),
+                      // const SizedBox(height: 16),
 
-                      _buildLabel(language.titlePrefix),
-                      const SizedBox(height: 6),
-                      buildTextField(
-                        controller: _prefixController,
-                        hint: language.prefix,
-                        icon: Icons.person_outline_rounded,
-                        validator: _required,
-                      ),
-                      const SizedBox(height: 16),
+                      // _buildLabel(language.titlePrefix),
+                      // const SizedBox(height: 6),
+                      // buildTextField(
+                      //   controller: _prefixController,
+                      //   hint: language.prefix,
+                      //   icon: Icons.person_outline_rounded,
+                      //   validator: _required,
+                      // ),
+                      // const SizedBox(height: 16),
 
-                      _buildLabel(language.name),
-                      const SizedBox(height: 6),
-                      buildTextField(
-                        controller: _firstNameController,
-                        hint: language.please + language.name,
-                        icon: Icons.person_outline_rounded,
-                        validator: _required,
-                      ),
-                      const SizedBox(height: 16),
+                      // _buildLabel(language.name),
+                      // const SizedBox(height: 6),
+                      // buildTextField(
+                      //   controller: _firstNameController,
+                      //   hint: language.please + language.name,
+                      //   icon: Icons.person_outline_rounded,
+                      //   validator: _required,
+                      // ),
+                      // const SizedBox(height: 16),
 
-                      _buildLabel(language.lastname),
-                      const SizedBox(height: 6),
-                      buildTextField(
-                        controller: _lastNameController,
-                        hint: language.please + language.lastname,
-                        icon: Icons.person_outline_rounded,
-                        validator: _required,
-                      ),
-                      const SizedBox(height: 16),
+                      // _buildLabel(language.lastname),
+                      // const SizedBox(height: 6),
+                      // buildTextField(
+                      //   controller: _lastNameController,
+                      //   hint: language.please + language.lastname,
+                      //   icon: Icons.person_outline_rounded,
+                      //   validator: _required,
+                      // ),
+                      // const SizedBox(height: 16),
 
-                      _buildLabel(language.dateOfBirth),
-                      const SizedBox(height: 6),
-                      buildDateField(
-                        context: context,
-                        controller: _birthDateController,
-                        hint: language.please + language.dateOfBirth,
-                        validator: _validateDate,
-                      ),
-                      const SizedBox(height: 16),
+                      // _buildLabel(language.dateOfBirth),
+                      // const SizedBox(height: 6),
+                      // buildDateField(
+                      //   context: context,
+                      //   controller: _birthDateController,
+                      //   hint: language.please + language.dateOfBirth,
+                      //   validator: _validateDate,
+                      // ),
+                      // const SizedBox(height: 16),
 
-                      _buildLabel(language.phoneNumber),
-                      const SizedBox(height: 6),
-                      buildTextField(
-                        controller: _phoneController,
-                        hint: language.please + language.phoneNumber,
-                        icon: Icons.phone_outlined,
-                        keybord: TextInputType.phone,
-                        validator: _validatePhone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
+                      // _buildLabel(language.phoneNumber),
+                      // const SizedBox(height: 6),
+                      // buildTextField(
+                      //   controller: _phoneController,
+                      //   hint: language.please + language.phoneNumber,
+                      //   icon: Icons.phone_outlined,
+                      //   keybord: TextInputType.phone,
+                      //   validator: _validatePhone,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     LengthLimitingTextInputFormatter(10),
+                      //   ],
+                      // ),
+                      // const SizedBox(height: 16),
 
-                      _buildLabel(language.email),
-                      const SizedBox(height: 6),
-                      buildTextField(
-                        controller: _emailController,
-                        hint: language.please + language.email,
-                        icon: Icons.email_outlined,
-                        keybord: TextInputType.emailAddress,
-                        validator: _validateEmail,
-                      ),
-                      const SizedBox(height: 24),
+                      // _buildLabel(language.email),
+                      // const SizedBox(height: 6),
+                      // buildTextField(
+                      //   controller: _emailController,
+                      //   hint: language.please + language.email,
+                      //   icon: Icons.email_outlined,
+                      //   keybord: TextInputType.emailAddress,
+                      //   validator: _validateEmail,
+                      // ),
+                      // const SizedBox(height: 24),
 
                       // ── Submit ─────────────────────────────────────────
                       SizedBox(
@@ -331,25 +346,32 @@ class _RegsiterPageState extends State<RegsiterPage>
     if (!_formKey.currentState!.validate()) return;
     try {
       final result = await postapi('${register}create', {
-        'idcard': _idCardController.text,
+        // 'idcard': _idCardController.text ,
+        'idcard': '',
         'username': _usernameController.text,
         'password': _passwordController.text,
         'facebookID': "",
         'appleID': "",
         'googleID': "",
         'lineID': "",
-        'email': _emailController.text,
+        // 'email': _emailController.text,
+        'email': _usernameController.text,
         'imageUrl': "",
         'category': "guest",
-        'prefixName': _prefixController.text,
+        // 'prefixName': _prefixController.text,
+        'prefixName': "",
         'firstName': _firstNameController.text,
-        'lastName': _lastNameController.text,
-        'phone': _phoneController.text,
-        'birthDay': _birthDateController.text,
+        // 'lastName': _lastNameController.text,
+        'lastName': "",
+        // 'phone': _phoneController.text,
+        'phone': "",
+        // 'birthDay': _birthDateController.text,
+        'birthDay': "",
         'status': "N",
         'platform': Platform.operatingSystem.toString(),
         'countUnit': "[]",
       });
+      print('result : ${result}');
 
       if (!mounted) return;
 

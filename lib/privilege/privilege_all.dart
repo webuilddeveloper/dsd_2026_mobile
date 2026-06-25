@@ -146,10 +146,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
                             selectedCode == 'th'
                                 ? category[index]['title']
                                 : category[index]['titleEN'],
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: isSelected ? Colors.white : Colors.black,
-                            ),
+                            style: TextStyle(fontSize: 14, color: Colors.black),
                           ),
                         ),
                       ),

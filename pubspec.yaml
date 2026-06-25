@@ -59,6 +59,8 @@ dependencies:
   gestures: ^1.0.0
   foundation: ^0.0.5
   webview_flutter: ^4.13.1
+  jwt_decoder: ^2.0.1
+  app_links: ^6.4.1
 
 
 

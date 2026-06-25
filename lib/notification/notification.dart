@@ -42,7 +42,7 @@ class _NotificationListState extends State<NotificationList>
       "type": "2",
       "name": "ข่าวสาร",
       "icon": "assets/DSD/icon/icon news.png",
-      "color": "0xFFF1B435",
+      "color": "0xffEFCD03",
     },
     {
       "type": "3",

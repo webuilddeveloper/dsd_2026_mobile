@@ -293,7 +293,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                           child: Text(
                             '${txtFirstName.text} ${txtLastName.text}',
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -373,7 +373,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                             onPressed: _isLoading ? null : _submitUpdate,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
+                              foregroundColor: Colors.black,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -434,18 +434,12 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                             decoration: BoxDecoration(
                               color: AppColors.primary,
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+                              border: Border.all(color: Colors.white, width: 3),
                             ),
                             child: Center(
                               child: Image.asset(
                                 'assets/DSD/icon/icons_camera.png',
+                                color: Colors.black,
                                 width: 20,
                                 height: 20,
                                 fit: BoxFit.contain,

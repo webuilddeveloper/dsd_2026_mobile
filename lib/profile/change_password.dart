@@ -404,6 +404,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               : Text(
                                 language.save,
                                 style: TextStyle(
+                                  color: Colors.black,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Kanit',
