@@ -31,7 +31,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     pages = <Widget>[
-      HomePage(key: ValueKey(0), onTabChange: _onItemTapped),
+      HomePage(key: _homeKey, onTabChange: _onItemTapped),
       CalendarPage(key: ValueKey(1), onTabChange: _onItemTapped),
       NotificationList(key: ValueKey(2), onTabChange: _onItemTapped),
       UserInformationPage(key: ValueKey(3), onTabChange: _onItemTapped),

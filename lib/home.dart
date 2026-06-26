@@ -4,7 +4,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/carousel.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/launch.dart';
-import 'package:dsd/blank_page/textfield.dart';
+
 import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/locale_provider.dart';
@@ -113,11 +113,78 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return (data as List).cast<Map<String, dynamic>>();
   }
 
-  Future<List<Map<String, dynamic>>> _futureTraining() async {
-    final data = await postDio('${trainingApi}readAPI', {"keySearch": "2569"});
-    return (data as List).cast<Map<String, dynamic>>();
-  }
+  // Future<List<Map<String, dynamic>>> _futureTraining() async {
+  //   final data = await postDio('${trainingApi}readAPI', {"keySearch": "2569"});
+  //   return (data as List).cast<Map<String, dynamic>>();
+  // }
 
+  List<Map<String, dynamic>> mockTraining = [
+    {
+      'trainingId': '0333454',
+      'course': 'ช่างปูกระเบื้อง(ช่างปู)',
+      'classNo': 1,
+      'site': 'สถาบันพัฒนาฝีมือแรงงาน 42 หนองคาย',
+      'dsdStartDate': '2026-07-06',
+      'dsdEndDate': '2026-07-09',
+      'period': 30,
+      'status2': false,
+    },
+    {
+      'trainingId': '0321757',
+      'course': 'การใช้เทคโนโลยีเพื่อจัดการน้ำสำหรับโรงเรือนเกษตรอัจฉริยะ',
+      'classNo': 2,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานกาฬสินธุ์',
+      'dsdStartDate': '2026-07-13',
+      'dsdEndDate': '2026-07-17',
+      'period': 18,
+      'status2': false,
+    },
+    {
+      'trainingId': '0327396',
+      'course': 'การบำรุงรักษาเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก',
+      'classNo': 3,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+      'dsdStartDate': '2026-07-13',
+      'dsdEndDate': '2026-07-17',
+      'period': 30,
+      'status2': false,
+    },
+    {
+      'trainingId': '0326287',
+      'course': 'การประกอบธุรกิจเครื่องดื่มมืออาชีพ',
+      'classNo': 4,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+      'dsdStartDate': '2026-07-13',
+      'dsdEndDate': '2026-07-17',
+      'period': 30,
+      'status2': true,
+    },
+    {
+      'trainingId': '0333926',
+      'course':
+          'เทคนิคการเพาะเลี้ยงผึ้งโพรงป่าด้วยนวัตกรรมการอนุรักษ์เชิงธรรมชาติ',
+      'classNo': 5,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+      'dsdStartDate': '2026-07-15',
+      'dsdEndDate': '2026-07-17',
+      'period': 18,
+      'status2': false,
+    },
+    {
+      'trainingId': '0328033',
+      'course': 'พื้นฐานระบบปัญญาประดิษฐ์',
+      'classNo': 6,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานมหาสารคาม',
+      'dsdStartDate': '2026-07-18',
+      'dsdEndDate': '2026-07-26',
+      'period': 30,
+      'status2': true,
+    },
+  ];
+
+  Future<List<Map<String, dynamic>>> _futureTraining() async {
+    return mockTraining;
+  }
   /*===============================>> UI <<=============================== */
 
   Widget _buildRightWidget(
@@ -130,38 +197,38 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
       return const SizedBox();
     }
 
-    if (isCertified) {
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PageLicense()),
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            color: const Color(0xFF6C4099),
-            border: Border.all(width: 1, color: const Color(0xFFDBDBDB)),
-          ),
-          child: Image.asset(
-            "assets/DSD/icon/icon_portfolio.png",
-            width: 40,
-            height: 40,
-          ),
-        ),
-      );
-    }
-
+    // if (isCertified) {
     return GestureDetector(
       onTap: () {
-        widget.onTabChange(2);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PageLicense()),
+        );
       },
-      child: _circleIcon(
-        Icon(Icons.notification_add, color: AppColors.primary, size: 30),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: const Color(0xFF6C4099),
+          border: Border.all(width: 1, color: const Color(0xFFDBDBDB)),
+        ),
+        child: Image.asset(
+          "assets/DSD/icon/icon_portfolio.png",
+          width: 40,
+          height: 40,
+        ),
       ),
     );
+    // }
+
+    // return GestureDetector(
+    //   onTap: () {
+    //     widget.onTabChange(2);
+    //   },
+    //   child: _circleIcon(
+    //     Icon(Icons.notification_add, color: AppColors.primary, size: 30),
+    //   ),
+    // );
   }
 
   @override
@@ -171,6 +238,9 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final bool isLoggedIn = _code.isNotEmpty;
     final bool hasIdCard = idcard.isNotEmpty; // ต้องแก้จาก is cert
     final bool isCertified = isCert;
+    print('_code : ${_code}');
+    print('idcard : ${idcard}');
+    print('isCert : ${isCert}');
 
     final String name =
         isLoggedIn
@@ -181,10 +251,10 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final String memberType =
         !isLoggedIn
             ? language.tologin
-            : !isCertified
+            : !hasIdCard
             ? language.verified
+            // : isCertified
             : language.certified;
-    // ? language.certified
     // : language.general;
 
     final String imageUrl = isLoggedIn ? _imageUrl : '';
@@ -195,17 +265,17 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         imageUrl: imageUrl,
         onProfileTap: () {
           if (!isLoggedIn) {
+            // เช็ค login
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => LoginPage()),
             );
-          } else {
-            // widget.onTabChange(3);
+          } else if (!hasIdCard) {
+            // เช็ค idcard ไม่มีไปยืนยันตัวตน
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => verifiedThaiID()),
             );
-            print('ยืนยันตัวตน]');
           }
         },
         rightWidget: _buildRightWidget(

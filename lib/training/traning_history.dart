@@ -30,16 +30,39 @@ class _TrainingHistoryState extends State<TrainingHistory> {
 
   /* ================= API ================= */
 
+  List<Map<String, dynamic>> mockTraining = [
+    {
+      "personalId": "4700800001962",
+      "names": "นางสาวสุกัญญา แสวงสุข",
+      "course": "อาชีพด้านการแพทย์และสุขภาพ สาขาพนักงานนวดไทย ระดับ 1",
+      "certificateNo": "06-000541/2569",
+      "certificateDate": "2026-04-20T02:02:38Z",
+      "site": "สถาบันพัฒนาทรัพยากรมนุษย์สำหรับอุตสาหกรรมบริการสุขภาพ",
+      "typeOfTrain": "1",
+
+      "classNo": 1,
+      "provinceName": "กรุงเทพมหานคร",
+      "statusCheck": 2, //สถานะ
+      "dsdStartDate": "2026-01-10",
+      "dsdEndDate": "2026-01-20",
+      "period": 30,
+
+      "cerExpire": "",
+    },
+  ];
   Future<void> _fetchTraining() async {
-    final idcard = await storage.read(key: 'idcard');
+    // final idcard = await storage.read(key: 'idcard');
 
-    final data = await postDio('${trainingApi}readAPIPersonal', {
-      "keySearch": idcard,
-    });
+    // final data = await postDio('${trainingApi}readAPIPersonal', {
+    //   "keySearch": idcard,
+    // });
 
+    // setState(() {
+    //   training = (data as List).cast<Map<String, dynamic>>();
+    //   isLoading = false;
+    // });
     setState(() {
-      training = (data as List).cast<Map<String, dynamic>>();
-      isLoading = false;
+      training = mockTraining;
     });
   }
 
@@ -253,48 +276,50 @@ class _TrainingHistoryState extends State<TrainingHistory> {
         backAction: () => goBack(),
       ),
       body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : training.isEmpty
-              ? Center(child: Text(language.noData))
-              : ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  /// 🔥 summary
-                  Row(
-                    children: [
-                      Expanded(
-                        child: summaryCard(
-                          language.allcourse,
-                          '${training.length}',
-                          AppColors.textDark,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: summaryCard(
-                          language.totalhours,
-                          '$totalHours',
-                          AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  /// 🔥 title
-                  Text(
-                    language.trainingList,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  /// 🔥 list
-                  ...training.map((e) => trainingCard(e)).toList(),
-                ],
+      // ปิดชั่วคราว
+      // isLoading
+      //     ? const Center(child: CircularProgressIndicator())
+      //     : training.isEmpty
+      //     ? Center(child: Text(language.noData))
+      //     :
+      ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          /// 🔥 summary
+          Row(
+            children: [
+              Expanded(
+                child: summaryCard(
+                  language.allcourse,
+                  '${training.length}',
+                  AppColors.textDark,
+                ),
               ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: summaryCard(
+                  language.totalhours,
+                  '$totalHours',
+                  AppColors.primary,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          /// 🔥 title
+          Text(
+            language.trainingList,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+
+          const SizedBox(height: 12),
+
+          /// 🔥 list
+          ...training.map((e) => trainingCard(e)).toList(),
+        ],
+      ),
     );
   }
 }

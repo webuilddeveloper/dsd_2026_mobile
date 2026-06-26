@@ -7,6 +7,7 @@ import 'package:dsd/profile/edit_user_information.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/skilledLabor/skill.dart';
 import 'package:dsd/privilege/privilege_all.dart';
+import 'package:dsd/skilledLabor/skill_2.dart';
 import 'package:dsd/training/training.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -53,6 +54,7 @@ List<ServiceItem> services(BuildContext context) {
       image: 'assets/DSD/imgs/2.png',
       onTap: (context, onTabChange) async {
         await handleAuthNavigation(context, TrainingService());
+        // await handleAuthNavigation(context, Skill1Page());
       },
     ),
 

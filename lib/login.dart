@@ -592,11 +592,15 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> readRegister() async {
+    print('------------- readRegister');
     final storage = FlutterSecureStorage();
     final profileCode = await storage.read(key: 'profileCode') ?? '';
-    final result = await postapi('${register}read', {"code": profileCode});
+    final result = await postapi('${registerV2}read', {"code": profileCode});
+    print('profileCode : ${profileCode}');
+    print('------------- readRegister status : ${result['status']}');
     if (result['status'] == 'S') {
       final data = result['objectData'];
+      print(data);
       if (data.isNotEmpty) {
         isInterests = data[0]['isInterest'];
       }
@@ -699,7 +703,7 @@ class _LoginPageState extends State<LoginPage>
 
       _userData['firstName'] = idData['given_name'];
       _userData['lastName'] = idData['family_name'];
-      // _userData['sex'] = idData['gender'];
+
       _userData['idcard'] = idData['pid'];
 
       print('##################################');
@@ -714,28 +718,21 @@ class _LoginPageState extends State<LoginPage>
       await prefs.remove('thaiDState');
       Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด');
     }
-  }
+  } 
+  
 
   _handleSocail({
     required Map<String, dynamic> model,
     required String category,
   }) async {
     final body = {
-      // 'username': '',
-      // "appleID": '',
-      // 'lineID': '',
-      // 'email': '',
-      // 'imageUrl': '',
-      // 'idcard':
       "idcard": "4700800001962", //model['idcard'],
       "firstName": model['name'] ?? '',
-      "lastName": model['lastname'] ?? '',
+      "lastName": model['lastname'] ?? '', 
+      
     };
 
     print('======================>> _handleSocail');
-    // print(body);
-    // print("$registerV2$category/login");
-
     final result = await postapi('$registerV2$category/login', body);
 
     if (result['status'] == 'S') {
@@ -761,67 +758,19 @@ class _LoginPageState extends State<LoginPage>
       );
 
       await readRegister();
-      // if (isInterests == false) {
-      //   Navigator.of(context).pushAndRemoveUntil(
-      //     MaterialPageRoute(builder: (_) => Interests(isEdit: false)),
-      //     (route) => false,
-      //   );
-      // } else {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => Menu()),
-        (route) => false,
-      );
-      // }
+
+      if (isInterests == false) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => Interests(isEdit: false)),
+          (route) => false,
+        );
+      } else {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => Menu()),
+          (route) => false,
+        );
+      }
     }
-
-    // if (result['status'] == 'S') {
-    //   final data = result['objectData'] ?? {};
-    //   print('data : $data');
-    //   // await storage.write(key: 'profileCode', value: data['code'] ?? '');
-    //   // await storage.write(key: 'profileCategory', value: category);
-    //   await storage.write(key: 'token', value: result['jsonData']);
-    //   await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
-    //   await storage.write(key: 'profileCode', value: data['code'] ?? '');
-    //   await storage.write(key: 'username', value: data['username'] ?? '');
-    //   await storage.write(
-    //     key: 'profileImageUrl',
-    //     value: data['imageUrl'] ?? '',
-    //   );
-    //   await storage.write(key: 'idcard', value: data['idcard'] ?? '');
-    //   await storage.write(key: 'profileCategory', value: 'guest');
-    //   await storage.write(
-    //     key: 'profileFirstName',
-    //     value: data['firstName'] ?? '',
-    //   );
-    //   await storage.write(
-    //     key: 'profileLastName',
-    //     value: data['lastName'] ?? '',
-    //   );
-
-    //   await readRegister();
-
-    //   // await storage.write(key: 'token', value: result['jsonData']);
-    //   // await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
-    //   // await storage.write(key: 'username', value: data['username'] ?? '');
-    //   // await storage.write(
-    //   //   key: 'profileImageUrl',
-    //   //   value: data['imageUrl'] ?? '',
-    //   // );
-    //   // await storage.write(key: 'idcard', value: data['idcard'] ?? '');
-    //   // await storage.write(
-    //   //   key: 'profileFirstName',
-    //   //   value: data['firstName'] ?? '',
-    //   // );
-    //   // await storage.write(
-    //   //   key: 'profileLastName',
-    //   //   value: data['lastName'] ?? '',
-    //   // );
-
-    //   Navigator.of(context).pushAndRemoveUntil(
-    //     MaterialPageRoute(builder: (_) => Menu()),
-    //     (route) => false,
-    //   );
-    // }
   }
 
   Widget _buildLabel(String text) {

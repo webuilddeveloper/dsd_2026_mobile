@@ -44,6 +44,69 @@ class _TrainingServiceState extends State<TrainingService> {
 
   /*===============================>> API <<=============================== */
 
+  List<Map<String, dynamic>> mockTraining = [
+    {
+      'trainingId': '0333454',
+      'course': 'ช่างปูกระเบื้อง(ช่างปู)',
+      'classNo': 1,
+      'site': 'สถาบันพัฒนาฝีมือแรงงาน 42 หนองคาย',
+      'dsdStartDate': '2026-07-06',
+      'dsdEndDate': '2026-07-09',
+      'period': 30,
+      'status2': false,
+    },
+    {
+      'trainingId': '0321757',
+      'course': 'การใช้เทคโนโลยีเพื่อจัดการน้ำสำหรับโรงเรือนเกษตรอัจฉริยะ',
+      'classNo': 2,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานกาฬสินธุ์',
+      'dsdStartDate': '2026-07-13',
+      'dsdEndDate': '2026-07-17',
+      'period': 18,
+      'status2': false,
+    },
+    {
+      'trainingId': '0327396',
+      'course': 'การบำรุงรักษาเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก',
+      'classNo': 3,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+      'dsdStartDate': '2026-07-13',
+      'dsdEndDate': '2026-07-17',
+      'period': 30,
+      'status2': false,
+    },
+    {
+      'trainingId': '0326287',
+      'course': 'การประกอบธุรกิจเครื่องดื่มมืออาชีพ',
+      'classNo': 4,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+      'dsdStartDate': '2026-07-13',
+      'dsdEndDate': '2026-07-17',
+      'period': 30,
+      'status2': true,
+    },
+    {
+      'trainingId': '0333926',
+      'course':
+          'เทคนิคการเพาะเลี้ยงผึ้งโพรงป่าด้วยนวัตกรรมการอนุรักษ์เชิงธรรมชาติ',
+      'classNo': 5,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+      'dsdStartDate': '2026-07-15',
+      'dsdEndDate': '2026-07-17',
+      'period': 18,
+      'status2': false,
+    },
+    {
+      'trainingId': '0328033',
+      'course': 'พื้นฐานระบบปัญญาประดิษฐ์',
+      'classNo': 6,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานมหาสารคาม',
+      'dsdStartDate': '2026-07-18',
+      'dsdEndDate': '2026-07-26',
+      'period': 30,
+      'status2': true,
+    },
+  ];
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context); // ← ดึง strings ตาม locale
@@ -57,9 +120,11 @@ class _TrainingServiceState extends State<TrainingService> {
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         child: ListView.builder(
-          itemCount: training.length,
+          // itemCount: training.length,
+          itemCount: mockTraining.length, // ชั่วราว
           itemBuilder: (context, index) {
-            final item = training[index];
+            // final item = training[index];
+            final item = mockTraining[index]; // ชั่วราว
 
             return Container(
               margin: const EdgeInsets.only(bottom: 12),
@@ -146,7 +211,8 @@ class _TrainingServiceState extends State<TrainingService> {
                     /// Button
                     InkWell(
                       onTap: () {
-                        final url = buildDsdUrl(training[index]);
+                        // final url = buildDsdUrl(training[index]);
+                        final url = buildDsdUrl(item); // ชั่วคราว
                         Navigator.push(
                           context,
                           MaterialPageRoute(

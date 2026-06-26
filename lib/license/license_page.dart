@@ -56,7 +56,42 @@ class _PageLicenseState extends State<PageLicense> {
     }).toList();
   }
 
-  List<Map<String, dynamic>> mock_event = [
+  List<Map<String, dynamic>> mockTraining = [
+    {
+      "personalId": "4700800001962",
+      "names": "นางสาวสุกัญญา แสวงสุข",
+      "course": "อาชีพด้านการแพทย์ และสุขภาพ สาขาพนักงานนวดไทย ระดับ 1",
+      "certificateNo": "06-000541/2569",
+      "certificateDate": "2026-04-20T02:02:38Z",
+      "site": "สถาบันพัฒนาทรัพยากรมนุษย์สำหรับอุตสาหกรรมบริการสุขภาพ",
+      "typeOfTrain": "1",
+      "cerExpire": "",
+    },
+  ];
+
+  List<Map<String, dynamic>> mockTesting = [
+    {
+      "personalId": "4700800001962",
+      "names": "นางสาวสุกัญญา แสวงสุข",
+      "course": "ทดสอบมาตรฐานฝีมือแรงงาน สาขาพนักงานนวดไทย ระดับ 1",
+      "certificateNo": "T-000101/2569",
+      "certificateDate": "2026-03-12T02:02:38Z",
+      "site": "ศูนย์ทดสอบมาตรฐานฝีมือแรงงาน กรุงเทพมหานคร",
+      "typeOfTrain": "2",
+      "cerExpire": "",
+    },
+    {
+      "personalId": "4700800001962",
+      "names": "นางสาวสุกัญญา แสวงสุข",
+      "course": "ทดสอบมาตรฐานฝีมือแรงงาน สาขาผู้ดูแลผู้สูงอายุ",
+      "certificateNo": "T-000102/2569",
+      "certificateDate": "2026-05-20T02:02:38Z",
+      "site": "ศูนย์ทดสอบมาตรฐานฝีมือแรงงาน สมุทรปราการ",
+      "typeOfTrain": "2",
+      "cerExpire": "",
+    },
+  ];
+  List<Map<String, dynamic>> mockEvent = [
     {
       "personalId": "4700800001962",
       "names": "นางสาวสุกัญญา แสวงสุข",
@@ -109,26 +144,27 @@ class _PageLicenseState extends State<PageLicense> {
               child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: _certFuture,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        "เกิดข้อผิดพลาด: ${snapshot.error}",
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    );
-                  }
+                  // //api
+                  // if (snapshot.connectionState == ConnectionState.waiting) {
+                  //   return const Center(child: CircularProgressIndicator());
+                  // }
+                  // if (snapshot.hasError) {
+                  //   return Center(
+                  //     child: Text(
+                  //       "เกิดข้อผิดพลาด: ${snapshot.error}",
+                  //       style: const TextStyle(color: Colors.red),
+                  //     ),
+                  //   );
+                  // }
 
-                  final allData = snapshot.data ?? [];
+                  // final allData = snapshot.data ?? [];
                   // final training = _filtered(allData, "1");
                   // final testing = _filtered(allData, "2");
                   // final evaluations = _filtered(allData, "3"); api ยังไม่มีข้อมูลประเภทนี้
-                  final training = mock_event;
-                  final testing = mock_event;
+                  final training = mockTraining;
+                  final testing = mockTesting;
                   final evaluations =
-                      mock_event; // 👈 ใช้ mock data แทนชั่วคราว
+                      mockTraining; // 👈 ใช้ mock data แทนชั่วคราว
 
                   return SingleChildScrollView(
                     child: Column(
@@ -217,71 +253,69 @@ class _PageLicenseState extends State<PageLicense> {
                 const SizedBox(width: 12),
 
                 Expanded(
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        padding: const EdgeInsets.all(6),
-                        child: Image.asset(iconPath, fit: BoxFit.contain),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: TextStyle(
-                            color: colorTitle,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-
-                      // 👇 Badge แสดงจำนวนเฉพาะตอน search
-                      if (isSearching)
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = isOpen ? null : index;
+                      });
+                    },
+                    child: Row(
+                      children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
+                          height: 40,
+                          width: 40,
                           decoration: BoxDecoration(
-                            color: Colors.white30,
-                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
                           ),
+                          padding: const EdgeInsets.all(6),
+                          child: Image.asset(iconPath, fit: BoxFit.contain),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
                           child: Text(
-                            "$matchCount",
+                            title,
                             style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              // matchCount > 0
-                              //     ? colorMain // สีของ section
-                              //     // ignore: deprecated_member_use
-                              //     : colorTitle,
+                              color: colorTitle,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
-                    ],
+
+                        // 👇 Badge แสดงจำนวนเฉพาะตอน search
+                        if (isSearching)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white30,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              "$matchCount",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                // matchCount > 0
+                                //     ? colorMain // สีของ section
+                                //     // ignore: deprecated_member_use
+                                //     : colorTitle,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
 
                 const SizedBox(width: 8),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      selectedIndex = isOpen ? null : index;
-                    });
-                  },
-                  child: Icon(
-                    isOpen
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    color: coloricon,
-                  ),
+                Icon(
+                  isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  color: coloricon,
                 ),
               ],
             ),

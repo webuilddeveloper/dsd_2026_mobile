@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/blank_page/textfield.dart';
+import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
@@ -32,20 +33,93 @@ class _TrainingAllState extends State<TrainingAll> {
     TrainingCategoryApi();
   }
 
+  List<Map<String, dynamic>> mockTraining = [
+    {
+      'trainingId': '0333454',
+      'course': 'ช่างปูกระเบื้อง(ช่างปู)',
+      'classNo': 1,
+      'site': 'สถาบันพัฒนาฝีมือแรงงาน 42 หนองคาย',
+      'dsdStartDate': '2026-07-06',
+      'dsdEndDate': '2026-07-09',
+      'period': 30,
+      'status2': false,
+    },
+    {
+      'trainingId': '0321757',
+      'course': 'การใช้เทคโนโลยีเพื่อจัดการน้ำสำหรับโรงเรือนเกษตรอัจฉริยะ',
+      'classNo': 2,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานกาฬสินธุ์',
+      'dsdStartDate': '2026-07-13',
+      'dsdEndDate': '2026-07-17',
+      'period': 18,
+      'status2': false,
+    },
+    {
+      'trainingId': '0327396',
+      'course': 'การบำรุงรักษาเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก',
+      'classNo': 3,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+      'dsdStartDate': '2026-07-13',
+      'dsdEndDate': '2026-07-17',
+      'period': 30,
+      'status2': false,
+    },
+    {
+      'trainingId': '0326287',
+      'course': 'การประกอบธุรกิจเครื่องดื่มมืออาชีพ',
+      'classNo': 4,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+      'dsdStartDate': '2026-07-13',
+      'dsdEndDate': '2026-07-17',
+      'period': 30,
+      'status2': true,
+    },
+    {
+      'trainingId': '0333926',
+      'course':
+          'เทคนิคการเพาะเลี้ยงผึ้งโพรงป่าด้วยนวัตกรรมการอนุรักษ์เชิงธรรมชาติ',
+      'classNo': 5,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+      'dsdStartDate': '2026-07-15',
+      'dsdEndDate': '2026-07-17',
+      'period': 18,
+      'status2': false,
+    },
+    {
+      'trainingId': '0328033',
+      'course': 'พื้นฐานระบบปัญญาประดิษฐ์',
+      'classNo': 6,
+      'site': 'สำนักงานพัฒนาฝีมือแรงงานมหาสารคาม',
+      'dsdStartDate': '2026-07-18',
+      'dsdEndDate': '2026-07-26',
+      'period': 30,
+      'status2': true,
+    },
+  ];
+
   /*================ API =================*/
 
+  // Future<List<Map<String, dynamic>>> fetchTraining({
+  //   String? categoryCode,
+  // }) async {
+  //   final body = {"keySearch": "2569"};
+
+  //   // ✅ ส่งเฉพาะตอนมี category
+  //   if (categoryCode != null && categoryCode.isNotEmpty) {
+  //     body["category"] = categoryCode;
+  //   }
+
+  //   final data = await postDio('${trainingApi}readAPI', body);
+  //   return (data as List).cast<Map<String, dynamic>>();
+  // }
   Future<List<Map<String, dynamic>>> fetchTraining({
     String? categoryCode,
   }) async {
-    final body = {"keySearch": "2569"};
-
-    // ✅ ส่งเฉพาะตอนมี category
-    if (categoryCode != null && categoryCode.isNotEmpty) {
-      body["category"] = categoryCode;
+    if (categoryCode == null || categoryCode.isEmpty) {
+      return mockTraining;
     }
 
-    final data = await postDio('${trainingApi}readAPI', body);
-    return (data as List).cast<Map<String, dynamic>>();
+    return mockTraining.where((e) => e['category'] == categoryCode).toList();
   }
 
   // ignore: non_constant_identifier_names
@@ -218,14 +292,17 @@ class _TrainingAllState extends State<TrainingAll> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  item['course'] ?? '',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
+                SizedBox(
+                  height: 34,
+                  child: Text(
+                    item['course'] ?? '',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 6),
                 Row(
@@ -292,7 +369,12 @@ class _TrainingAllState extends State<TrainingAll> {
                   child: InkWell(
                     onTap: () async {
                       final url = buildDsdUrl(item);
-                      await launchURL(url);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => WebViewPage(url: url),
+                        ),
+                      );
                     },
                     child: Container(
                       width: double.infinity,

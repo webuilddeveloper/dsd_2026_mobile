@@ -72,7 +72,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
 
     setState(() => category = profileCategory ?? '');
 
-    final value = await postapi('${register}read', {'code': code});
+    final value = await postapi('${registerV2}read', {'code': code});
 
     if (value.isNotEmpty) {
       try {
@@ -168,7 +168,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
     final code = await storage.read(key: 'profileCode');
     await storage.write(key: 'idcard', value: txtIdcard.text);
     try {
-      final result = await postapi('${register}update', {
+      final result = await postapi('${registerV2}update', {
         'code': code,
         'idcard': txtIdcard.text,
         'username': txtUsername.text,

@@ -56,6 +56,10 @@ class _MyAppState extends State<MyApp> {
               case 'login':
                 MyApp.navigatorKey.currentState!.pushReplacementNamed('/login');
                 break;
+
+              case 'verify':
+                // verifiedThaiID จัดการเองผ่าน AppLifecycleState.resumed
+                break;
             }
           } else {
             await prefs.remove('thaiDCode');

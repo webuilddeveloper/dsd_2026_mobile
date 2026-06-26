@@ -1,10 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
-
 import 'package:dio/dio.dart';
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -54,104 +51,190 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
         resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.backgroundMain,
         appBar: appBar(
-          title: 'ยืนยัตัวตนด้วย ThaID',
+          title: 'ยืนยันตัวตนด้วย ThaiD',
           rightBtn: false,
           backAction: () => Navigator.pop(context),
         ),
-        body: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom,
-            left: 20,
-            right: 20,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
-
-              Center(
-                child: Image.asset(
-                  'assets/images/verify_thai_id.png',
-                  height: 166,
-                  width: 205,
-                ),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              20,
+              20,
+              20,
+              MediaQuery.of(context).padding.bottom + 20,
+            ),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 28),
-
-              const Text(
-                'ยืนยันตัวตน\nด้วยแอปพลิเคชัน ThaiD',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textDark,
-                  height: 1.35,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 24,
                 ),
-              ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
 
-              const SizedBox(height: 10),
-
-              const Text(
-                'ยืนยันตัวตนเพื่อใช้งานดูใบรับรอง (Certificate) หรือเข้าร่วมการทดสอบและอบรมออนไลน์',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textgrey,
-                  height: 1.75,
-                ),
-              ),
-
-              const Spacer(),
-
-              Stack(
-                children: [
-                  GestureDetector(
-                    onTap: _loadingSubmit ? null : _callThaiID,
-                    child: Container(
-                      height: 52,
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color:
-                            _loadingSubmit
-                                ? AppColors.primaryShade
-                                : AppColors.primary,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'ยืนยันตัวตน',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textDark,
-                        ),
+                    Center(
+                      child: Image.asset(
+                        'assets/images/verify_thai_id.png',
+                        height: 140,
                       ),
                     ),
-                  ),
-                  if (_loadingSubmit)
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryShade.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        alignment: Alignment.center,
-                        child: const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation(
-                              AppColors.textDark,
+
+                    const SizedBox(height: 28),
+
+                    const Text(
+                      'ยืนยันตัวตน\nด้วยแอปพลิเคชัน ThaiD',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        height: 1.35,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Text(
+                      'เพื่อเข้าใช้งาน ดูใบรับรอง (Certificate)\nและเข้าร่วมการทดสอบหรืออบรมออนไลน์',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.7,
+                        color: AppColors.textDark.withOpacity(.65),
+                      ),
+                    ),
+
+                    const SizedBox(height: 28),
+
+                    // Step
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF8F9FC),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  "กดปุ่ม \"ยืนยันตัวตน\"",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Row(
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  "ระบบจะเปิดแอป ThaiD",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const Spacer(),
+
+                    Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: _loadingSubmit ? null : _callThaiID,
+                          child: Container(
+                            height: 56,
+                            width: double.infinity,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color:
+                                  _loadingSubmit
+                                      ? AppColors.primaryShade
+                                      : AppColors.primary,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(.25),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: const Text(
+                              'ยืนยันตัวตน',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                ],
-              ),
 
-              const SizedBox(height: 24),
-            ],
+                        if (_loadingSubmit)
+                          Positioned.fill(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryShade.withOpacity(.6),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              alignment: Alignment.center,
+                              child: const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation(
+                                    AppColors.textDark,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -175,11 +258,11 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
     try {
       String responseType = 'code';
       String clientId = 'b1lzRU9NcmxEWjFTdXRTMEtaZDhXaHFSTk0xc1hyc00';
-      String client_secret =
-          'UVpJMVZhUWN4dXBDNk9wY0xJNm9tcjJKZHFTZUJCZXVGOUlISDRKRw';
+      // String client_secret =
+      //     'UVpJMVZhUWN4dXBDNk9wY0xJNm9tcjJKZHFTZUJCZXVGOUlISDRKRw';
       String redirectUri = 'https://gateway.we-builds.com/dsd/thaid';
       String base = 'https://imauth.bora.dopa.go.th/api/v2/oauth2/auth/';
-      // Random string for state, '1' for login.
+
       String state = '1${getRandomString()}';
       // String state = 'mobile';
       String scope = 'pid given_name family_name openid';
@@ -190,7 +273,7 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
       await prefs.setString(
         'thaiDAction',
         'login',
-      ); // Set state to 'login' instead of 'create'
+      ); //verify รอแก้ Api ใช้ login ชั่วคร่าว
       await launchUrl(
         Uri.parse('$base$parameter'),
 
@@ -245,7 +328,6 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
       print('################# ID Data #################');
       print(idData);
 
-      // Prepare data for login instead of registration
       var _userData = {};
 
       _userData['thaiID'] = {
@@ -256,14 +338,14 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
 
       _userData['firstName'] = idData['given_name'];
       _userData['lastName'] = idData['family_name'];
-      // _userData['sex'] = idData['gender'];
+
       _userData['idcard'] = idData['pid'];
 
       print('##################################');
       print(_userData);
       print(_userData.runtimeType);
 
-      Update(model: _userData['thaiID']);
+      update(model: _userData['thaiID']);
     } catch (e) {
       await prefs.remove('thaiDCode');
       await prefs.remove('thaiDState');
@@ -271,54 +353,50 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
     }
   }
 
-  Future<void> Update({required Map<String, dynamic> model}) async {
+  Future<void> update({required Map<String, dynamic> model}) async {
     final code = await storage.read(key: 'profileCode');
+    print('code : ${code}');
     try {
-      final result = await postapi('${registerV2}update', {
-        'code': code,
-        'idcard': model['idcard'],
-        'username': '',
-        'password': '',
-        'facebookID': '',
-        'appleID': '',
-        'googleID': '',
-        'lineID': '',
-        'email': '',
-        'imageUrl': '',
-        'category': '',
-        'prefixName': '',
-        'firstName': model['name'] ?? '',
-        'lastName': model['lastname'] ?? '',
-        'phone': '',
-        'birthDay': '',
-        'status': '',
-        'platform': Platform.operatingSystem,
-        'countUnit': '[]',
-      });
+      // final result = await postapi('${registerV2}update', {
+      //   'code': code,
+      //   'idcard': model['idcard'],
+      //   'username': '',
+      //   'password': '',
+      //   'facebookID': '',
+      //   'appleID': '',
+      //   'googleID': '',
+      //   'lineID': '',
+      //   'email': '',
+      //   'imageUrl': '',
+      //   'category': '',
+      //   'prefixName': '',
+      //   'firstName': model['name'] ?? '',
+      //   'lastName': model['lastname'] ?? '',
+      //   'phone': '',
+      //   'birthDay': '',
+      //   'status': '',
+      //   'platform': Platform.operatingSystem,
+      //   'countUnit': '[]',
+      // });
 
-      if (!mounted) return;
-
-      final isSuccess = result['status'] == 'S';
-      print('--------> isSuccess');
-      // showCustomDialog(
-      //   context,
-      //   title: isSuccess ? language.successfully : language.failed,
-      //   description:
-      //       isSuccess
-      //           ? language.updateSuccess
-      //           : (result['message']?.isNotEmpty == true
-      //               ? result['message']
-      //               : language.updateFailed),
-      //   onConfirm: () => Navigator.pop(context),
-      // );
+      // if (!mounted) return;
+      // print('-----1-----> ${result['status']}');
+      // if (result['status'] == 'S') {
+      //   print('------2----> ${result['status']}');
+      //   Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(builder: (_) => Menu()),
+      //     (route) => false,
+      //   );
+      // } else {
+      //   print('------3----> ${result['status']}');
+      //   Fluttertoast.showToast(msg: 'อัปเดตข้อมูลไม่สำเร็จ');
+      //   setState(() => _loadingSubmit = false);
+      // }
     } catch (_) {
+      print('------4----> ');
       if (!mounted) return;
-      // showCustomDialog(
-      //   context,
-      //   title: language.failed,
-      //   description: language.skipchangePassword5,
-      //   onConfirm: () => Navigator.pop(context),
-      // );
+      Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด');
+      setState(() => _loadingSubmit = false);
     } finally {
       // if (mounted) setState(() => _isLoading = false);
     }
