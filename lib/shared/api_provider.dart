@@ -56,6 +56,9 @@ const registerV2 = '${dsd_server}m/v2/Register/';
 // aboutUs
 const aboutUs = '${dsd_server}aboutUs/';
 
+// policy
+const policyApi = '${dsd_server}m/policy/';
+
 Future<dynamic> postDio(String url, dynamic criteria) async {
   final storage = FlutterSecureStorage();
   final profileCode = await storage.read(key: 'profileCode9');

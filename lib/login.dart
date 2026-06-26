@@ -9,6 +9,7 @@ import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/forgot.dart';
 import 'package:dsd/interests.dart';
 import 'package:dsd/menu.dart';
+import 'package:dsd/policy.dart';
 import 'package:dsd/register.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
@@ -40,7 +41,7 @@ class _LoginPageState extends State<LoginPage>
   late final AnimationController _animCtrl;
   late final Animation<double> _fadeAnim;
   late final Animation<Offset> _slideAnim;
-  late bool isInterests;
+  bool isInterests = true;
   bool _loadingSubmit = false;
   String _thiaDCode = '';
 
@@ -548,17 +549,7 @@ class _LoginPageState extends State<LoginPage>
         );
 
         await readRegister();
-        if (isInterests == false) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => Interests(isEdit: false)),
-            (route) => false,
-          );
-        } else {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => Menu()),
-            (route) => false,
-          );
-        }
+        _goToPolicy();
       } else {
         // ❌ LOGIN FAIL
         showDialogFail(
@@ -718,8 +709,7 @@ class _LoginPageState extends State<LoginPage>
       await prefs.remove('thaiDState');
       Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด');
     }
-  } 
-  
+  }
 
   _handleSocail({
     required Map<String, dynamic> model,
@@ -728,8 +718,7 @@ class _LoginPageState extends State<LoginPage>
     final body = {
       "idcard": "4700800001962", //model['idcard'],
       "firstName": model['name'] ?? '',
-      "lastName": model['lastname'] ?? '', 
-      
+      "lastName": model['lastname'] ?? '',
     };
 
     print('======================>> _handleSocail');
@@ -759,18 +748,16 @@ class _LoginPageState extends State<LoginPage>
 
       await readRegister();
 
-      if (isInterests == false) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => Interests(isEdit: false)),
-          (route) => false,
-        );
-      } else {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => Menu()),
-          (route) => false,
-        );
-      }
+      _goToPolicy();
     }
+  }
+
+  void _goToPolicy() {
+    final nextPage = isInterests == false ? Interests(isEdit: false) : Menu();
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => PolicyPage(nextPage: nextPage)),
+      (route) => false,
+    );
   }
 
   Widget _buildLabel(String text) {
