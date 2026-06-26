@@ -716,7 +716,7 @@ class _LoginPageState extends State<LoginPage>
     required String category,
   }) async {
     final body = {
-      "idcard": model['idcard'],
+      "idcard": model['idcard'] ?? model['pid'] ?? '',
       "firstName": model['name'] ?? '',
       "lastName": model['lastname'] ?? '',
     };

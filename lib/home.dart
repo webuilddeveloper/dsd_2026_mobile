@@ -78,12 +78,18 @@ class HomePageState extends State<HomePage>
   Future<void> loadData() async {
     final code = await storage.read(key: 'profileCode');
     final profileCategory = await storage.read(key: 'profileCategory');
+    final profileFirstName = await storage.read(key: 'profileFirstName') ?? '';
+    final profileLastName = await storage.read(key: 'profileLastName') ?? '';
+    final profileImageUrl = await storage.read(key: 'profileImageUrl') ?? '';
+    final storedIdCard = await storage.read(key: 'idcard') ?? '';
 
     if (code == null || code.isEmpty) {
       if (!mounted) return;
       setState(() {
         _code = '';
         category = '';
+        idcard = '';
+        isCert = false;
         _imageUrl = '';
         txtFirstName.clear();
         txtLastName.clear();
@@ -91,8 +97,15 @@ class HomePageState extends State<HomePage>
       return;
     }
 
-    _code = code;
-    category = profileCategory ?? '';
+    if (!mounted) return;
+    setState(() {
+      _code = code;
+      category = profileCategory ?? '';
+      _imageUrl = profileImageUrl;
+      idcard = storedIdCard;
+      txtFirstName.text = profileFirstName;
+      txtLastName.text = profileLastName;
+    });
 
     final value = await postapi('${registerV2}read', {"code": _code});
 
