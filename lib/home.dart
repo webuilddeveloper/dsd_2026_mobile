@@ -33,7 +33,8 @@ class HomePage extends StatefulWidget {
 }
 
 // class HomePageState extends State<HomePage> {
-class HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class HomePageState extends State<HomePage>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   final storage = FlutterSecureStorage();
 
   String _imageUrl = '';
@@ -45,13 +46,27 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final txtFirstName = TextEditingController();
   final txtLastName = TextEditingController();
   final searchController = TextEditingController();
+  late final AnimationController _certGlowController;
   List<Map<String, String>> training = [];
 
   @override
   void initState() {
     super.initState();
+    _certGlowController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat();
 
     refreshPage();
+  }
+
+  @override
+  void dispose() {
+    _certGlowController.dispose();
+    txtFirstName.dispose();
+    txtLastName.dispose();
+    searchController.dispose();
+    super.dispose();
   }
 
   /*===============================>> LOAD DATA <<=============================== */
@@ -198,26 +213,82 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
 
     // if (isCertified) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PageLicense()),
+    return AnimatedBuilder(
+      animation: _certGlowController,
+      builder: (context, child) {
+        final glow = 0.35 + (_certGlowController.value - 0.5).abs() * 0.5;
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PageLicense()),
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFE8D6FF).withOpacity(glow),
+                  blurRadius: 18,
+                  spreadRadius: 1,
+                ),
+                BoxShadow(
+                  color: const Color(0xFF6C4099).withOpacity(0.24),
+                  blurRadius: 12,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                      color: const Color(0xFF6C4099),
+                      border: Border.all(
+                        width: 1,
+                        color: const Color(0xFFDBDBDB),
+                      ),
+                    ),
+                    child: Image.asset(
+                      "assets/DSD/icon/icon_portfolio.png",
+                      width: 40,
+                      height: 40,
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: FractionalTranslation(
+                      translation: Offset(
+                        -1.2 + (_certGlowController.value * 2.4),
+                        0,
+                      ),
+                      child: Transform.rotate(
+                        angle: -0.65,
+                        child: Container(
+                          width: 18,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.white.withOpacity(0),
+                                Colors.white.withOpacity(0.32),
+                                Colors.white.withOpacity(0),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         );
       },
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          color: const Color(0xFF6C4099),
-          border: Border.all(width: 1, color: const Color(0xFFDBDBDB)),
-        ),
-        child: Image.asset(
-          "assets/DSD/icon/icon_portfolio.png",
-          width: 40,
-          height: 40,
-        ),
-      ),
     );
     // }
 
@@ -314,12 +385,15 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
               const SizedBox(height: 16),
               _buildServiceSection(),
               const SizedBox(height: 16),
-              _buildRowText(language.recommended, () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TrainingAll()),
-                );
-              }),
+              _buildRowText(
+                isLoggedIn ? language.recommended : language.recommendedGuest,
+                () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TrainingAll()),
+                  );
+                },
+              ),
               const SizedBox(height: 16),
               _buildCourse(),
 

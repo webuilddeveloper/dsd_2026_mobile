@@ -67,6 +67,8 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
+                  _skillImage(),
+                  const SizedBox(height: 20),
                   _downloadCard(),
                   const SizedBox(height: 20),
                   _requirementsCard(),
@@ -75,6 +77,17 @@ class _CertState extends State<Cert> with SingleTickerProviderStateMixin {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _skillImage() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Image.asset(
+        'assets/DSD/imgs/dsd_skill.png',
+        width: double.infinity,
+        fit: BoxFit.contain,
       ),
     );
   }

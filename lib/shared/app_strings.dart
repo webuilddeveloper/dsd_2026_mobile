@@ -54,6 +54,7 @@ class AppStrings {
   final String knowledge;
   final String privilege;
   final String recommended;
+  final String recommendedGuest;
   final String pressrelease;
   // หน้าcalendar
   final String list;
@@ -250,6 +251,7 @@ class AppStrings {
     required this.knowledge,
     required this.privilege,
     required this.recommended,
+    required this.recommendedGuest,
     required this.pressrelease,
 
     // หน้าcalendar
@@ -451,6 +453,7 @@ class AppStrings {
     knowledge: "คลังความรู้",
     privilege: "สิทธิประโยชน์",
     recommended: "คอร์สอบรมแนะนำสำหรับคุณ",
+    recommendedGuest: "คอร์สอบรมแนะนำ",
     pressrelease: "ข่าวประชาสัมพันธ์",
     // หน้าcalendar
     list: "รายการ",
@@ -648,7 +651,8 @@ class AppStrings {
     cert: "Apply for certification of knowledge and skills.",
     knowledge: "Knowledge",
     privilege: "Privilege",
-    recommended: "Recommended Training Courses ",
+    recommended: "Recommended Training Courses For You",
+    recommendedGuest: "Recommended Training Courses",
     pressrelease: "Press Release",
     // หน้าcalendar
     list: "List",
