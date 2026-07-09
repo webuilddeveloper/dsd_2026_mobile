@@ -453,7 +453,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                     // category[index]['title'],
                                     selectedCode == 'th'
                                         ? category[index]['title']
-                                        : category[index]['titleEN'],
+                                        : category[index]['titleEN'] ?? '',
 
                                     style: TextStyle(
                                       fontSize: 14,

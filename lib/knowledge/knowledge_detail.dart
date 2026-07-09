@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
+import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
@@ -105,7 +106,7 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                       // model['title'] ?? '',
                       selectedCode == 'th'
                           ? model['title'] ?? ''
-                          : model['titleEN'],
+                          : model['titleEN'] ?? '',
 
                       style: const TextStyle(
                         fontSize: 14,
@@ -118,7 +119,16 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                     Center(
                       child: InkWell(
                         onTap: () {
-                          launchURL(model['fileUrl']);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => WebViewPage(
+                                    url: model['fileUrl'],
+                                    title: language.knowledge,
+                                  ),
+                            ),
+                          );
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -188,7 +198,7 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                         value:
                             selectedCode == 'th'
                                 ? model['categoryList'][0]['title']
-                                : model['categoryList'][0]['titleEN'],
+                                : model['categoryList'][0]['titleEN'] ?? '',
                       ),
 
                     if ((model['bookType'] ?? '') != '')

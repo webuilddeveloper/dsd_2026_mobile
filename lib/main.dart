@@ -1,10 +1,12 @@
 import 'package:app_links/app_links.dart';
 import 'package:dsd/login.dart';
+import 'package:dsd/verified/verified_thaid.dart';
 import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/splash.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +14,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LineSDK.instance.setup('2009618460').then((_) {});
+
+  try {
+    await LineSDK.instance.setup('2009618460');
+  } catch (e) {
+    debugPrint('LineSDK error: $e');
+  }
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => LocaleProvider(),
@@ -41,35 +49,40 @@ class _MyAppState extends State<MyApp> {
     if (!kIsWeb) {
       final appLinks = AppLinks();
       try {
-        appLinks.uriLinkStream.listen((Uri uri) async {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          String state = prefs.getString('thaiDState') ?? '';
-          String action = prefs.getString('thaiDAction') ?? '';
-
-          if (state == uri.queryParameters['state']) {
-            await prefs.setString(
-              'thaiDCode',
-              uri.queryParameters['code'] ?? '',
-            );
-
-            switch (action) {
-              case 'login':
-                MyApp.navigatorKey.currentState!.pushReplacementNamed('/login');
-                break;
-
-              case 'verify':
-                // verifiedThaiID จัดการเองผ่าน AppLifecycleState.resumed
-                break;
-            }
-          } else {
-            await prefs.remove('thaiDCode');
-            await prefs.remove('thaiDState');
-            await prefs.remove('thaiDAction');
-          }
+        appLinks.getInitialLink().then((uri) {
+          if (uri != null) _handleThaiDLink(uri);
         });
+        appLinks.uriLinkStream.listen(_handleThaiDLink);
       } catch (e) {
         print('Error: $e');
       }
+    }
+  }
+
+  Future<void> _handleThaiDLink(Uri uri) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final state = prefs.getString('thaiDState') ?? '';
+    final action = prefs.getString('thaiDAction') ?? '';
+
+    if (state != uri.queryParameters['state']) {
+      await prefs.remove('thaiDCode');
+      await prefs.remove('thaiDState');
+      await prefs.remove('thaiDAction');
+      return;
+    }
+
+    await prefs.setString('thaiDCode', uri.queryParameters['code'] ?? '');
+
+    final navigator = MyApp.navigatorKey.currentState;
+    if (navigator == null) return;
+
+    switch (action) {
+      case 'login':
+        navigator.pushReplacementNamed('/login');
+        break;
+      case 'verify':
+        navigator.pushReplacementNamed('/verify');
+        break;
     }
   }
 
@@ -81,7 +94,10 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       navigatorKey: MyApp.navigatorKey,
       initialRoute: '/',
-      routes: {'/login': (context) => const LoginPage()},
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/verify': (context) => const verifiedThaiID(),
+      },
       home: SplashPage(),
       theme: StyleTheme.lightTheme,
       locale: localeProvider.locale,

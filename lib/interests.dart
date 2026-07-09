@@ -241,7 +241,7 @@ class _InterestsState extends State<Interests> {
                             Text(
                               selectedCode == "th"
                                   ? item['title']
-                                  : item['titleEN'] ?? "-",
+                                  : item['titleEN'] ?? "",
                               textAlign: TextAlign.center,
                             ),
                           ],

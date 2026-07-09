@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dsd/blank_page/appbar.dart';
+import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
@@ -171,7 +172,18 @@ class _AboutUsState extends State<AboutUs> {
         iconColor: AppColors.primary,
         iconBg: AppColors.primaryShade,
         label: language.privacypolicy,
-        onTap: () => _launchUrl(item['policyUrl']),
+        // onTap: () => _launchUrl(item['policyUrl']),
+        onTap: () {
+          final url = item['policyUrl'];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (_) => WebViewPage(url: url, title: language.privacypolicy),
+            ),
+          );
+        },
+
         isFirst: true,
       ),
       _divider(),
@@ -180,7 +192,16 @@ class _AboutUsState extends State<AboutUs> {
         iconColor: AppColors.primary,
         iconBg: AppColors.primaryShade,
         label: language.contactUs,
-        onTap: () => _launchUrl(item['site']),
+        // onTap: () => _launchUrl(item['site']),
+        onTap: () {
+          final url = item['site'];
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => WebViewPage(url: url, title: language.contactUs),
+            ),
+          );
+        },
         isLast: true,
       ),
     ]);

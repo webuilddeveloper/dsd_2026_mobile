@@ -5,8 +5,10 @@ import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
+import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TrainingAll extends StatefulWidget {
   const TrainingAll({super.key});
@@ -128,7 +130,7 @@ class _TrainingAllState extends State<TrainingAll> {
 
     setState(() {
       category = [
-        {'code': '', 'title': 'ทั้งหมด'},
+        {'code': '', 'title': 'ทั้งหมด', "titleEN": 'All'},
         ...(data as List).cast<Map<String, dynamic>>(),
       ];
     });
@@ -151,9 +153,15 @@ class _TrainingAllState extends State<TrainingAll> {
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context);
+    final provider = context.watch<LocaleProvider>();
+    final selectedCode = provider.locale.languageCode;
+    String _code = '';
+
+    final bool isLoggedIn = _code.isNotEmpty;
+
     return Scaffold(
       appBar: appBar(
-        title: language.recommended,
+        title: isLoggedIn ? language.recommended : language.recommendedGuest,
         rightBtn: false,
         backBtn: true,
         backAction: () => goBack(),
@@ -211,7 +219,10 @@ class _TrainingAllState extends State<TrainingAll> {
                           vertical: 6,
                         ),
                         child: Text(
-                          category[index]['title'] ?? '',
+                          selectedCode == "th"
+                              ? category[index]['title']
+                              : category[index]['titleEN'] ?? '',
+
                           style: TextStyle(color: Colors.black),
                         ),
                       ),
@@ -261,6 +272,7 @@ class _TrainingAllState extends State<TrainingAll> {
   }
 
   Widget buildItem(Map<String, dynamic> item) {
+    final language = AppStrings.of(context);
     return Container(
       height: MediaQuery.of(context).size.height * 0.28,
       width: MediaQuery.of(context).size.width * 0.45,
@@ -368,11 +380,15 @@ class _TrainingAllState extends State<TrainingAll> {
                 Center(
                   child: InkWell(
                     onTap: () async {
-                      final url = buildDsdUrl(item);
+                      final url = buildTrainingUrl(item);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => WebViewPage(url: url),
+                          builder:
+                              (_) => WebViewPage(
+                                url: url,
+                                title: language.trainingCourses,
+                              ),
                         ),
                       );
                     },

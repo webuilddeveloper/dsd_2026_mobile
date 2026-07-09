@@ -5,8 +5,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewPage extends StatefulWidget {
   final String url;
+  final String title;
 
-  const WebViewPage({super.key, required this.url});
+  const WebViewPage({super.key, required this.url, required this.title});
 
   @override
   State<WebViewPage> createState() => _WebViewPageState();
@@ -34,7 +35,7 @@ class _WebViewPageState extends State<WebViewPage> {
     final language = AppStrings.of(context);
     return Scaffold(
       appBar: appBar(
-        title: language.trainingCourses,
+        title: widget.title,
         backBtn: true,
         rightBtn: false,
         backAction: () => goBack(),

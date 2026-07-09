@@ -247,7 +247,7 @@ class _PageLicenseState extends State<PageLicense> {
         children: [
           /// 🔹 HEADER
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            padding: EdgeInsets.only(left: 8, right: 18, top: 12, bottom: 12),
             child: Row(
               children: [
                 const SizedBox(width: 12),
@@ -313,9 +313,18 @@ class _PageLicenseState extends State<PageLicense> {
                 ),
 
                 const SizedBox(width: 8),
-                Icon(
-                  isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                  color: coloricon,
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = isOpen ? null : index;
+                    });
+                  },
+                  child: Icon(
+                    isOpen
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: coloricon,
+                  ),
                 ),
               ],
             ),

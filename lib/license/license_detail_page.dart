@@ -1,14 +1,21 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:background_downloader/background_downloader.dart';
 import 'package:dsd/blank_page/appbar.dart';
+import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+
 class LicenseDetailPage extends StatefulWidget {
   final Map<String, dynamic> license;
   final String title;
-  final bool showLicenseCard; // 👈 เพิ่ม
+  final bool showLicenseCard;
 
   const LicenseDetailPage({
     super.key,
@@ -23,9 +30,57 @@ class LicenseDetailPage extends StatefulWidget {
 
 class _LicenseDetailPageState extends State<LicenseDetailPage> {
   bool showQR = false;
+  bool _isDownloading = false;
 
   void goBack() {
     Navigator.pop(context, false);
+  }
+
+  Future<void> downloadPdf(String url, String fileName) async {
+    final safeFileName =
+        fileName.toLowerCase().endsWith('.pdf') ? fileName : '$fileName.pdf';
+
+    setState(() {
+      _isDownloading = true;
+    });
+
+    final task = DownloadTask(
+      url: url,
+      filename: safeFileName,
+      baseDirectory: BaseDirectory.applicationDocuments,
+      updates: Updates.statusAndProgress,
+    );
+
+    final downloadResult = await FileDownloader().download(
+      task,
+      onProgress: (progress) {
+        print('โหลด: ${(progress * 100).toStringAsFixed(0)}%');
+      },
+    );
+
+    if (downloadResult.status == TaskStatus.complete) {
+      final dir = await getApplicationDocumentsDirectory();
+      final fullPath = '${dir.path}/$safeFileName';
+
+      if (mounted) {
+        setState(() => _isDownloading = false);
+        try {
+          await Share.shareXFiles([XFile(fullPath)]);
+        } catch (e) {
+          print('share error: $e');
+        }
+      }
+    } else {
+      if (mounted) {
+        setState(() => _isDownloading = false);
+        showDialogFail(
+          context,
+          title: 'ดาวน์โหลดล้มเหลว',
+          description: 'สถานะ: ${downloadResult.status}',
+          onConfirm: () => Navigator.pop(context),
+        );
+      }
+    }
   }
 
   @override
@@ -195,6 +250,74 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
           _buildtxtStatus(
             title: language.licenseStatus,
             subtitle: widget.license['cerExpire'] ?? "-",
+          ),
+          SizedBox(height: 12),
+
+          InkWell(
+            onTap:
+                _isDownloading
+                    ? null // 👈 กันกดซ้ำตอนกำลังโหลด
+                    : () {
+                      downloadPdf(
+                        'https://khubdeedlt.we-builds.com/khubdeedlt-document/images/knowledge/knowledge_261952630.pdf',
+                        "document",
+                      );
+                    },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child:
+                    _isDownloading
+                        ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.black,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              'กำลังดาวน์โหลด...',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        )
+                        : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/DSD/icon/icon_downlond.png',
+                              color: Colors.black,
+                              width: 24,
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'ดาวน์โหลดเอกสาร',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+              ),
+            ),
           ),
         ],
       ),

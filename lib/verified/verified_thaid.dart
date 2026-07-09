@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:dsd/blank_page/appbar.dart';
+import 'package:dsd/menu.dart';
+import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,26 +22,44 @@ class verifiedThaiID extends StatefulWidget {
 }
 
 class _verifiedThaiIDState extends State<verifiedThaiID>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   String _thiaDCode = '';
   bool _loadingSubmit = false;
   final storage = FlutterSecureStorage();
 
   @override
   void initState() {
-    print('---------->>_verifiedThaiIDState');
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      setState(() {
-        _thiaDCode = prefs.getString('thaiDCode') ?? '';
-        if (_thiaDCode.isNotEmpty) {
-          _loadingSubmit = true;
-          _getToken();
-        }
-      });
-    });
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkThaiDCode());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkThaiDCode();
+    }
+  }
+
+  Future<void> _checkThaiDCode() async {
+    if (_loadingSubmit) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final code = prefs.getString('thaiDCode') ?? '';
+    if (code.isEmpty || code == _thiaDCode) return;
+
+    if (!mounted) return;
+    setState(() {
+      _thiaDCode = code;
+      _loadingSubmit = true;
+    });
+    _getToken();
   }
 
   @override
@@ -258,13 +279,10 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
     try {
       String responseType = 'code';
       String clientId = 'b1lzRU9NcmxEWjFTdXRTMEtaZDhXaHFSTk0xc1hyc00';
-      // String client_secret =
-      //     'UVpJMVZhUWN4dXBDNk9wY0xJNm9tcjJKZHFTZUJCZXVGOUlISDRKRw';
       String redirectUri = 'https://gateway.we-builds.com/dsd/thaid';
       String base = 'https://imauth.bora.dopa.go.th/api/v2/oauth2/auth/';
 
       String state = '1${getRandomString()}';
-      // String state = 'mobile';
       String scope = 'pid given_name family_name openid';
       String parameter =
           '?response_type=$responseType&client_id=$clientId&redirect_uri=$redirectUri&scope=$scope&state=$state';
@@ -272,23 +290,20 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
       await prefs.setString('thaiDState', state);
       await prefs.setString(
         'thaiDAction',
-        'login',
-      ); //verify รอแก้ Api ใช้ login ชั่วคร่าว
+        'verify', //verify รอแก้ Api ใช้ login ชั่วคร่าว
+      );
       await launchUrl(
         Uri.parse('$base$parameter'),
 
         mode: LaunchMode.externalApplication,
       );
-      print('==================');
-      print('$base$parameter');
-      // _callLogin();
     } catch (ex) {
       Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด');
     }
   }
 
   _getToken() async {
-    print('---------->>_verified _getToken');
+    print('---------->>getToken_verified');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       await prefs.remove('thaiDCode');
@@ -325,8 +340,8 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
       // Decode token to get user info
       Map<String, dynamic> idData = JwtDecoder.decode(res.data['id_token']);
 
-      print('################# ID Data #################');
-      print(idData);
+      // print('################# ID Data #################');
+      // print(idData);
 
       var _userData = {};
 
@@ -338,67 +353,80 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
 
       _userData['firstName'] = idData['given_name'];
       _userData['lastName'] = idData['family_name'];
-
       _userData['idcard'] = idData['pid'];
 
       print('##################################');
       print(_userData);
-      print(_userData.runtimeType);
 
-      update(model: _userData['thaiID']);
+      await update(model: _userData['thaiID']);
     } catch (e) {
+      print('---------->>_getToken error: $e');
       await prefs.remove('thaiDCode');
       await prefs.remove('thaiDState');
+      if (!mounted) return;
       Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด');
+      setState(() => _loadingSubmit = false);
     }
   }
 
-  Future<void> update({required Map<String, dynamic> model}) async {
-    final code = await storage.read(key: 'profileCode');
-    print('code : ${code}');
-    try {
-      // final result = await postapi('${registerV2}update', {
-      //   'code': code,
-      //   'idcard': model['idcard'],
-      //   'username': '',
-      //   'password': '',
-      //   'facebookID': '',
-      //   'appleID': '',
-      //   'googleID': '',
-      //   'lineID': '',
-      //   'email': '',
-      //   'imageUrl': '',
-      //   'category': '',
-      //   'prefixName': '',
-      //   'firstName': model['name'] ?? '',
-      //   'lastName': model['lastname'] ?? '',
-      //   'phone': '',
-      //   'birthDay': '',
-      //   'status': '',
-      //   'platform': Platform.operatingSystem,
-      //   'countUnit': '[]',
-      // });
+  String category = '';
 
-      // if (!mounted) return;
-      // print('-----1-----> ${result['status']}');
-      // if (result['status'] == 'S') {
-      //   print('------2----> ${result['status']}');
-      //   Navigator.of(context).pushAndRemoveUntil(
-      //     MaterialPageRoute(builder: (_) => Menu()),
-      //     (route) => false,
-      //   );
-      // } else {
-      //   print('------3----> ${result['status']}');
-      //   Fluttertoast.showToast(msg: 'อัปเดตข้อมูลไม่สำเร็จ');
-      //   setState(() => _loadingSubmit = false);
-      // }
+  Future<void> update({required Map<String, dynamic> model}) async {
+    print('--------update---------');
+    print(model);
+
+    print('model id pid : ${model['pid']}');
+
+    final code = await storage.read(key: 'profileCode');
+    final profileCategory = await storage.read(key: 'profileCategory');
+
+    setState(() => category = profileCategory ?? '');
+
+    final value = await postapi('${registerV2}read', {'code': code});
+    final user = value['objectData'][0];
+
+    final body = {
+      'code': code,
+      'idcard': model['pid'] ?? '',
+      'username': user['username'],
+      'password': user['password'],
+      'facebookID': user['facebookID'],
+      'appleID': user['appleID'],
+      'googleID': user['googleID'],
+      'lineID': user['lineID'],
+      'email': user['email'],
+      'imageUrl': user['imageUrl'],
+      'category': user['category'],
+      'prefixName': user['prefixName'],
+      'firstName': model['name'] ?? '',
+      'lastName': model['lastname'] ?? '',
+      'phone': user['phone'],
+      'birthDay': user['birthDay'],
+      'status': user['status'],
+      'platform': Platform.operatingSystem,
+      'countUnit': user['countUnit'] ?? '[]',
+    };
+
+    try {
+      final result = await postapi('${registerV2}update', body);
+
+      if (!mounted) return;
+
+      if (result['status'] == 'S') {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => Menu()),
+          (route) => false,
+        );
+      } else {
+        Fluttertoast.showToast(msg: 'อัปเดตข้อมูลไม่สำเร็จ');
+        setState(() => _loadingSubmit = false);
+      }
     } catch (_) {
-      print('------4----> ');
       if (!mounted) return;
       Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด');
       setState(() => _loadingSubmit = false);
     } finally {
-      // if (mounted) setState(() => _isLoading = false);
+      if (mounted) setState(() => _loadingSubmit = false);
     }
   }
 }

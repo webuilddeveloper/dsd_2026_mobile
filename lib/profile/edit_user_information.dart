@@ -344,7 +344,7 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                           hint: language.email,
                           icon: Icons.email_outlined,
                           keybord: TextInputType.emailAddress,
-                          isSelect: false,
+                          isSelect: true,
                         ),
                         const SizedBox(height: 12),
                         buildTextField(

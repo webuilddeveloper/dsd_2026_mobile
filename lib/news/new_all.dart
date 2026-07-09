@@ -143,7 +143,7 @@ class _NewAllState extends State<NewAll> {
                                   child: Text(
                                     selectedCode == "th"
                                         ? category[index]['title']
-                                        : category[index]['titleEN'],
+                                        : category[index]['titleEN'] ?? '',
 
                                     style: TextStyle(
                                       fontSize: 14,
@@ -237,7 +237,7 @@ class _NewAllState extends State<NewAll> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                selectedCode == 'th' ? news['title'] : news['titleEN'],
+                selectedCode == 'th' ? news['title'] : news['titleEN'] ?? '',
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -292,7 +292,9 @@ class _NewAllState extends State<NewAll> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    selectedCode == 'th' ? news['title'] : news['titleEN'],
+                    selectedCode == 'th'
+                        ? news['title']
+                        : news['titleEN'] ?? '',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),

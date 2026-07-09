@@ -49,6 +49,11 @@ const trainingApi = '${dsd_server}m/training/';
 const sendtraining = '${dsd_server}m/training/register/';
 const trainingCategoryApi = '${trainingApi}category/';
 
+//testingApi
+const testingApi = '${dsd_server}m/Testing/';
+const sendtesting = '${dsd_server}m/testing/register/';
+const testingCategoryApi = '${testingApi}category/';
+
 //register
 const register = '${dsd_server}m/Register/';
 const registerV2 = '${dsd_server}m/v2/Register/';

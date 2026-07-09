@@ -135,7 +135,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                       Text(
                         selectedCode == "th"
                             ? widget.news['title']
-                            : widget.news['titleEN'] ?? "-",
+                            : widget.news['titleEN'] ?? "",
 
                         style: const TextStyle(
                           fontSize: 14,
@@ -219,7 +219,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                                   child: Text(
                                     selectedCode == "th"
                                         ? widget.news['title']
-                                        : widget.news['titleEN'] ?? "-",
+                                        : widget.news['titleEN'] ?? "",
                                     style: TextStyle(
                                       color: AppColors.primary,
                                       fontSize: 14,

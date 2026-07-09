@@ -120,11 +120,11 @@ class _TrainingServiceState extends State<TrainingService> {
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         child: ListView.builder(
-          // itemCount: training.length,
-          itemCount: mockTraining.length, // ชั่วราว
+          itemCount: training.length,
+          // itemCount: mockTraining.length, // ชั่วราว
           itemBuilder: (context, index) {
-            // final item = training[index];
-            final item = mockTraining[index]; // ชั่วราว
+            final item = training[index];
+            // final item = mockTraining[index]; // ชั่วราว
 
             return Container(
               margin: const EdgeInsets.only(bottom: 12),
@@ -212,11 +212,15 @@ class _TrainingServiceState extends State<TrainingService> {
                     InkWell(
                       onTap: () {
                         // final url = buildDsdUrl(training[index]);
-                        final url = buildDsdUrl(item); // ชั่วคราว
+                        final url = buildTrainingUrl(item); // ชั่วคราว
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => WebViewPage(url: url),
+                            builder:
+                                (_) => WebViewPage(
+                                  url: url,
+                                  title: language.trainingCourses,
+                                ),
                           ),
                         );
                       },

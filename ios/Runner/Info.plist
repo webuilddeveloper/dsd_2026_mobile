@@ -2,72 +2,87 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-
 	<key>CFBundleDisplayName</key>
 	<string>DSD E-Cer</string>
-
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-
 	<key>CFBundleName</key>
 	<string>DSD E-Cer</string>
-
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
-
 	<key>CFBundleSignature</key>
 	<string>????</string>
-
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>thaid</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>dsdecert</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
-
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>line</string>
+		<string>lineauth2</string>
+		<string>line3rdp</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>แอปพลิเคชันต้องการเข้าถึงตำแหน่งของท่านเพื่อแสดงข้อมูลแผนที่และบริการที่เกี่ยวข้อง</string>
-
-	<!-- Network (ถ้าไม่จำเป็น แนะนำให้ปิดใน production) -->
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-
-	<!-- Permissions -->
 	<key>NSCameraUsageDescription</key>
 	<string>แอป DSD E-Cer ขออนุญาตเข้าถึงกล้องของอุปกรณ์ เพื่อใช้ในการถ่ายภาพเอกสารหรือข้อมูลที่เกี่ยวข้องกับการใช้งาน</string>
-
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>แอปพลิเคชันต้องการเข้าถึงตำแหน่งของท่านเพื่อแสดงข้อมูลแผนที่และบริการที่เกี่ยวข้อง</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>แอป DSD E-Cer ขออนุญาตเข้าถึงรูปภาพในอุปกรณ์ เพื่อให้ผู้ใช้งานสามารถเลือกและอัปโหลดรูปภาพหรือเอกสารเข้าสู่ระบบ</string>
-
-	<!-- iPhone Orientation -->
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<!-- iPad Orientation -->
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -75,48 +90,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<!-- LINE -->
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>line</string>
-		<string>lineauth2</string>
-		<string>line3rdp</string>
-	</array>
-
-	<!-- URL Schemes -->
-	<key>CFBundleURLTypes</key>
-	<array>
-
-		<!-- LINE Login -->
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-			</array>
-		</dict>
-
-		<!-- Deep Link -->
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-
-			<key>CFBundleURLName</key>
-			<string>thaid</string>
-
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>dsdecert</string>
-			</array>
-		</dict>
-
-	</array>
-
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-
 </dict>
 </plist>

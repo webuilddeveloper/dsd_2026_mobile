@@ -192,8 +192,8 @@ class _RegsiterPageState extends State<RegsiterPage>
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _confirmPassController,
-                        // hint: language.please + language.confirmpassword,
-                        hint: "กรอกรหัสผ่านอีกครั้ง",
+                        hint: language.confirmpassword,
+                        // hint: "กรอกรหัสผ่านอีกครั้ง",
                         icon: Icons.lock_outline_rounded,
                         obscure: _obscureConfirmPassword,
                         validator: _validateConfirmPass,
@@ -212,8 +212,8 @@ class _RegsiterPageState extends State<RegsiterPage>
                       const SizedBox(height: 6),
                       buildTextField(
                         controller: _firstNameController,
-                        hint: " กรุณากรอกชื่อ",
-                        // hint: language.please + language.name,
+                        // hint: " กรุณากรอกชื่อ",
+                        hint: language.please + language.name,
                         icon: Icons.person_outline_rounded,
                         validator: _required,
                       ),

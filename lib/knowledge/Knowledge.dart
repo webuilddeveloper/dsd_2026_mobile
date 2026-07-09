@@ -143,7 +143,7 @@ class _KnowledgePageState extends State<KnowledgePage>
                         child: Text(
                           selectedCodelanguage == 'th'
                               ? categoryknowlege[index]['title']
-                              : categoryknowlege[index]['titleEN'],
+                              : categoryknowlege[index]['titleEN'] ?? '',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight:

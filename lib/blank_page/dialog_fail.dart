@@ -309,3 +309,71 @@ void showAddInterestDialog(
     },
   );
 }
+
+void showDownloadSuccessDialog(
+  BuildContext context, {
+  required VoidCallback onSaveFile, // เปลี่ยนชื่อจาก onOpenFile
+}) {
+  final language = AppStrings.of(context);
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    barrierColor: Color(0xffE7C882).withOpacity(0.5),
+    builder: (context) {
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: CupertinoAlertDialog(
+          title: const Text(
+            'ดาวน์โหลดสำเร็จ',
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: 'Sarabun',
+              color: Colors.black,
+            ),
+          ),
+          content: const Text(
+            'บันทึกไฟล์เอกสารลงเครื่องเรียบร้อยแล้ว',
+            style: TextStyle(
+              fontSize: 12,
+              fontFamily: 'Sarabun',
+              color: Colors.black,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          actions: [
+            // ปิด
+            CupertinoDialogAction(
+              child: Text(
+                language.cancel,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontFamily: 'Sarabun',
+                  color: Colors.grey,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            // บันทึกเอกสาร
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: Text(
+                'บันทึกเอกสาร',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontFamily: 'Sarabun',
+                  color: AppColors.primary,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                onSaveFile();
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}

@@ -328,8 +328,7 @@ class HomePageState extends State<HomePage>
 
     final String name =
         isLoggedIn
-            ? txtFirstName
-                .text //${txtLastName.text}
+            ? '${txtFirstName.text} ${txtLastName.text}'
             : language.logged;
 
     final String memberType =
@@ -454,12 +453,16 @@ class HomePageState extends State<HomePage>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Kanit',
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Kanit',
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         InkWell(
@@ -540,11 +543,12 @@ class HomePageState extends State<HomePage>
   }
 
   Widget _buildCourse() {
+    final language = AppStrings.of(context);
     return FutureBuilder(
       future: _futureTraining(),
       builder: (context, snapshot) {
         return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.28,
+          height: MediaQuery.of(context).size.height * 0.29,
           child: ListView.separated(
             separatorBuilder:
                 (BuildContext context, int index) => const SizedBox(width: 12),
@@ -553,7 +557,7 @@ class HomePageState extends State<HomePage>
             itemBuilder: (context, index) {
               final training = snapshot.data!;
               return Container(
-                height: MediaQuery.of(context).size.height * 0.28,
+                height: MediaQuery.of(context).size.height * 0.29,
                 width: MediaQuery.of(context).size.width * 0.45,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -674,11 +678,15 @@ class HomePageState extends State<HomePage>
                           const SizedBox(height: 12),
                           InkWell(
                             onTap: () {
-                              final url = buildDsdUrl(training[index]);
+                              final url = buildTrainingUrl(training[index]);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => WebViewPage(url: url),
+                                  builder:
+                                      (_) => WebViewPage(
+                                        url: url,
+                                        title: language.trainingCourses,
+                                      ),
                                 ),
                               );
                             },
@@ -775,7 +783,7 @@ class HomePageState extends State<HomePage>
                             // news['title'] ?? '',
                             selectedCode == 'th'
                                 ? news['title']
-                                : news['titleEN'],
+                                : news['titleEN'] ?? '',
                             style: const TextStyle(
                               color: Colors.white,
                               fontFamily: 'Kanit',

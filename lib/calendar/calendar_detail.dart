@@ -135,7 +135,7 @@ class _CalendarDetailState extends State<CalendarDetail> {
                       // widget.calendarlist['title'],
                       selectedCode == 'th'
                           ? widget.calendarlist['title']
-                          : widget.calendarlist['titleEN'],
+                          : widget.calendarlist['titleEN'] ?? '',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,

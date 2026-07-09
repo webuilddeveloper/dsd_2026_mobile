@@ -135,8 +135,8 @@ class _PrivilegeDetailState extends State<PrivilegeDetail> {
                   children: [
                     Text(
                       selectedCode == 'th'
-                          ? widget.privilege['title'] ?? '-'
-                          : widget.privilege['titleEN'] ?? '-',
+                          ? widget.privilege['title']
+                          : widget.privilege['titleEN'] ?? '',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,

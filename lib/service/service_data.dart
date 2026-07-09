@@ -5,7 +5,7 @@ import 'package:dsd/knowledge/Knowledge.dart';
 import 'package:dsd/login.dart';
 import 'package:dsd/profile/edit_user_information.dart';
 import 'package:dsd/shared/app_strings.dart';
-import 'package:dsd/skilledLabor/skill.dart';
+import 'package:dsd/skilledLabor/testing.dart';
 import 'package:dsd/privilege/privilege_all.dart';
 import 'package:dsd/skilledLabor/skill_2.dart';
 import 'package:dsd/training/training.dart';
@@ -62,7 +62,7 @@ List<ServiceItem> services(BuildContext context) {
       title: language.standtest,
       image: 'assets/DSD/imgs/1.png',
       onTap: (context, onTabChange) async {
-        await handleAuthNavigation(context, SkillPage());
+        await handleAuthNavigation(context, TestingPage());
       },
     ),
 

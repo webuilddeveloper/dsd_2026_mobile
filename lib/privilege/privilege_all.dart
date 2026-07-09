@@ -145,7 +145,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
                           child: Text(
                             selectedCode == 'th'
                                 ? category[index]['title']
-                                : category[index]['titleEN'],
+                                : category[index]['titleEN'] ?? '',
                             style: TextStyle(fontSize: 14, color: Colors.black),
                           ),
                         ),
@@ -217,7 +217,7 @@ class _PrivilegeAllState extends State<PrivilegeAll> {
                                 Text(
                                   selectedCode == 'th'
                                       ? item['title'] ?? ''
-                                      : item['titleEN'] ?? '-',
+                                      : item['titleEN'] ?? '',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(

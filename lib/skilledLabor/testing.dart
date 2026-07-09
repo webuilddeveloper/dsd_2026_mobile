@@ -1,5 +1,7 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
+import 'package:dsd/blank_page/launch.dart';
+import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/skilledLabor/skill_detail.dart';
 
@@ -8,14 +10,14 @@ import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class SkillPage extends StatefulWidget {
-  const SkillPage({super.key});
+class TestingPage extends StatefulWidget {
+  const TestingPage({super.key});
 
   @override
-  State<SkillPage> createState() => _SkillPageState();
+  State<TestingPage> createState() => _TestingPageState();
 }
 
-class _SkillPageState extends State<SkillPage> {
+class _TestingPageState extends State<TestingPage> {
   void goBack() {
     Navigator.pop(context, false);
   }
@@ -25,23 +27,29 @@ class _SkillPageState extends State<SkillPage> {
   @override
   void initState() {
     super.initState();
-    _skilledLaborApi();
+    _testingApi();
   }
 
-  List<Map<String, dynamic>> skills = [];
+  List<Map<String, dynamic>> testing = [];
   bool isLoading = true;
 
   /*===============================>> API <<=============================== */
-  Future<void> _skilledLaborApi() async {
-    final profileCode = await storage.read(key: 'profileCode');
+  Future<void> _testingApi() async {
+    // final profileCode = await storage.read(key: 'profileCode');
 
-    final data = await postDio('${skilledLaborApi}read', {
-      'limit': 10,
-      "username": profileCode,
-      // "code": profileCode,
-    });
+    // final data = await postDio('${skilledLaborApi}read', {
+    //   'limit': 10,
+    //   "username": profileCode,
+    //   // "code": profileCode,
+    // });
+    // setState(() {
+    //   testing = (data as List).cast<Map<String, dynamic>>();
+
+    //   isLoading = false;
+    // });
+    final data = await postDio('${testingApi}readAPI', {"keySearch": "2569"});
     setState(() {
-      skills = (data as List).cast<Map<String, dynamic>>();
+      testing = (data as List).cast<Map<String, dynamic>>();
 
       isLoading = false;
     });
@@ -62,9 +70,9 @@ class _SkillPageState extends State<SkillPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         child: ListView.builder(
-          itemCount: skills.length,
+          itemCount: testing.length,
           itemBuilder: (context, index) {
-            final item = skills[index];
+            final item = testing[index];
 
             return Container(
               margin: const EdgeInsets.only(bottom: 12),
@@ -83,7 +91,7 @@ class _SkillPageState extends State<SkillPage> {
                   children: [
                     /// Title
                     Text(
-                      item['title'],
+                      item['testOccupationName'],
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -94,14 +102,14 @@ class _SkillPageState extends State<SkillPage> {
 
                     /// Batch
                     Text(
-                      'รุ่นที่ ${item['generation']}',
+                      'รุ่นที่ ${item['testTime']}',
                       style: const TextStyle(fontSize: 15),
                     ),
 
                     const SizedBox(height: 4),
 
                     /// Organization
-                    Text(item['agency'], style: const TextStyle(fontSize: 15)),
+                    Text(item['site'], style: const TextStyle(fontSize: 15)),
 
                     const SizedBox(height: 12),
 
@@ -116,7 +124,7 @@ class _SkillPageState extends State<SkillPage> {
                         const SizedBox(width: 6),
                         Text(
                           // exam.examDate,
-                          formatDate(item['dateStart']),
+                          formatDate(item['startDate']),
                           style: const TextStyle(fontSize: 13),
                         ),
                       ],
@@ -128,19 +136,32 @@ class _SkillPageState extends State<SkillPage> {
 
                     /// Button
                     InkWell(
-                      onTap:
-                          item['status2'] == true
-                              ? null
-                              : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            SkillDetailPage(skill: item),
-                                  ),
-                                );
-                              },
+                      onTap: () {
+                        final url = buildTestingUrl(item); // ชั่วคราว
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => WebViewPage(
+                                  url: url,
+                                  title: language.skillTestSchedule,
+                                ),
+                          ),
+                        );
+                      },
+                      // onTap:
+                      //     item['status2'] == true
+                      //         ? null
+                      //         : () {
+                      //           Navigator.push(
+                      //             context,
+                      //             MaterialPageRoute(
+                      //               builder:
+                      //                   (context) =>
+                      //                       SkillDetailPage(skill: item),
+                      //             ),
+                      //           );
+                      //         },
                       child: Container(
                         height: 48,
                         decoration: BoxDecoration(
