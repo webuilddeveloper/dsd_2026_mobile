@@ -37,7 +37,9 @@ class _PageLicenseState extends State<PageLicense> {
   Future<List<Map<String, dynamic>>> _futureGetcert() async {
     final storage = FlutterSecureStorage();
     final idcard = await storage.read(key: 'idcard');
+
     final data = await postDio(getCert, {"idcard": idcard});
+    print("data: $data"); // debug
     return (data as List).cast<Map<String, dynamic>>();
   }
 
@@ -144,25 +146,30 @@ class _PageLicenseState extends State<PageLicense> {
               child: FutureBuilder<List<Map<String, dynamic>>>(
                 future: _certFuture,
                 builder: (context, snapshot) {
-                  // //api
-                  // if (snapshot.connectionState == ConnectionState.waiting) {
-                  //   return const Center(child: CircularProgressIndicator());
-                  // }
-                  // if (snapshot.hasError) {
-                  //   return Center(
-                  //     child: Text(
-                  //       "เกิดข้อผิดพลาด: ${snapshot.error}",
-                  //       style: const TextStyle(color: Colors.red),
-                  //     ),
-                  //   );
-                  // }
+                  //api
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        "เกิดข้อผิดพลาด: ${snapshot.error}",
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
 
-                  // final allData = snapshot.data ?? [];
-                  // final training = _filtered(allData, "1");
-                  // final testing = _filtered(allData, "2");
-                  // final evaluations = _filtered(allData, "3"); api ยังไม่มีข้อมูลประเภทนี้
-                  final training = mockTraining;
-                  final testing = mockTesting;
+                  final allData = snapshot.data ?? [];
+
+                  final training = _filtered(allData, "1");
+                  final testing = _filtered(allData, "2");
+                  // final evaluations = _filtered(
+                  //   allData,
+                  //   "3",
+                  // ); // api ยังไม่มีข้อมูลประเภทนี้
+
+                  // final training = mockTraining;
+                  // final testing = mockTesting;
                   final evaluations =
                       mockTraining; // 👈 ใช้ mock data แทนชั่วคราว
 

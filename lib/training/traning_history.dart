@@ -50,20 +50,21 @@ class _TrainingHistoryState extends State<TrainingHistory> {
       "cerExpire": "",
     },
   ];
+
   Future<void> _fetchTraining() async {
-    // final idcard = await storage.read(key: 'idcard');
+    final idcard = await storage.read(key: 'idcard');
 
-    // final data = await postDio('${trainingApi}readAPIPersonal', {
-    //   "keySearch": idcard,
-    // });
-
-    // setState(() {
-    //   training = (data as List).cast<Map<String, dynamic>>();
-    //   isLoading = false;
-    // });
-    setState(() {
-      training = mockTraining;
+    final data = await postDio('${trainingApi}readAPIPersonal', {
+      "keySearch": idcard,
     });
+
+    setState(() {
+      training = (data as List).cast<Map<String, dynamic>>();
+      isLoading = false;
+    });
+    // setState(() {
+    //   training = mockTraining;
+    // });
   }
 
   /* ================= CALCULATE ================= */
@@ -95,31 +96,31 @@ class _TrainingHistoryState extends State<TrainingHistory> {
         break;
 
       case 3:
-        label = language.statusPendingSelection;
+        label = language.statusApprovedPendingSelection;
         bg = const Color(0xFFD1ECF1);
         text = const Color(0xFF0C5460);
         break;
 
       case 4:
-        label = language.statusFailed;
+        label = language.statusRejectedQualification;
         bg = const Color(0xFFF8D7DA);
         text = const Color(0xFF721C24);
         break;
 
       case 5:
-        label = language.statusCancelled;
+        label = language.statusCancelledInsufficientApplicants;
         bg = const Color(0xFFE2E3E5);
         text = const Color(0xFF383D41);
         break;
 
       case 6:
-        label = language.statusContacted;
+        label = language.statusApplicantContacted;
         bg = const Color(0xFFEAF3DE);
         text = const Color(0xFF27500A);
         break;
 
       case 7:
-        label = language.statusNotContacted;
+        label = language.statusUnableToContactApplicant;
         bg = const Color(0xFFFFE5E5);
         text = const Color(0xFFB00020);
         break;
@@ -139,7 +140,6 @@ class _TrainingHistoryState extends State<TrainingHistory> {
       child: Text(label, style: TextStyle(fontSize: 11, color: text)),
     );
   }
-
   /* ================= UI ================= */
 
   Widget infoRow(IconData icon, String text) {
@@ -276,50 +276,49 @@ class _TrainingHistoryState extends State<TrainingHistory> {
         backAction: () => goBack(),
       ),
       body:
-      // ปิดชั่วคราว
-      // isLoading
-      //     ? const Center(child: CircularProgressIndicator())
-      //     : training.isEmpty
-      //     ? Center(child: Text(language.noData))
-      //     :
-      ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          /// 🔥 summary
-          Row(
-            children: [
-              Expanded(
-                child: summaryCard(
-                  language.allcourse,
-                  '${training.length}',
-                  AppColors.textDark,
-                ),
+          // ปิดชั่วคราว
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : training.isEmpty
+              ? Center(child: Text(language.noData))
+              : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  /// 🔥 summary
+                  Row(
+                    children: [
+                      Expanded(
+                        child: summaryCard(
+                          language.allcourse,
+                          '${training.length}',
+                          AppColors.textDark,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: summaryCard(
+                          language.totalhours,
+                          '$totalHours',
+                          AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  /// 🔥 title
+                  Text(
+                    language.trainingList,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  /// 🔥 list
+                  ...training.map((e) => trainingCard(e)).toList(),
+                ],
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: summaryCard(
-                  language.totalhours,
-                  '$totalHours',
-                  AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          /// 🔥 title
-          Text(
-            language.trainingList,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-
-          const SizedBox(height: 12),
-
-          /// 🔥 list
-          ...training.map((e) => trainingCard(e)).toList(),
-        ],
-      ),
     );
   }
 }

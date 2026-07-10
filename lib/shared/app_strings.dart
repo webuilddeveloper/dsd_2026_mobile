@@ -114,11 +114,11 @@ class AppStrings {
   final String noData;
   final String statusPendingReview;
   final String statusPendingApproval;
-  final String statusPendingSelection;
-  final String statusFailed;
-  final String statusCancelled;
-  final String statusContacted;
-  final String statusNotContacted;
+  final String statusApprovedPendingSelection;
+  final String statusRejectedQualification;
+  final String statusCancelledInsufficientApplicants;
+  final String statusApplicantContacted;
+  final String statusUnableToContactApplicant;
   final String statusUnknown;
   final String trainingDetails;
   final String organization;
@@ -311,11 +311,11 @@ class AppStrings {
     required this.noData,
     required this.statusPendingReview,
     required this.statusPendingApproval,
-    required this.statusPendingSelection,
-    required this.statusFailed,
-    required this.statusCancelled,
-    required this.statusContacted,
-    required this.statusNotContacted,
+    required this.statusApprovedPendingSelection,
+    required this.statusRejectedQualification,
+    required this.statusCancelledInsufficientApplicants,
+    required this.statusApplicantContacted,
+    required this.statusUnableToContactApplicant,
     required this.statusUnknown,
     required this.trainingDetails,
     required this.organization,
@@ -509,13 +509,13 @@ class AppStrings {
     batchNo: "รุ่นที่",
     hours: "ชั่วโมง",
     noData: "ยังไม่มีข้อมูล",
-    statusPendingReview: "รอการตรวจสอบ",
+    statusPendingReview: "รอตรวจสอบ",
     statusPendingApproval: "รออนุมัติ",
-    statusPendingSelection: "รอคัดเลือก",
-    statusFailed: "ไม่ผ่าน",
-    statusCancelled: "ยกเลิกรุ่น",
-    statusContacted: "ติดต่อแล้ว",
-    statusNotContacted: "ติดต่อไม่ได้",
+    statusApprovedPendingSelection: "รอการคัดเลือก",
+    statusRejectedQualification: "ไม่ผ่านคุณสมบัติ",
+    statusCancelledInsufficientApplicants: "ยกเลิกรุ่น",
+    statusApplicantContacted: "ติดต่อแล้ว",
+    statusUnableToContactApplicant: "ติดต่อไม่ได้",
     statusUnknown: "ไม่ทราบสถานะ",
     trainingDetails: "รายละเอียดการอบรม",
     organization: "หน่วยงาน",
@@ -709,11 +709,11 @@ class AppStrings {
     noData: "No data available",
     statusPendingReview: "Pending Review",
     statusPendingApproval: "Pending Approval",
-    statusPendingSelection: "Pending Selection",
-    statusFailed: "Failed",
-    statusCancelled: "Cancelled",
-    statusContacted: "Contacted",
-    statusNotContacted: "Not Contacted",
+    statusApprovedPendingSelection: "Pending Selection",
+    statusRejectedQualification: "Qualifications Not Met",
+    statusCancelledInsufficientApplicants: "Batch Cancelled",
+    statusApplicantContacted: "Contacted",
+    statusUnableToContactApplicant: "Unreachable",
     statusUnknown: "Unknown Status",
     trainingDetails: "Training Details",
     organization: "Organization",

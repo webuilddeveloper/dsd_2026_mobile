@@ -1,13 +1,13 @@
-import 'package:dsd/blank_page/dialog_fail.dart';
+// import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/calendar/calendar_page.dart';
 import 'package:dsd/certification.dart';
 import 'package:dsd/knowledge/Knowledge.dart';
-import 'package:dsd/login.dart';
-import 'package:dsd/profile/edit_user_information.dart';
+// import 'package:dsd/login.dart';
+// import 'package:dsd/profile/edit_user_information.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/skilledLabor/testing.dart';
 import 'package:dsd/privilege/privilege_all.dart';
-import 'package:dsd/skilledLabor/skill_2.dart';
+
 import 'package:dsd/training/training.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

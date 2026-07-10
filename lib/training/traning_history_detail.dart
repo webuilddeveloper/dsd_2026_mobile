@@ -29,15 +29,15 @@ class TrainingHistoryDetail extends StatelessWidget {
       case 2:
         return language.statusPendingApproval;
       case 3:
-        return language.statusPendingSelection;
+        return language.statusApprovedPendingSelection;
       case 4:
-        return language.statusFailed;
+        return language.statusRejectedQualification;
       case 5:
-        return language.statusCancelled;
+        return language.statusCancelledInsufficientApplicants;
       case 6:
-        return language.statusContacted;
+        return language.statusApplicantContacted;
       case 7:
-        return language.statusNotContacted;
+        return language.statusUnableToContactApplicant;
       default:
         return language.statusUnknown;
     }
@@ -45,27 +45,43 @@ class TrainingHistoryDetail extends StatelessWidget {
 
   Color get badgeBg {
     switch (status) {
-      case 6:
-        return const Color(0xFFEAF3DE);
+      case 1:
+        return const Color(0xFFF1EFE8); // Pending Review
+      case 2:
+        return const Color(0xFFFFF3CD); // Pending Approval
+      case 3:
+        return const Color(0xFFD1ECF1); // Approved - Pending Selection
       case 4:
+        return const Color(0xFFF8D7DA); // Rejected
       case 5:
+        return const Color(0xFFE2E3E5); // Cancelled
+      case 6:
+        return const Color(0xFFEAF3DE); // Contacted
       case 7:
-        return const Color(0xFFF8D7DA);
+        return const Color(0xFFFFE5E5); // Unable to Contact
       default:
-        return const Color(0xFFF1EFE8);
+        return Colors.grey.shade200;
     }
   }
 
   Color get badgeText {
     switch (status) {
+      case 1:
+        return const Color(0xFF5F5E5A);
+      case 2:
+        return const Color(0xFF856404);
+      case 3:
+        return const Color(0xFF0C5460);
+      case 4:
+        return const Color(0xFF721C24);
+      case 5:
+        return const Color(0xFF383D41);
       case 6:
         return const Color(0xFF27500A);
-      case 4:
-      case 5:
       case 7:
-        return const Color(0xFF721C24);
+        return const Color(0xFFB00020);
       default:
-        return const Color(0xFF5F5E5A);
+        return Colors.grey;
     }
   }
 

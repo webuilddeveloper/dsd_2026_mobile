@@ -225,94 +225,94 @@ class HomePageState extends State<HomePage>
       return const SizedBox();
     }
 
-    // if (isCertified) {
-    return AnimatedBuilder(
-      animation: _certGlowController,
-      builder: (context, child) {
-        final glow = 0.35 + (_certGlowController.value - 0.5).abs() * 0.5;
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => PageLicense()),
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFE8D6FF).withOpacity(glow),
-                  blurRadius: 18,
-                  spreadRadius: 1,
-                ),
-                BoxShadow(
-                  color: const Color(0xFF6C4099).withOpacity(0.24),
-                  blurRadius: 12,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: Stack(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
-                      color: const Color(0xFF6C4099),
-                      border: Border.all(
-                        width: 1,
-                        color: const Color(0xFFDBDBDB),
-                      ),
-                    ),
-                    child: Image.asset(
-                      "assets/DSD/icon/icon_portfolio.png",
-                      width: 40,
-                      height: 40,
-                    ),
+    if (isCertified) {
+      return AnimatedBuilder(
+        animation: _certGlowController,
+        builder: (context, child) {
+          final glow = 0.35 + (_certGlowController.value - 0.5).abs() * 0.5;
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PageLicense()),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFE8D6FF).withOpacity(glow),
+                    blurRadius: 18,
+                    spreadRadius: 1,
                   ),
-                  Positioned.fill(
-                    child: FractionalTranslation(
-                      translation: Offset(
-                        -1.2 + (_certGlowController.value * 2.4),
-                        0,
+                  BoxShadow(
+                    color: const Color(0xFF6C4099).withOpacity(0.24),
+                    blurRadius: 12,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Stack(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        color: const Color(0xFF6C4099),
+                        border: Border.all(
+                          width: 1,
+                          color: const Color(0xFFDBDBDB),
+                        ),
                       ),
-                      child: Transform.rotate(
-                        angle: -0.65,
-                        child: Container(
-                          width: 18,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.white.withOpacity(0),
-                                Colors.white.withOpacity(0.32),
-                                Colors.white.withOpacity(0),
-                              ],
+                      child: Image.asset(
+                        "assets/DSD/icon/icon_portfolio.png",
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: FractionalTranslation(
+                        translation: Offset(
+                          -1.2 + (_certGlowController.value * 2.4),
+                          0,
+                        ),
+                        child: Transform.rotate(
+                          angle: -0.65,
+                          child: Container(
+                            width: 18,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.white.withOpacity(0),
+                                  Colors.white.withOpacity(0.32),
+                                  Colors.white.withOpacity(0),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
-    );
-    // }
+          );
+        },
+      );
+    }
 
-    // return GestureDetector(
-    //   onTap: () {
-    //     widget.onTabChange(2);
-    //   },
-    //   child: _circleIcon(
-    //     Icon(Icons.notification_add, color: AppColors.primary, size: 30),
-    //   ),
-    // );
+    return GestureDetector(
+      onTap: () {
+        widget.onTabChange(2);
+      },
+      child: _circleIcon(
+        Icon(Icons.notification_add, color: AppColors.primary, size: 30),
+      ),
+    );
   }
 
   @override
@@ -336,10 +336,11 @@ class HomePageState extends State<HomePage>
             ? language.tologin
             : !hasIdCard
             ? language.verified
-            // : isCertified
-            : language.certified;
-    // : language.general;
+            : isCertified
+            ? language.certified
+            : language.general;
 
+    print('isCertified : ${isCertified}');
     final String imageUrl = isLoggedIn ? _imageUrl : '';
     return Scaffold(
       appBar: AppBarHome(
