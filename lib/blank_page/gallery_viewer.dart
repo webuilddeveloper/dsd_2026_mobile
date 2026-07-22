@@ -1,4 +1,7 @@
+import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 
 class GalleryViewer {
   static void open(
@@ -72,6 +75,52 @@ class AssetImageViewer {
               ],
             ),
           ),
+    );
+  }
+}
+
+class PdfViewerDialog {
+  static void open(BuildContext context, {required String pdfUrl}) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black87, // สีด้านหลัง Dialog
+      useSafeArea: false,
+      builder: (_) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.black,
+          surfaceTintColor: Colors.black,
+          child: Container(
+            color: Colors.black,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: SfPdfViewerTheme(
+                    data: SfPdfViewerThemeData(
+                      backgroundColor: Colors.black,
+                      // progressBarColor: AppColors.primary,
+                    ),
+                    child: SfPdfViewer.network(pdfUrl),
+                  ),
+                ),
+
+                Positioned(
+                  top: 40,
+                  right: 20,
+                  child: Material(
+                    color: AppColors.backgroundMain,
+                    shape: const CircleBorder(),
+                    child: IconButton(
+                      icon: Icon(Icons.close, color: Colors.black),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

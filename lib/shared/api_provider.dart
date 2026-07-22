@@ -20,6 +20,9 @@ const splash = "$dsd_server/splash/";
 
 // Getcert
 const getCert = "$dsd_server/m/Register/GetCret";
+const getCretTraining = "$dsd_server/m/Register/GetCretTraining";
+const getCretTesting = "$dsd_server/m/Register/GetCretTesting";
+const getCretEvaluations = "$dsd_server/m/Register/GetCretTesting";
 
 //new
 const newsApi = "${dsd_server}m/news/";

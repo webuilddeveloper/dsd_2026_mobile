@@ -129,6 +129,7 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                                   ),
                             ),
                           );
+                          print(model['fileUrl']);
                         },
                         child: Container(
                           decoration: BoxDecoration(

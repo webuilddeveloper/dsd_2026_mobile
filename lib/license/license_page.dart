@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/license/license_detail_page.dart';
@@ -39,7 +41,7 @@ class _PageLicenseState extends State<PageLicense> {
     final idcard = await storage.read(key: 'idcard');
 
     final data = await postDio(getCert, {"idcard": idcard});
-    print("data: $data"); // debug
+
     return (data as List).cast<Map<String, dynamic>>();
   }
 
@@ -70,7 +72,6 @@ class _PageLicenseState extends State<PageLicense> {
       "cerExpire": "",
     },
   ];
-
   List<Map<String, dynamic>> mockTesting = [
     {
       "personalId": "4700800001962",
@@ -105,6 +106,7 @@ class _PageLicenseState extends State<PageLicense> {
       "cerExpire": "",
     },
   ];
+
   @override
   void dispose() {
     for (final c in _scrollControllers) {
@@ -163,15 +165,15 @@ class _PageLicenseState extends State<PageLicense> {
 
                   final training = _filtered(allData, "1");
                   final testing = _filtered(allData, "2");
-                  // final evaluations = _filtered(
-                  //   allData,
-                  //   "3",
-                  // ); // api ยังไม่มีข้อมูลประเภทนี้
+                  final evaluations = _filtered(
+                    allData,
+                    "3",
+                  ); // api ยังไม่มีข้อมูลประเภทนี้
 
                   // final training = mockTraining;
                   // final testing = mockTesting;
-                  final evaluations =
-                      mockTraining; // 👈 ใช้ mock data แทนชั่วคราว
+                  // final evaluations =
+                  //     mockTraining; // 👈 ใช้ mock data แทนชั่วคราว
 
                   return SingleChildScrollView(
                     child: Column(
@@ -186,7 +188,8 @@ class _PageLicenseState extends State<PageLicense> {
                           coloricon: const Color(0xFF784C4C),
                           scrollbarColor: const Color(0xFFD8A32B),
                           matchCount: training.length,
-                          showLicenseCar: false,
+
+                          //showLicenseCar: true,
                         ),
                         _buildLicenseCard(
                           index: 1,
@@ -198,7 +201,8 @@ class _PageLicenseState extends State<PageLicense> {
                           coloricon: Colors.white,
                           scrollbarColor: const Color(0xFF4F1964),
                           matchCount: testing.length,
-                          showLicenseCar: false,
+
+                          //showLicenseCar: false,
                         ),
 
                         _buildLicenseCard(
@@ -211,7 +215,8 @@ class _PageLicenseState extends State<PageLicense> {
                           coloricon: Colors.white,
                           scrollbarColor: const Color(0xFFD8A32B),
                           matchCount: evaluations.length,
-                          showLicenseCar: true,
+
+                          //showLicenseCar: true,
                         ),
                       ],
                     ),
@@ -238,7 +243,8 @@ class _PageLicenseState extends State<PageLicense> {
     required String iconPath,
     required Color scrollbarColor,
     required int matchCount, // 👈 เพิ่มตรงนี้
-    required bool showLicenseCar,
+    // 👈 เพิ่มตรงนี ้
+    // required bool, //showLicenseCar,
   }) {
     final isOpen = selectedIndex == index;
     final isSearching = licenseSearch.text.trim().isNotEmpty; // 👈
@@ -365,7 +371,8 @@ class _PageLicenseState extends State<PageLicense> {
                         dataList: dataList,
                         scrollbarColor: scrollbarColor,
                         scrollController: _scrollControllers[index],
-                        showLicenseCar: showLicenseCar,
+
+                        //showLicenseCar: //showLicenseCar,
                       ),
                     ),
           ),
@@ -488,7 +495,8 @@ class _PageLicenseState extends State<PageLicense> {
     required List<Map<String, dynamic>> dataList,
     required Color scrollbarColor,
     required ScrollController scrollController,
-    required bool showLicenseCar,
+    // 👈 เพิ่มตรงนี ้
+    // required bool, //showLicenseCar,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -525,7 +533,8 @@ class _PageLicenseState extends State<PageLicense> {
                   child: _buildItem(
                     data: dataList[idx],
                     title: title,
-                    showLicenseCar: showLicenseCar,
+
+                    //showLicenseCar: //showLicenseCar,
                   ),
                 );
               },
@@ -542,12 +551,16 @@ class _PageLicenseState extends State<PageLicense> {
   Widget _buildItem({
     required Map<String, dynamic> data,
     required String title,
-    required bool showLicenseCar,
+
+    // required bool, //showLicenseCar,
   }) {
     return Padding(
       padding: const EdgeInsets.only(right: 16),
       child: InkWell(
         onTap: () {
+          // print("data: $data");
+          print('certificateNo : ${data['certificateNo']}');
+          print('typeOfTrain : ${data['typeOfTrain']}');
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -555,7 +568,14 @@ class _PageLicenseState extends State<PageLicense> {
                   (context) => LicenseDetailPage(
                     license: data,
                     title: title,
-                    showLicenseCard: showLicenseCar,
+                    certificateNo: data['certificateNo'],
+                    typeOfTrain: data['typeOfTrain'],
+                    // // selectpath == 'taining'
+                    // data['typeOfTrain'] == '1'
+                    //     ? data['certificateNo']
+                    //     : data['typeOfTrain'] == '2'
+                    //     ? data['certificateNo']
+                    //     : data['certificateNo'],
                   ),
             ),
           );

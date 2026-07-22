@@ -5,23 +5,29 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/dialog_fail.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/gallery_viewer.dart';
+import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class LicenseDetailPage extends StatefulWidget {
   final Map<String, dynamic> license;
   final String title;
-  final bool showLicenseCard;
-
+  // final bool showLicenseCard;
+  final String certificateNo;
+  final String typeOfTrain;
   const LicenseDetailPage({
     super.key,
     required this.license,
     required this.title,
-    required this.showLicenseCard,
+    // required this.showLicenseCard,
+    required this.certificateNo,
+    required this.typeOfTrain,
   });
 
   @override
@@ -31,6 +37,44 @@ class LicenseDetailPage extends StatefulWidget {
 class _LicenseDetailPageState extends State<LicenseDetailPage> {
   bool showQR = false;
   bool _isDownloading = false;
+
+  late Future<Map<String, dynamic>> getpathCert;
+
+  @override
+  void initState() {
+    super.initState();
+    getpathCert = _futureGetpathCert();
+  }
+
+  Future<Map<String, dynamic>> _futureGetpathCert() async {
+    const apiMap = {
+      '1': getCretTraining,
+      '2': getCretTesting,
+      '3': getCretEvaluations,
+    };
+
+    final storage = const FlutterSecureStorage();
+    final idcard = await storage.read(key: 'idcard');
+
+    final api = apiMap[widget.typeOfTrain];
+    if (api == null) {
+      throw Exception('Unknown typeOfTrain: ${widget.typeOfTrain}');
+    }
+
+    final list = (await postDio(api, {"idcard": idcard}));
+
+    final result = list.firstWhere(
+      (e) => e['certificateNo'] == widget.certificateNo,
+      orElse: () => <String, dynamic>{},
+    );
+
+    debugPrint('Certificate: $result');
+    // debugPrint('========== Certificate ==========');
+    // debugPrint(result);
+    // debugPrint('=================================');
+
+    return result;
+  }
 
   void goBack() {
     Navigator.pop(context, false);
@@ -111,9 +155,9 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
                     children: [
                       // showQR ?
                       // _buildQR() :
-                      widget.showLicenseCard == true
-                          ? _buildCard()
-                          : SizedBox(),
+                      // widget.showLicenseCard == true
+                      //     ?
+                      _buildCard(),
                       const SizedBox(height: 8),
 
                       // Row(
@@ -160,29 +204,98 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
 
   /// CARD IMAGE
   Widget _buildCard() {
-    return Container(
-      key: const ValueKey("card"),
+    return FutureBuilder(
+      future: getpathCert,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            width: MediaQuery.of(context).size.width * 0.6,
+            child: const Center(
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        }
 
+        final pathCer = snapshot.data?['pathCer'];
+
+        if (pathCer == null || pathCer.toString().isEmpty) {
+          return _buildEmptyState();
+        }
+
+        return _buildPdfCard(pathCer);
+      },
+    );
+  }
+
+  Widget _buildPdfCard(String pathCer) {
+    return Container(
       height: MediaQuery.of(context).size.height * 0.4,
       width: MediaQuery.of(context).size.width * 0.6,
-      // width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: GestureDetector(
-          onTap: () {
-            AssetImageViewer.open(
-              context,
-              imagePath: "assets/DSD/imgs/cer-test.jpg",
-            );
-          },
-          child: Image.asset(
-            "assets/DSD/imgs/cer-test.jpg",
-            fit: BoxFit.contain,
-          ),
+        child: Stack(
+          children: [
+            // แสดง Preview ของ PDF แต่ไม่รับ Gesture
+            Positioned.fill(
+              child: IgnorePointer(child: SfPdfViewer.network(pathCer)),
+            ),
+
+            // รับการแตะเพื่อเปิดเต็มจอ
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    PdfViewerDialog.open(context, pdfUrl: pathCer);
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.4,
+      width: MediaQuery.of(context).size.width * 0.6,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/DSD/imgs/icon_estimate.png",
+              width: 80,
+              height: 80,
+              color: AppColors.primary,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "ไม่มีข้อมูล",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textDark,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "กรุณาตรวจสอบอีกครั้งในภายหลัง",
+              style: TextStyle(fontSize: 13, color: AppColors.textgrey),
+            ),
+          ],
         ),
       ),
     );
@@ -190,31 +303,31 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
 
   /// QR
   // ignore: unused_element
-  Widget _buildQR() {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.45,
-      width: MediaQuery.of(context).size.width * 0.8,
-      // width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.white,
-      ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Image.asset(
-            "assets/DSD/imgs/qr-test.png",
-            fit: BoxFit.contain,
-          ),
-        ),
-        // child: Icon(
-        //   Icons.qr_code_2,
-        //   color: AppColors.primary,
-        //   size: MediaQuery.of(context).size.height * 0.3,
-        // ),
-      ),
-    );
-  }
+  // Widget _buildQR() {
+  //   return Container(
+  //     height: MediaQuery.of(context).size.height * 0.45,
+  //     width: MediaQuery.of(context).size.width * 0.8,
+  //     // width: double.infinity,
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(16),
+  //       color: Colors.white,
+  //     ),
+  //     child: Center(
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(24.0),
+  //         child: Image.asset(
+  //           "assets/DSD/imgs/qr-test.png",
+  //           fit: BoxFit.contain,
+  //         ),
+  //       ),
+  //       // child: Icon(
+  //       //   Icons.qr_code_2,
+  //       //   color: AppColors.primary,
+  //       //   size: MediaQuery.of(context).size.height * 0.3,
+  //       // ),
+  //     ),
+  //   );
+  // }
 
   /// DETAIL CARD
   Widget _buildDetailCard() {
@@ -226,100 +339,118 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
         borderRadius: BorderRadius.circular(16),
         color: Colors.white,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildtxt(
-            title: language.cardholdernumber,
-            subtitle: widget.license['personalId'],
-          ),
+      child: FutureBuilder(
+        future: getpathCert,
+        builder: (context, snapshot) {
+          const filenameMap = {
+            '1': 'traningId',
+            '2': 'testingId',
+            '3': 'evaluationId',
+          };
 
-          const Divider(color: AppColors.backgroundMain),
-
-          _buildtxt(
-            title: widget.license['course'] ?? "",
-            subtitle: widget.license['site'] ?? "",
-          ),
-
-          const Divider(color: AppColors.backgroundMain),
-          _buildtxt(
-            title: language.dateIssue,
-            subtitle: formatDate(widget.license['certificateDate'] ?? ""),
-          ),
-          const Divider(color: AppColors.backgroundMain),
-          _buildtxtStatus(
-            title: language.licenseStatus,
-            subtitle: widget.license['cerExpire'] ?? "-",
-          ),
-          SizedBox(height: 12),
-
-          InkWell(
-            onTap:
-                _isDownloading
-                    ? null // 👈 กันกดซ้ำตอนกำลังโหลด
-                    : () {
-                      downloadPdf(
-                        'https://khubdeedlt.we-builds.com/khubdeedlt-document/images/knowledge/knowledge_261952630.pdf',
-                        "document",
-                      );
-                    },
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(8),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildtxt(
+                title: language.cardholdernumber,
+                subtitle: widget.license['personalId'] ?? "",
               ),
-              child: Center(
-                child:
+
+              const Divider(color: AppColors.backgroundMain),
+
+              _buildtxt(
+                title: widget.license['course'] ?? "",
+                subtitle: widget.license['site'] ?? "",
+              ),
+
+              const Divider(color: AppColors.backgroundMain),
+              _buildtxt(
+                title: language.dateIssue,
+                subtitle: formatDate(widget.license['certificateDate'] ?? ""),
+              ),
+              const Divider(color: AppColors.backgroundMain),
+              _buildtxtStatus(
+                title: language.licenseStatus,
+                subtitle: widget.license['cerExpire'] ?? "-",
+              ),
+              SizedBox(height: 12),
+
+              InkWell(
+                onTap:
                     _isDownloading
-                        ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.black,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            Text(
-                              'กำลังดาวน์โหลด...',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
+                        ? null // 👈 กันกดซ้ำตอนกำลังโหลด
+                        : () {
+                          final filename = filenameMap[widget.typeOfTrain];
+                          downloadPdf(
+                            snapshot.data?['pathCer'] ?? "",
+                            snapshot.data?[filename]?.toString() ?? 'document',
+                          );
+                        },
+                child:
+                    snapshot.data?['pathCer'] != null
+                        ? Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child:
+                                _isDownloading
+                                    ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2.5,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.black,
+                                                ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 12),
+                                        Text(
+                                          'กำลังดาวน์โหลด...',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                    : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          'assets/DSD/icon/icon_downlond.png',
+                                          color: Colors.black,
+                                          width: 24,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        const Text(
+                                          'ดาวน์โหลดเอกสาร',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                          ),
                         )
-                        : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/DSD/icon/icon_downlond.png',
-                              color: Colors.black,
-                              width: 24,
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'ดาวน์โหลดเอกสาร',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                        : SizedBox(),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
