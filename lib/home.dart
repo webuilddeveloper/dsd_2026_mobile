@@ -4,7 +4,6 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/carousel.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/launch.dart';
-import 'package:dsd/blank_page/textfield.dart';
 
 import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/technician/technician.dart';
@@ -525,7 +524,7 @@ class HomePageState extends State<HomePage>
   // }
   Widget buildTechnicianCard({required BuildContext context}) {
     return InkWell(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(16),
       onTap: () {
         Navigator.push(
           context,
@@ -533,172 +532,129 @@ class HomePageState extends State<HomePage>
         );
       },
       child: Container(
-        height: 105,
+        height: 88,
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          // gradient: const LinearGradient(
-          //   begin: Alignment.topLeft,
-          //   end: Alignment.bottomRight,
-          //   colors: [Color(0xffffd54f), Color(0xffffc107)],
-          // ),
-          color: AppColors.primary.withOpacity(0.8),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.amber.withOpacity(.25),
-          //     blurRadius: 18,
-          //     offset: const Offset(0, 8),
-          //   ),
-          // ],
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFFFE57A), Color(0xFFE8B62D)],
+          ),
+          border: Border.all(color: Colors.white.withOpacity(.65), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFE0A81F).withOpacity(.22),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            /// วงกลมใหญ่
             Positioned(
-              right: -45,
-              top: -35,
+              right: -28,
+              top: -38,
               child: Container(
-                width: 140,
-                height: 140,
+                width: 124,
+                height: 124,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.12),
+                  color: Colors.white.withOpacity(.16),
                   shape: BoxShape.circle,
                 ),
               ),
             ),
-
-            /// วงกลมเล็ก
             Positioned(
-              right: 45,
-              bottom: -18,
+              right: 58,
+              bottom: -22,
               child: Container(
-                width: 55,
-                height: 55,
+                width: 62,
+                height: 62,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.10),
+                  border: Border.all(color: Colors.white.withOpacity(.24)),
                   shape: BoxShape.circle,
                 ),
               ),
             ),
-
-            /// จุดตกแต่ง
             Positioned(
-              right: 80,
-              top: 18,
-              child: Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: List.generate(
-                  12,
-                  (_) => Container(
-                    width: 3,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(.45),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+              right: 16,
+              top: 16,
+              bottom: 16,
+              child: Container(
+                width: 56,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(.20),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white.withOpacity(.40)),
+                ),
+                child: const Icon(
+                  Icons.engineering_rounded,
+                  size: 31,
+                  color: Color(0xFF3B2B0D),
                 ),
               ),
             ),
-
-            /// icon
-            Positioned(
-              right: 18,
-              bottom: 10,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(.18),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-
-                  const Icon(
-                    Icons.engineering_rounded,
-                    size: 34,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            ),
-
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.fromLTRB(16, 12, 84, 12),
+              child: Row(
                 children: [
-                  const Text(
-                    "ช่างที่ได้รับการรับรอง",
-                    style: TextStyle(
-                      fontFamily: "Kanit",
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xff222222),
-                    ),
-                  ),
-
-                  const SizedBox(height: 2),
-
-                  Text(
-                    "ค้นหาช่างที่ผ่านการรับรองใกล้คุณ",
-                    style: TextStyle(
-                      fontFamily: "Kanit",
-                      fontSize: 12,
-                      color: Colors.black.withOpacity(.65),
-                    ),
-                  ),
-
-                  const Spacer(),
-
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(.08),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(width: 10),
-
                         const Text(
-                          "ค้นหาเลย",
+                          "ช่างที่ได้รับการรับรอง",
                           style: TextStyle(
                             fontFamily: "Kanit",
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF2C2618),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-
-                        const SizedBox(width: 8),
-
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: const BoxDecoration(
-                            // color: Color(0xff2E7D32),
-                            color: Color(0xFF6FC546),
-                            shape: BoxShape.circle,
+                        const SizedBox(height: 2),
+                        Text(
+                          "ค้นหาช่างที่ผ่านการรับรองใกล้คุณ",
+                          style: TextStyle(
+                            fontFamily: "Kanit",
+                            fontSize: 11,
+                            color: Colors.black.withOpacity(.62),
                           ),
-                          child: const Icon(
-                            Icons.arrow_forward_rounded,
-                            color: Colors.white,
-                            size: 15,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2F2A1C),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "ค้นหาเลย",
+                                style: TextStyle(
+                                  fontFamily: "Kanit",
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(
+                                Icons.arrow_forward_rounded,
+                                color: Colors.white,
+                                size: 13,
+                              ),
+                            ],
                           ),
                         ),
                       ],
