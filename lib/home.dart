@@ -532,140 +532,90 @@ class HomePageState extends State<HomePage>
         );
       },
       child: Container(
-        height: 88,
+        height: 84,
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFF4B8), Color(0xFFF2CB5B)],
+            colors: [Color(0xFFFFFAE8), Color(0xFFFFE9A3)],
           ),
-          border: Border.all(color: Colors.white.withOpacity(.65), width: 1),
+          border: Border.all(color: const Color(0xFFE9CC75), width: 1),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFD8A32B).withOpacity(.18),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
+              color: const Color(0xFF8A6A18).withOpacity(.10),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Positioned(
-              right: -28,
-              top: -38,
-              child: Container(
-                width: 124,
-                height: 124,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 50,
+                height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.20),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            Positioned(
-              right: 58,
-              bottom: -22,
-              child: Container(
-                width: 62,
-                height: 62,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white.withOpacity(.24)),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            Positioned(
-              right: 16,
-              top: 16,
-              bottom: 16,
-              child: Container(
-                width: 56,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.34),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.white.withOpacity(.56)),
+                  color: Colors.white.withOpacity(.72),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white),
                 ),
                 child: const Icon(
                   Icons.engineering_rounded,
-                  size: 31,
-                  color: Color(0xFF7A5A14),
+                  size: 28,
+                  color: Color(0xFF8A6B1F),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 10, 84, 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "ช่างที่ได้รับการรับรอง",
-                          style: TextStyle(
-                            fontFamily: "Kanit",
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF5B4A1F),
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          "ค้นหาช่างที่ผ่านการรับรองใกล้คุณ",
-                          style: TextStyle(
-                            fontFamily: "Kanit",
-                            fontSize: 10.5,
-                            color: Color(0xFF75663A),
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(.88),
-                            borderRadius: BorderRadius.circular(999),
-                            border: Border.all(
-                              color: const Color(0xFFE1B83C).withOpacity(.34),
-                            ),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "ค้นหาเลย",
-                                style: TextStyle(
-                                  fontFamily: "Kanit",
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF6F5514),
-                                ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(
-                                Icons.arrow_forward_rounded,
-                                color: Color(0xFF6F5514),
-                                size: 12,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "ตรวจสอบรายชื่อช่างที่ได้รับการรับรอง",
+                      style: TextStyle(
+                        fontFamily: "Kanit",
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF4F4630),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                    SizedBox(height: 4),
+                    Text(
+                      "ค้นหาช่างใกล้คุณ พร้อมดูข้อมูลการรับรอง",
+                      style: TextStyle(
+                        fontFamily: "Kanit",
+                        fontSize: 10.5,
+                        color: Color(0xFF756D59),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(.88),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFE1C467)),
+                ),
+                child: const Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 18,
+                  color: Color(0xFF82651A),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
