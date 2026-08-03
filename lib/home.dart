@@ -566,7 +566,7 @@ class HomePageState extends State<HomePage>
                       scale: 2.2,
                       alignment: Alignment.centerRight,
                       child: Image.asset(
-                        'assets/DSD/icon/bg_search.png',
+                        'assets/DSD/imgs/certified_technician.png',
                         fit: BoxFit.cover,
                         alignment: Alignment.centerRight,
                       ),
