@@ -371,7 +371,7 @@ class _RegsiterPageState extends State<RegsiterPage>
         'platform': Platform.operatingSystem.toString(),
         'countUnit': "[]",
       });
-      print('result : ${result}');
+
 
       if (!mounted) return;
 

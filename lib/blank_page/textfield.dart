@@ -59,6 +59,32 @@ Widget buildSearch({
   );
 }
 
+Widget buildSearchButton({
+  required String hintText,
+  required VoidCallback onTap,
+}) {
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(18),
+    child: Container(
+      height: 52,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.borderColor),
+      ),
+      child: Row(
+        children: [
+          Image.asset('assets/DSD/icon/icon_search.png', width: 24),
+          const SizedBox(width: 12),
+          Text(hintText, style: const TextStyle(color: AppColors.textDark)),
+        ],
+      ),
+    ),
+  );
+}
+
 Widget buildTextField({
   Key? key,
   required TextEditingController controller,

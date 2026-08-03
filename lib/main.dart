@@ -15,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ScreenProtector.preventScreenshotOn();
+  // await ScreenProtector.preventScreenshotOn(); //ป้องกันแคปหน้าจอ
   try {
     await LineSDK.instance.setup('2009618460');
   } catch (e) {
