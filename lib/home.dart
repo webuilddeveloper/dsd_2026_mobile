@@ -539,14 +539,14 @@ class HomePageState extends State<HomePage>
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFE57A), Color(0xFFE8B62D)],
+            colors: [Color(0xFFFFF4B8), Color(0xFFF2CB5B)],
           ),
           border: Border.all(color: Colors.white.withOpacity(.65), width: 1),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFE0A81F).withOpacity(.22),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
+              color: const Color(0xFFD8A32B).withOpacity(.18),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -560,7 +560,7 @@ class HomePageState extends State<HomePage>
                 width: 124,
                 height: 124,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.16),
+                  color: Colors.white.withOpacity(.20),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -584,33 +584,33 @@ class HomePageState extends State<HomePage>
               child: Container(
                 width: 56,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.20),
+                  color: Colors.white.withOpacity(.34),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.white.withOpacity(.40)),
+                  border: Border.all(color: Colors.white.withOpacity(.56)),
                 ),
                 child: const Icon(
                   Icons.engineering_rounded,
                   size: 31,
-                  color: Color(0xFF3B2B0D),
+                  color: Color(0xFF7A5A14),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 84, 12),
+              padding: const EdgeInsets.fromLTRB(16, 10, 84, 10),
               child: Row(
                 children: [
                   Expanded(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
                           "ช่างที่ได้รับการรับรอง",
                           style: TextStyle(
                             fontFamily: "Kanit",
-                            fontSize: 15,
+                            fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF2C2618),
+                            color: Color(0xFF5B4A1F),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -620,21 +620,23 @@ class HomePageState extends State<HomePage>
                           "ค้นหาช่างที่ผ่านการรับรองใกล้คุณ",
                           style: TextStyle(
                             fontFamily: "Kanit",
-                            fontSize: 11,
-                            color: Colors.black.withOpacity(.62),
+                            fontSize: 10.5,
+                            color: Color(0xFF75663A),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
+                            horizontal: 9,
+                            vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2F2A1C),
+                            color: Colors.white.withOpacity(.88),
                             borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: const Color(0xFFE1B83C).withOpacity(.34),
+                            ),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
@@ -643,16 +645,16 @@ class HomePageState extends State<HomePage>
                                 "ค้นหาเลย",
                                 style: TextStyle(
                                   fontFamily: "Kanit",
-                                  fontSize: 11,
+                                  fontSize: 10.5,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                                  color: Color(0xFF6F5514),
                                 ),
                               ),
                               SizedBox(width: 4),
                               Icon(
                                 Icons.arrow_forward_rounded,
-                                color: Colors.white,
-                                size: 13,
+                                color: Color(0xFF6F5514),
+                                size: 12,
                               ),
                             ],
                           ),
