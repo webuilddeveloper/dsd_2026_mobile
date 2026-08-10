@@ -18,102 +18,65 @@ class _TechnicianPageState extends State<TechnicianPage> {
     {
       "personalId": "4700800001962",
       "names": "นายสุวัฒน์ เจริญพิบูลย์",
-      "course": "ช่างไฟฟ้าภายในอาคาร ระดับ 1",
-      "certificateNo": "06-000541/2569",
-      "certificateDate": "2025-12-22T02:02:38Z",
       "site": "กองบริหารทรัพยากรบุคคล",
-
-      "pathCer": null,
+      "certificates": [
+        {
+          "course": "ช่างไฟฟ้าภายในอาคาร ระดับ 1",
+          "certificateNo": "06-000541/2569",
+          "certificateDate": "2025-12-22T02:02:38Z",
+          "site": "กองบริหารทรัพยากรบุคคล",
+          "pathCer": null,
+        },
+        {
+          "course": "ช่างไฟฟ้าภายในอาคาร ระดับ 2",
+          "certificateNo": "06-000389/2568",
+          "certificateDate": "2024-06-10T09:00:00Z",
+          "site": "สำนักงานพัฒนาฝีมือแรงงาน กรุงเทพมหานคร",
+          "pathCer": null,
+        },
+        {
+          "course": "ช่างเดินสายไฟฟ้าแรงสูง",
+          "certificateNo": "06-000102/2567",
+          "certificateDate": "2023-02-18T09:00:00Z",
+          "site": "สำนักงานพัฒนาฝีมือแรงงาน นนทบุรี",
+          "pathCer": null,
+        },
+      ],
+    },
+    {
+      "personalId": "3309900005678",
+      "names": "นางสาวสมหญิง บุญมาก",
+      "site": "สำนักงานพัฒนาฝีมือแรงงาน เชียงใหม่",
+      "certificates": [
+        {
+          "course": "ช่างเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก",
+          "certificateNo": "07-000101/2569",
+          "certificateDate": "2025-10-01T09:00:00Z",
+          "site": "สำนักงานพัฒนาฝีมือแรงงาน เชียงใหม่",
+          "pathCer": null,
+        },
+        {
+          "course": "ช่างซ่อมเครื่องทำความเย็นขนาดเล็ก",
+          "certificateNo": "07-000455/2567",
+          "certificateDate": "2024-01-25T09:00:00Z",
+          "site": "สำนักงานพัฒนาฝีมือแรงงาน เชียงใหม่",
+          "pathCer": null,
+        },
+      ],
     },
     {
       "personalId": "1101200001234",
       "names": "นายสมชาย ใจดี",
       "course": "ช่างไฟฟ้าภายในอาคาร ระดับ 2",
-      "certificateNo": "06-000542/2569",
-      "certificateDate": "2025-11-10T09:00:00Z",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน กรุงเทพมหานคร",
-
-      "pathCer": null,
-    },
-    {
-      "personalId": "3309900005678",
-      "names": "นางสาวสมหญิง บุญมาก",
-      "course": "ช่างเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก",
-      "certificateNo": "07-000101/2569",
-      "certificateDate": "2025-10-01T09:00:00Z",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน เชียงใหม่",
-
-      "pathCer": null,
-    },
-    {
-      "personalId": "4102300011111",
-      "names": "นายอนันต์ พัฒนา",
-      "course": "ช่างเชื่อมไฟฟ้า",
-      "certificateNo": "08-000321/2569",
-      "certificateDate": "2025-09-15T09:00:00Z",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน ชลบุรี",
-
-      "pathCer": null,
-    },
-    {
-      "personalId": "5204400022222",
-      "names": "นายกิตติชัย สุขใจ",
-      "course": "ช่างซ่อมรถยนต์",
-      "certificateNo": "09-000555/2569",
-      "certificateDate": "2025-08-20T09:00:00Z",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน ขอนแก่น",
-
-      "pathCer": null,
-    },
-    {
-      "personalId": "8306600033333",
-      "names": "นายธนพล ดีพร้อม",
-      "course": "ช่างซ่อมรถจักรยานยนต์",
-      "certificateNo": "10-000121/2569",
-      "certificateDate": "2025-07-12T09:00:00Z",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน ภูเก็ต",
-
-      "pathCer": null,
-    },
-    {
-      "personalId": "2407700044444",
-      "names": "นางสาวพิชญา ศรีสุข",
-      "course": "ช่างเดินระบบประปา",
-      "certificateNo": "11-000888/2569",
-      "certificateDate": "2025-06-30T09:00:00Z",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน ระยอง",
-
-      "pathCer": null,
-    },
-    {
-      "personalId": "3608800055555",
-      "names": "นายวรชัย มั่นคง",
-      "course": "ช่างก่ออิฐ ฉาบปูน",
-      "certificateNo": "12-000412/2569",
-      "certificateDate": "2025-05-22T09:00:00Z",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน นครราชสีมา",
-
-      "pathCer": null,
-    },
-    {
-      "personalId": "9201100066666",
-      "names": "นายภาคิน รุ่งเรือง",
-      "course": "ช่างติดตั้งระบบโซลาร์เซลล์",
-      "certificateNo": "13-000201/2569",
-      "certificateDate": "2025-04-18T09:00:00Z",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน สงขลา",
-
-      "pathCer": null,
-    },
-    {
-      "personalId": "1509900077777",
-      "names": "นางสาวศิริพร แสงทอง",
-      "course": "ช่างซ่อมเครื่องใช้ไฟฟ้าภายในบ้าน",
-      "certificateNo": "14-000654/2569",
-      "certificateDate": "2025-03-10T09:00:00Z",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน พระนครศรีอยุธยา",
-
-      "pathCer": null,
+      "certificates": [
+        {
+          "course": "ช่างเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก",
+          "certificateNo": "07-000101/2569",
+          "certificateDate": "2025-10-01T09:00:00Z",
+          "site": "สำนักงานพัฒนาฝีมือแรงงาน เชียงใหม่",
+          "pathCer": null,
+        },
+      ],
     },
   ];
 
@@ -122,10 +85,34 @@ class _TechnicianPageState extends State<TechnicianPage> {
   @override
   void initState() {
     super.initState();
-
     _filteredTechnicians = List.from(technicians);
-
     _searchController.addListener(_searchTechnician);
+  }
+
+  // ── ดึงลิสต์ใบเซอร์ + fallback (ตรงกับ logic ของหน้า detail) ──
+  List<Map<String, dynamic>> _certsOf(Map<String, dynamic> item) {
+    final raw = item["certificates"];
+
+    if (raw is List) {
+      return raw
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    }
+
+    if (item["course"] != null || item["certificateNo"] != null) {
+      return [
+        {
+          "course": item["course"],
+          "certificateNo": item["certificateNo"],
+          "certificateDate": item["certificateDate"],
+          "site": item["site"],
+          "pathCer": item["pathCer"],
+        },
+      ];
+    }
+
+    return [];
   }
 
   void _searchTechnician() {
@@ -139,19 +126,31 @@ class _TechnicianPageState extends State<TechnicianPage> {
 
       _filteredTechnicians =
           technicians.where((item) {
-            return (item["names"] ?? "").toString().toLowerCase().contains(
-                  keyword,
-                ) ||
-                (item["course"] ?? "").toString().toLowerCase().contains(
-                  keyword,
-                ) ||
-                (item["certificateNo"] ?? "").toString().toLowerCase().contains(
+            final matchTop =
+                (item["names"] ?? "").toString().toLowerCase().contains(
                   keyword,
                 ) ||
                 (item["site"] ?? "").toString().toLowerCase().contains(
                   keyword,
                 ) ||
                 (item["personalId"] ?? "").toString().contains(keyword);
+
+            if (matchTop) return true;
+
+            // ── เช็คทุกใบเซอร์ของช่างคนนี้ (รวม fallback) ──
+            final certs = _certsOf(item);
+            return certs.any((cert) {
+              return (cert["course"] ?? "").toString().toLowerCase().contains(
+                    keyword,
+                  ) ||
+                  (cert["certificateNo"] ?? "")
+                      .toString()
+                      .toLowerCase()
+                      .contains(keyword) ||
+                  (cert["site"] ?? "").toString().toLowerCase().contains(
+                    keyword,
+                  );
+            });
           }).toList();
     });
   }
@@ -171,7 +170,6 @@ class _TechnicianPageState extends State<TechnicianPage> {
         rightBtn: false,
         backAction: () => Navigator.pop(context),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -184,9 +182,6 @@ class _TechnicianPageState extends State<TechnicianPage> {
               },
             ),
             const SizedBox(height: 16),
-
-            const SizedBox(height: 12),
-
             Expanded(
               child:
                   _filteredTechnicians.isEmpty
@@ -207,187 +202,137 @@ class _TechnicianPageState extends State<TechnicianPage> {
   }
 
   Widget _buildTechnicianCard(Map<String, dynamic> item) {
+    final certCount = _certsOf(item).length;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          // onTap: () {
-          //   // TODO: ไปหน้ารายละเอียดช่าง
-          //   Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => TechnicianDetailPage(technician: item),
-          //     ),
-          //   );
-          // },
+          borderRadius: BorderRadius.circular(14),
           onTap: () {
-            showGeneralDialog(
-              context: context,
-              barrierDismissible: true,
-              barrierLabel: '',
-              barrierColor: Colors.black45,
-              transitionDuration: const Duration(milliseconds: 250),
-              pageBuilder: (_, __, ___) {
-                return Center(child: TechnicianDetailDialog(technician: item));
-              },
-              transitionBuilder: (_, animation, __, child) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: ScaleTransition(
-                    scale: Tween<double>(begin: .92, end: 1).animate(
-                      CurvedAnimation(
-                        parent: animation,
-                        curve: Curves.easeOutCubic,
-                      ),
-                    ),
-                    child: child,
-                  ),
-                );
-              },
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TechnicianDetailPage(technician: item),
+              ),
             );
           },
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Avatar
                 Container(
-                  width: 52,
-                  height: 52,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
                     color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(9.0),
                     child: Image.asset(
                       'assets/DSD/icon/icon_user.png',
-                      width: 28,
-                      height: 28,
                       color: Colors.white,
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 12),
 
-                // ข้อมูล
+                // ── ข้อมูลสำคัญเท่านั้น ──
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ชื่อ + แท็กประเภท
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              item["names"] ?? "-",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        item["names"] ?? "-",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.5,
+                          color: Colors.black87,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 3,
+                      Text(
+                        "เลขบัตร: ${item["personalId"] ?? "-"}",
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Colors.grey.shade600,
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.backgroundMain,
-                          borderRadius: BorderRadius.circular(8),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item["site"] ?? "-",
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Colors.grey.shade600,
                         ),
-                        child: Text(
-                          item["course"] ?? "-",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 10),
-
-                      _buildInfoRow(
-                        Icons.badge_outlined,
-                        "เลขรับรอง",
-                        item["certificateNo"],
-                      ),
-                      const SizedBox(height: 4),
-                      _buildInfoRow(
-                        Icons.business_outlined,
-                        "หน่วยงาน",
-                        item["site"],
-                      ),
-                      const SizedBox(height: 4),
-                      // _buildInfoRow(
-                      //   Icons.location_on_outlined,
-                      //   "จังหวัด",
-                      //   item["province"],
-                      // ),
                     ],
                   ),
                 ),
 
+                // ── badge จำนวนใบเซอร์ ──
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.workspace_premium_outlined,
+                        size: 13,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        "$certCount ใบ",
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+
                 const Icon(
                   Icons.chevron_right,
                   color: AppColors.primary,
-                  size: 28,
+                  size: 22,
                 ),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String label, dynamic value) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 15, color: Colors.grey.shade500),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: "$label : ",
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-                ),
-                TextSpan(
-                  text: "${value ?? "-"}",
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

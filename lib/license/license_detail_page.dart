@@ -345,7 +345,7 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
           const filenameMap = {
             '1': 'traningId',
             '2': 'testingId',
-            '3': 'evaluationId',
+            '3': 'formId',
           };
 
           return Column(
@@ -371,7 +371,7 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
               const Divider(color: AppColors.backgroundMain),
               _buildtxtStatus(
                 title: language.licenseStatus,
-                subtitle: widget.license['cerExpire'] ?? "-",
+                subtitle: "-", // widget.license['cerExpire'] ??
               ),
               SizedBox(height: 12),
 

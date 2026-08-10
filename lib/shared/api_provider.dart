@@ -22,7 +22,7 @@ const splash = "$dsd_server/splash/";
 const getCert = "$dsd_server/m/Register/GetCret";
 const getCretTraining = "$dsd_server/m/Register/GetCretTraining";
 const getCretTesting = "$dsd_server/m/Register/GetCretTesting";
-const getCretEvaluations = "";
+const getCretEvaluations = "$dsd_server/m/Register/GetCretKnowledge";
 
 //new
 const newsApi = "${dsd_server}m/news/";
