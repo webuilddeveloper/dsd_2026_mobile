@@ -1,4 +1,4 @@
-package td.webuild.dsdecer.ios
+package td.webuild.dsd.ecert
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,7 @@ class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        //window.addFlags(WindowManager.LayoutParams.FLAG_SECURE) //ป้องกันแคป
     }
 
     override fun onNewIntent(intent: Intent) {

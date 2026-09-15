@@ -54,6 +54,7 @@ class AppStrings {
   final String knowledge;
   final String privilege;
   final String recommended;
+  final String noRecommendedCourses;
   final String recommendedGuest;
   final String pressrelease;
   // หน้าcalendar
@@ -251,6 +252,7 @@ class AppStrings {
     required this.knowledge,
     required this.privilege,
     required this.recommended,
+    required this.noRecommendedCourses,
     required this.recommendedGuest,
     required this.pressrelease,
 
@@ -448,11 +450,12 @@ class AppStrings {
     standtest: "สมัครสอบมาตรฐาน\nที่นั่งทางวิชาชีพ",
     skillTestSchedule: "กำหนดการทดสอบมาตรฐานฝีมือแรงงาน",
     trainingapp: "สมัครฝึกอบรม",
-    trainingCourses: "หลักสูตรฝึกอบรม",
+    trainingCourses: "หลักสูตรฝึกอบรม ",
     cert: "สมัครรับรองความรู้\nความสามารถ",
     knowledge: "คลังความรู้",
     privilege: "สิทธิประโยชน์",
     recommended: "คอร์สอบรมแนะนำสำหรับคุณ",
+    noRecommendedCourses: "ยังไม่พบคอร์สที่ตรงกับความสนใจของคุณในขณะนี้",
     recommendedGuest: "คอร์สอบรมแนะนำ",
     pressrelease: "ข่าวประชาสัมพันธ์",
     // หน้าcalendar
@@ -652,6 +655,8 @@ class AppStrings {
     knowledge: "Knowledge",
     privilege: "Privilege",
     recommended: "Recommended Training Courses For You",
+    noRecommendedCourses:
+        "We couldn’t find any courses that match your interests at the moment.",
     recommendedGuest: "Recommended Training Courses",
     pressrelease: "Press Release",
     // หน้าcalendar

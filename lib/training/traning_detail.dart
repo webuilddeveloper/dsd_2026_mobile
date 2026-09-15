@@ -115,7 +115,7 @@ class _TraningDetailState extends State<TraningDetail> {
 
     return Scaffold(
       appBar: appBar(
-        title: "หลักสูตรฝึกอบรม",
+        title: "หลักสูตรฝึกอบรม ",
         backBtn: true,
         backAction: () => Navigator.pop(context),
       ),

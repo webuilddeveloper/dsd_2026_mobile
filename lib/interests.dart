@@ -51,6 +51,7 @@ class _InterestsState extends State<Interests> {
       "profileCode": await storage.read(key: 'profileCode'),
     });
 
+    print(await storage.read(key: 'profileCode'));
     List data = [];
     if (res is List) {
       data = res;

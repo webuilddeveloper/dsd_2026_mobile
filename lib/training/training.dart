@@ -33,15 +33,46 @@ class _TrainingServiceState extends State<TrainingService> {
   }
 
   /*===============================>> API <<=============================== */
+  // Future<void> _trainingApi() async {
+  //   final data = await postDio('${trainingApi}readAPI', {"keySearch": "2569"});
+  //   setState(() {
+  //     training = (data as List).cast<Map<String, dynamic>>();
+  //     print('✅ training: ${training}');
+  //     isLoading = false;
+  //   });
+  // }
+
+  String? errorMessage;
   Future<void> _trainingApi() async {
-    final data = await postDio('${trainingApi}readAPI', {"keySearch": "2569"});
-    setState(() {
-      training = (data as List).cast<Map<String, dynamic>>();
+    try {
+      final data = await postDio('${trainingApi}readAPI', {
+        'keySearch': '2569',
+      });
 
-      isLoading = false;
-    });
+      if (!mounted) return;
+
+      setState(() {
+        training =
+            data is List
+                ? data
+                    .whereType<Map>()
+                    .map((item) => Map<String, dynamic>.from(item))
+                    .toList()
+                : [];
+
+        errorMessage = null;
+        isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+
+      setState(() {
+        training = [];
+        errorMessage = error.toString().replaceFirst('Exception: ', '');
+        isLoading = false;
+      });
+    }
   }
-
   /*===============================>> API <<=============================== */
 
   List<Map<String, dynamic>> mockTraining = [
@@ -119,148 +150,179 @@ class _TrainingServiceState extends State<TrainingService> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        child: ListView.builder(
-          itemCount: training.length,
-          // itemCount: mockTraining.length, // ชั่วราว
-          itemBuilder: (context, index) {
-            final item = training[index];
-            // final item = mockTraining[index]; // ชั่วราว
-
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item['course'],
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'รุ่นที่ ${item['classNo'] ?? '-'}',
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(item['site'], style: const TextStyle(fontSize: 15)),
-                    const SizedBox(height: 12),
-                    Row(
+        child:
+            isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : errorMessage != null
+                ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          children: [
-                            Image.asset(
-                              'assets/DSD/icon/icon_calendar_full.png',
-                              color: AppColors.primary,
-                              width: 16,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              formatDate(item['dsdStartDate']),
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                          ],
-                        ),
-                        SizedBox(width: 8),
-                        Row(
-                          children: [
-                            Image.asset(
-                              'assets/DSD/icon/icon_calendar_full.png',
-                              color: AppColors.primary,
-                              width: 16,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              formatDate(item['dsdEndDate']),
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Image.asset(
-                          'assets/DSD/icon/icon date.png',
-                          color: AppColors.primary,
-                          width: 16,
-                        ),
-                        const SizedBox(width: 6),
                         Text(
-                          'ระยะเวลาที่ฝึก : ${item['period']} ชั่วโมง',
-                          style: const TextStyle(fontSize: 13),
+                          errorMessage!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    const Divider(color: AppColors.backgroundMain),
-                    const SizedBox(height: 16),
+                  ),
+                )
+                : training.isEmpty
+                ? const Center(
+                  child: Text(
+                    'ไม่พบข้อมูลหลักสูตรฝึกอบรม',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                )
+                : ListView.builder(
+                  itemCount: training.length,
+                  // itemCount: mockTraining.length, // ชั่วราว
+                  itemBuilder: (context, index) {
+                    final item = training[index];
+                    // final item = mockTraining[index]; // ชั่วราว
 
-                    /// Button
-                    InkWell(
-                      onTap: () {
-                        // final url = buildDsdUrl(training[index]);
-                        final url = buildTrainingUrl(item); // ชั่วคราว
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (_) => WebViewPage(
-                                  url: url,
-                                  title: language.trainingCourses,
-                                ),
-                          ),
-                        );
-                      },
-                      // item['status2'] == true
-                      //     ? null
-                      //     : () {
-                      //       Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //           builder: (_) => TraningDetail(item: item),
-                      //         ),
-                      //       );
-                      //     },
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color:
-                              item['status2'] == true
-                                  ? Colors.grey
-                                  : const Color(0xff6FC546),
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 20,
                         ),
-                        child: Center(
-                          child: Text(
-                            item['status2'] == true ? 'สมัครแล้ว' : 'สมัคร',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item['course'],
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'รุ่นที่ ${item['classNo'] ?? '-'}',
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              item['site'],
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/DSD/icon/icon_calendar_full.png',
+                                      color: AppColors.primary,
+                                      width: 16,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      formatDate(item['dsdStartDate']),
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(width: 8),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/DSD/icon/icon_calendar_full.png',
+                                      color: AppColors.primary,
+                                      width: 16,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      formatDate(item['dsdEndDate']),
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Image.asset(
+                                  'assets/DSD/icon/icon date.png',
+                                  color: AppColors.primary,
+                                  width: 16,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'ระยะเวลาที่ฝึก : ${item['period']} ชั่วโมง',
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            const Divider(color: AppColors.backgroundMain),
+                            const SizedBox(height: 16),
+
+                            /// Button
+                            InkWell(
+                              onTap: () {
+                                // final url = buildDsdUrl(training[index]);
+                                final url = buildTrainingUrl(item); // ชั่วคราว
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => WebViewPage(
+                                          url: url,
+                                          title: language.trainingCourses,
+                                        ),
+                                  ),
+                                );
+                              },
+                              // item['status2'] == true
+                              //     ? null
+                              //     : () {
+                              //       Navigator.push(
+                              //         context,
+                              //         MaterialPageRoute(
+                              //           builder: (_) => TraningDetail(item: item),
+                              //         ),
+                              //       );
+                              //     },
+                              child: Container(
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25),
+                                  color:
+                                      item['status2'] == true
+                                          ? Colors.grey
+                                          : const Color(0xff6FC546),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    item['status2'] == true
+                                        ? 'สมัครแล้ว'
+                                        : 'สมัคร',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
-              ),
-            );
-          },
-        ),
       ),
     );
   }

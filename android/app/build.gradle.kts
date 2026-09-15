@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "td.webuild.dsdecer.ios"
+    namespace = "td.webuild.dsd.ecert"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
 
@@ -29,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "td.webuild.dsdecer.ios"
+        applicationId = "td.webuild.dsd.ecert"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -38,7 +38,7 @@ android {
 
     // ✅ ครอบ if ตรงนี้ด้วย
     signingConfigs {
-        if (keystorePropertiesFile.exists()) {
+        if (keystorePropertiesFile.exists()) {q
             create("release") {
                 keyAlias = keystoreProperties["keyAlias"] as String
                 keyPassword = keystoreProperties["keyPassword"] as String

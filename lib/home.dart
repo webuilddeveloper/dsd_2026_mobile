@@ -6,6 +6,7 @@ import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/launch.dart';
 
 import 'package:dsd/blank_page/webview.dart';
+import 'package:dsd/interests.dart';
 import 'package:dsd/technician/technician.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/locale_provider.dart';
@@ -21,6 +22,7 @@ import 'package:dsd/service/service_allpage.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:dsd/verified/verified_thaid.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
@@ -48,8 +50,11 @@ class HomePageState extends State<HomePage>
   final txtLastName = TextEditingController();
   final searchController = TextEditingController();
   late final AnimationController _certGlowController;
+  String? _trainingErrorMessage;
+  
   List<Map<String, String>> training = [];
 
+  bool _hasSelectedInterest = true;
   @override
   void initState() {
     super.initState();
@@ -140,9 +145,157 @@ class HomePageState extends State<HomePage>
     return (data as List).cast<Map<String, dynamic>>();
   }
 
+  Future<List<Map<String, dynamic>>> _futureTraining() async {
+    try {
+      _trainingErrorMessage = null;
+
+      final profileCode = await storage.read(key: 'profileCode');
+
+      final data = await postDio('${trainingApi}readAPI', {
+        'keySearch': '2569',
+        'profileCode': profileCode,
+      });
+
+      return (data as List)
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList();
+    } catch (error, stackTrace) {
+      debugPrint('❌ _futureTraining error: $error');
+      debugPrintStack(stackTrace: stackTrace);
+
+      _trainingErrorMessage = error.toString().replaceFirst('Exception: ', '');
+
+      return [];
+    }
+  }
+
+  // Future<Set<String>> _getSelectedInterestKeywords() async {
+  //   try {
+  //     // โหลดหมวดหมู่ทั้งหมด
+  //     final categoryData = await postDio('${trainingApi}category/read', {});
+  //     final categories =
+  //         (categoryData as List)
+  //             .whereType<Map>()
+  //             .map((item) => Map<String, dynamic>.from(item))
+  //             .toList();
+
+  //     // โหลดหมวดหมู่ที่ผู้ใช้เลือก
+  //     final interestData = await postDio('${register}readInterest', {
+  //       "profileCode": await storage.read(key: 'profileCode'),
+  //     });
+
+  //     final interests =
+  //         (interestData as List)
+  //             .whereType<Map>()
+  //             .map((item) => Map<String, dynamic>.from(item))
+  //             .toList();
+
+  //     // กรองเฉพาะหมวดหมู่ที่ผู้ใช้เลือกอยู่
+  //     final Set<String> activeCategoryCodes =
+  //         interests
+  //             .where((item) => item['isActive'] == true)
+  //             .map((item) => item['trainingCategory']?.toString())
+  //             .whereType<String>()
+  //             .where((code) => code.isNotEmpty)
+  //             .toSet();
+
+  //     // นำ code ไปหา title
+  //     final Set<String> selectedCategoryTitles =
+  //         categories
+  //             .where((category) {
+  //               final code = category['code']?.toString();
+
+  //               return code != null && activeCategoryCodes.contains(code);
+  //             })
+  //             .map((category) => category['title']?.toString().trim())
+  //             .whereType<String>()
+  //             .where((title) => title.isNotEmpty)
+  //             .toSet();
+
+  //     // รวม title และคำใกล้เคียงเป็น Keyword
+  //     final Set<String> keywords = {};
+
+  //     for (final title in selectedCategoryTitles) {
+  //       keywords.add(_normalizeText(title));
+
+  //       final aliases = interestKeywordAliases[title] ?? [];
+
+  //       keywords.addAll(
+  //         aliases.map(_normalizeText).where((keyword) => keyword.isNotEmpty),
+  //       );
+  //     }
+
+  //     debugPrint('✅ activeCategoryCodes: $activeCategoryCodes');
+  //     debugPrint('✅ selectedCategoryTitles: $selectedCategoryTitles');
+  //     debugPrint('✅ keywords: $keywords');
+
+  //     return keywords;
+  //   } catch (error, stackTrace) {
+  //     debugPrint('❌ _getSelectedInterestKeywords error: $error');
+  //     debugPrintStack(stackTrace: stackTrace);
+
+  //     return {};
+  //   }
+  // }
+
   // Future<List<Map<String, dynamic>>> _futureTraining() async {
-  //   final data = await postDio('${trainingApi}readAPI', {"keySearch": "2569"});
-  //   return (data as List).cast<Map<String, dynamic>>();
+  //   try {
+  //     _trainingErrorMessage = null;
+  //     // โหลด Keyword จากความสนใจ
+  //     final keywords = await _getSelectedInterestKeywords();
+
+  //     _hasSelectedInterest = keywords.isNotEmpty;
+  //     print('_hasSelectedInterest : $_hasSelectedInterest');
+
+  //     if (!_hasSelectedInterest) {
+  //       debugPrint('⚠️ ผู้ใช้ยังไม่ได้เลือกความสนใจ');
+  //       return [];
+  //     }
+
+  //     // โหลดหลักสูตร
+  //     final data = await postDio('${trainingApi}readAPI', {
+  //       'keySearch': '2569',
+  //     });
+
+  //     final trainings =
+  //         (
+  //             // mockTraining
+  //             data as List)
+  //             .whereType<Map>()
+  //             .map((item) => Map<String, dynamic>.from(item))
+  //             .toList();
+
+  //     // กรองหลักสูตรตาม Keyword
+  //     final recommendedTrainings =
+  //         trainings.where((training) {
+  //           final searchableText = _normalizeText(
+  //             [
+  //               training['course'],
+  //               training['description'],
+  //             ].whereType<String>().join(' '),
+  //           );
+
+  //           return keywords.any((keyword) {
+  //             return searchableText.contains(keyword);
+  //           });
+  //         }).toList();
+
+  //     debugPrint('✅ training ทั้งหมด: ${trainings.length}');
+  //     debugPrint('✅ training ที่ตรงความสนใจ: ${recommendedTrainings.length}');
+
+  //     return recommendedTrainings;
+  //   } catch (error, stackTrace) {
+  //     debugPrint('❌ _futureTraining error: $error');
+  //     debugPrintStack(stackTrace: stackTrace);
+
+  //     _trainingErrorMessage = error.toString().replaceFirst('Exception: ', '');
+  //     return [];
+  //   }
+  // }
+
+  // Future<List<Map<String, dynamic>>> _futureTraining() async {
+  //   return mockTraining;
   // }
 
   List<Map<String, dynamic>> mockTraining = [
@@ -209,9 +362,6 @@ class HomePageState extends State<HomePage>
     },
   ];
 
-  Future<List<Map<String, dynamic>>> _futureTraining() async {
-    return mockTraining;
-  }
   /*===============================>> UI <<=============================== */
 
   Widget _buildRightWidget(
@@ -776,181 +926,310 @@ class HomePageState extends State<HomePage>
       future: _futureTraining(),
       builder: (context, snapshot) {
         final cardHeight = MediaQuery.of(context).size.height * 0.275;
-        return SizedBox(
-          height: cardHeight,
-          child: ListView.separated(
-            separatorBuilder:
-                (BuildContext context, int index) => const SizedBox(width: 12),
-            scrollDirection: Axis.horizontal,
-            itemCount: snapshot.data?.length ?? 0,
-            itemBuilder: (context, index) {
-              final training = snapshot.data!;
-              return Container(
-                height: cardHeight,
-                width: MediaQuery.of(context).size.width * 0.45,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 85,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
+        return snapshot.data == null || snapshot.data!.isEmpty
+            ? _trainingErrorMessage != null
+                ? SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF9E6),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.35),
+                        width: 1,
                       ),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
-                        child: Image.asset(
-                          'assets/DSD/imgs/2.png',
-                          fit: BoxFit.cover,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _trainingErrorMessage!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Kanit',
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
+                  ),
+                )
+                : _hasSelectedInterest
+                ? SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  child: Center(
+                    child: Text(
+                      language.noRecommendedCourses,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Kanit',
+                      ),
+                    ),
+                  ),
+                )
+                : Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF9E6),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: AppColors.primary.withOpacity(0.35),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              height: 34,
-                              child: Text(
-                                training[index]['course'] ?? '',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                            const Text(
+                              'ยังไม่ได้เลือกความสนใจ',
+                              style: TextStyle(
+                                fontFamily: 'Kanit',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF4F4630),
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Image.asset(
-                                  'assets/DSD/icon/icon date.png',
-                                  width: 14,
-                                  color: const Color(0xFFBB439C),
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    " ระยะเวลาที่ฝึก ${training[index]['period'] ?? ''} ชั่วโมง",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: AppColors.textDark,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w400,
-                                      fontFamily: 'Kanit',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Image.asset(
-                                  'assets/DSD/icon/icon_calendar_full.png',
-                                  width: 14,
-                                  color: AppColors.primary,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    "วันเริ่ม ${formatDate(training[index]['dsdStartDate'] ?? '')}",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: AppColors.textDark,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w400,
-                                      fontFamily: 'Kanit',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Image.asset(
-                                  'assets/DSD/icon/icon_calendar_full.png',
-                                  width: 14,
-                                  color: AppColors.primary,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    "วันสิ้นสุด ${formatDate(training[index]['dsdEndDate'] ?? '')}",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: AppColors.textDark,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w400,
-                                      fontFamily: 'Kanit',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            InkWell(
-                              onTap: () {
-                                final url = buildTrainingUrl(training[index]);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => WebViewPage(
-                                          url: url,
-                                          title: language.trainingCourses,
-                                        ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF6FC546),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: const Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8),
-                                    child: Text(
-                                      "สมัคร",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Kanit',
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'เลือกความสนใจเพื่อรับคอร์สที่เหมาะกับคุณ',
+                              style: TextStyle(
+                                fontFamily: "Kanit",
+                                fontSize: 10.5,
+                                color: Color(0xFF756D59),
                               ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 8),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Interests(isEdit: false),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(.86),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withOpacity(.94),
+                            ),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: const Color(0xFF80631A).withOpacity(.12),
+                            //     blurRadius: 8,
+                            //     offset: const Offset(0, 2),
+                            //   ),
+                            // ],
+                          ),
+                          padding: const EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.arrow_forward_rounded,
+                            color: AppColors.primary,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+            : SizedBox(
+              height: cardHeight,
+              child: ListView.separated(
+                separatorBuilder:
+                    (BuildContext context, int index) =>
+                        const SizedBox(width: 12),
+                scrollDirection: Axis.horizontal,
+                itemCount: snapshot.data?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final training = snapshot.data!;
+                  return Container(
+                    height: cardHeight,
+                    width: MediaQuery.of(context).size.width * 0.45,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 85,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[400],
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(12),
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(12),
+                            ),
+                            child: Image.asset(
+                              'assets/DSD/imgs/2.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 6,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 34,
+                                  child: Text(
+                                    training[index]['course'] ?? '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/DSD/icon/icon date.png',
+                                      width: 14,
+                                      color: const Color(0xFFBB439C),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        " ระยะเวลาที่ฝึก ${training[index]['period'] ?? ''} ชั่วโมง",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: AppColors.textDark,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'Kanit',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/DSD/icon/icon_calendar_full.png',
+                                      width: 14,
+                                      color: AppColors.primary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        "วันเริ่ม ${formatDate(training[index]['dsdStartDate'] ?? '')}",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: AppColors.textDark,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'Kanit',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/DSD/icon/icon_calendar_full.png',
+                                      width: 14,
+                                      color: AppColors.primary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        "วันสิ้นสุด ${formatDate(training[index]['dsdEndDate'] ?? '')}",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: AppColors.textDark,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'Kanit',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                InkWell(
+                                  onTap: () {
+                                    final url = buildTrainingUrl(
+                                      training[index],
+                                    );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => WebViewPage(
+                                              url: url,
+                                              title: language.trainingCourses,
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF6FC546),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 8,
+                                        ),
+                                        child: Text(
+                                          "สมัคร",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'Kanit',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            );
       },
     );
   }

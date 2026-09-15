@@ -614,8 +614,8 @@ class _LoginPageState extends State<LoginPage>
     try {
       String responseType = 'code';
       String clientId = 'b1lzRU9NcmxEWjFTdXRTMEtaZDhXaHFSTk0xc1hyc00';
-      String client_secret =
-          'UVpJMVZhUWN4dXBDNk9wY0xJNm9tcjJKZHFTZUJCZXVGOUlISDRKRw';
+      // String client_secret =
+      //     'UVpJMVZhUWN4dXBDNk9wY0xJNm9tcjJKZHFTZUJCZXVGOUlISDRKRw';
       String redirectUri = 'https://gateway.we-builds.com/dsd/thaid';
       String base = 'https://imauth.bora.dopa.go.th/api/v2/oauth2/auth/';
       // Random string for state, '1' for login.

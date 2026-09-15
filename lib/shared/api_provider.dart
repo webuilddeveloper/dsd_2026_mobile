@@ -1,16 +1,15 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
-const server = 'https://ksp.we-builds.com/ksp-api/';
-
 // ignore: constant_identifier_names
-const dsd_server = 'https://gateway.we-builds.com/dsd-e-api/';
-
 // const dsd_server = 'https://untoasted-float-roving.ngrok-free.dev/';
+const dsd_server = 'https://gateway.we-builds.com/dsd-e-api/';
+// const dsd_server = 'http://localhost:8700/';
 
 const serverUpload =
     'https://khubdeedlt.we-builds.com/khubdeedlt-document/upload';
@@ -67,18 +66,61 @@ const aboutUs = '${dsd_server}aboutUs/';
 // policy
 const policyApi = '${dsd_server}m/policy/';
 
-Future<dynamic> postDio(String url, dynamic criteria) async {
-  final storage = FlutterSecureStorage();
+// Future<dynamic> postDio(String url, dynamic criteria) async {
+//   final storage = FlutterSecureStorage();
+//   final profileCode = await storage.read(key: 'profileCode9');
+
+//   if (profileCode != '' && profileCode != null) {
+//     criteria = {'profileCode': profileCode, ...criteria};
+//   }
+
+//   Dio dio = Dio();
+//   var response = await dio.post(url, data: criteria);
+//   print('✅ postDio: ${url} - ${criteria}');
+//   print('✅ status: ${response.statusCode}');
+
+//   return Future.value(response.data['objectData']);
+// }
+Future<dynamic> postDio(String url, Map<String, dynamic> criteria) async {
+  const storage = FlutterSecureStorage();
   final profileCode = await storage.read(key: 'profileCode9');
 
-  if (profileCode != '' && profileCode != null) {
-    criteria = {'profileCode': profileCode, ...criteria};
+  final requestData = {
+    if (profileCode != null && profileCode.isNotEmpty)
+      'profileCode': profileCode,
+    ...criteria,
+  };
+
+  try {
+    final dio = Dio();
+
+    final response = await dio.post(url, data: requestData);
+
+    final data = response.data;
+
+    debugPrint('✅ postDio: $url - $requestData');
+    debugPrint('✅ HTTP status: ${response.statusCode}');
+    debugPrint('✅ API status: ${data['status']}');
+
+    if (data is! Map) {
+      throw Exception('รูปแบบข้อมูลจาก API ไม่ถูกต้อง');
+    }
+
+    if (data['status'] == 'S') {
+      return data['objectData'];
+    }
+
+    final message = data['message']?.toString() ?? 'ไม่สามารถดำเนินการได้';
+
+    throw Exception(message);
+  } on DioException catch (error) {
+    final responseData = error.response?.data;
+
+    final message =
+        responseData is Map ? responseData['message']?.toString() : null;
+
+    throw Exception(message ?? 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
   }
-
-  Dio dio = Dio();
-  var response = await dio.post(url, data: criteria);
-
-  return Future.value(response.data['objectData']);
 }
 
 Future<dynamic> postapi(String url, dynamic criteria) async {
