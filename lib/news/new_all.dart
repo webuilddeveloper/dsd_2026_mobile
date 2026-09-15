@@ -1,4 +1,5 @@
 import 'package:dsd/blank_page/appbar.dart';
+import 'package:dsd/blank_page/category_chip.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/news/new_detail.dart';
 import 'package:dsd/shared/api_provider.dart';
@@ -117,41 +118,18 @@ class _NewAllState extends State<NewAll> {
                           final isSelected = selectedIndex == index;
                           return Padding(
                             padding: const EdgeInsets.only(right: 8),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() => selectedIndex = index);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color:
-                                      isSelected
-                                          ? AppColors.primary
-                                          : Colors.white,
-                                  border: Border.all(
-                                    color:
-                                        isSelected
-                                            ? Colors.white
-                                            : AppColors.primary,
-                                  ),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 4,
-                                  ),
-                                  child: Text(
-                                    selectedCode == "th"
-                                        ? category[index]['title']
-                                        : category[index]['titleEN'] ?? '',
-
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            child: CategoryChip(
+                              label:
+                                  index == 0
+                                      ? language.categoryAll
+                                      : (selectedCode == 'th'
+                                              ? category[index]['title']
+                                              : category[index]['titleEN'] ??
+                                                  '')
+                                          .toString(),
+                              selected: isSelected,
+                              onSelected:
+                                  () => setState(() => selectedIndex = index),
                             ),
                           );
                         }),

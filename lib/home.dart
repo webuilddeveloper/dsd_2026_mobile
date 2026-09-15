@@ -116,15 +116,14 @@ class HomePageState extends State<HomePage>
 
     final value = await postapi('${registerV2}read', {"code": _code});
 
-    print('✅ _code: ${_code}');
     if (value != null &&
         value['objectData'] != null &&
         value['objectData'].isNotEmpty) {
       var user = value['objectData'][0];
-
+      print('✅ _code: ${_code}');
       print('${user['idcard'] ?? ''}');
       print('${isCert = user['isCert']}');
-      print('${isPDPA = user['isPDPA']}');
+      print('${isPDPA = user['isPdpa']}');
       if (!mounted) return;
       setState(() {
         _imageUrl = user['imageUrl'] ?? '';
@@ -132,7 +131,7 @@ class HomePageState extends State<HomePage>
         txtLastName.text = user['lastName'] ?? '';
         idcard = user['idcard'] ?? '';
         isCert = user['isCert'];
-        isPDPA = user['isPDPA'];
+        isPDPA = user['isPdpa'];
       });
     }
   }
@@ -478,6 +477,7 @@ class HomePageState extends State<HomePage>
     print('_code : ${_code}');
     print('idcard : ${idcard}');
     print('isCert : ${isCert}');
+    print('isPDPA : ${isPDPA}');
 
     final String name =
         isLoggedIn
@@ -585,110 +585,25 @@ class HomePageState extends State<HomePage>
 
   /*===============================>> WIDGET <<=============================== */
 
-  // Widget buildTechnicianCard({required BuildContext context}) {
-  //   return InkWell(
-  //     borderRadius: BorderRadius.circular(18),
-  //     onTap: () {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (_) => const TechnicianPage()),
-  //       );
-  //     },
-  //     child: Container(
-  //       width: double.infinity,
-  //       decoration: BoxDecoration(
-  //         borderRadius: BorderRadius.circular(18),
-  //         color: AppColors.primary.withOpacity(0.8),
-  //       ),
-  //       child: Stack(
-  //         clipBehavior: Clip.none,
-  //         children: [
-  //           // ไอคอนใหญ่จางๆ เป็นลวดลายพื้นหลัง มุมขวา
-  //           Positioned(
-  //             right: 5,
-  //             top: -10,
-  //             bottom: -10,
-  //             child: Padding(
-  //               padding: const EdgeInsets.all(8.0),
-  //               child: Icon(
-  //                 Icons.engineering_rounded,
-  //                 size: 70,
-  //                 color: Colors.white.withOpacity(0.3),
-  //               ),
-  //             ),
-  //           ),
-  //           Padding(
-  //             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  //             child: Row(
-  //               children: [
-  //                 Expanded(
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     children: [
-  //                       const Text(
-  //                         'ช่างที่ได้รับการรับรอง',
-  //                         style: TextStyle(
-  //                           fontSize: 15,
-  //                           fontWeight: FontWeight.w700,
-  //                           color: Colors.black,
-  //                           fontFamily: 'Kanit',
-  //                         ),
-  //                       ),
-  //                       const SizedBox(height: 2),
-  //                       Text(
-  //                         'ค้นหาช่างที่ได้รับการรับรองใกล้คุณ',
-  //                         style: TextStyle(
-  //                           fontSize: 11,
-  //                           color: Colors.black.withOpacity(0.6),
-  //                           fontFamily: 'Kanit',
-  //                         ),
-  //                       ),
-  //                       const SizedBox(height: 6),
-  //                       Row(
-  //                         mainAxisSize: MainAxisSize.min,
-  //                         children: const [
-  //                           Text(
-  //                             'ค้นหาเลย',
-  //                             style: TextStyle(
-  //                               fontSize: 12,
-  //                               fontWeight: FontWeight.w600,
-  //                               color: Colors.black,
-  //                               fontFamily: 'Kanit',
-  //                             ),
-  //                           ),
-  //                           SizedBox(width: 4),
-  //                           Icon(
-  //                             Icons.arrow_forward_rounded,
-  //                             size: 16,
-  //                             color: Colors.black,
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget buildTechnicianCard({required BuildContext context}) {
+    final language = AppStrings.of(context);
     return InkWell(
       borderRadius: BorderRadius.circular(16),
-      onTap: () {
-        isPDPA
-            ? Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const TechnicianPage()),
-            )
-            : Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const TechnicianPDPA()),
-            );
+      onTap: () async {
+        if (!isPDPA) {
+          final consent = await Navigator.push<bool>(
+            context,
+            MaterialPageRoute(builder: (_) => const TechnicianPDPA()),
+          );
+          if (!context.mounted || !mounted || consent == null) return;
+          setState(() => isPDPA = consent);
+          if (!consent) return;
+        }
+        if (!context.mounted) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TechnicianPage()),
+        );
       },
       child: Container(
         height: 84,
@@ -753,14 +668,14 @@ class HomePageState extends State<HomePage>
                 padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       flex: 7,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "ตรวจสอบรายชื่อช่างที่ได้รับการรับรอง",
+                            language.technicianHomeTitle,
                             style: TextStyle(
                               fontFamily: "Kanit",
                               fontSize: 13,
@@ -772,7 +687,7 @@ class HomePageState extends State<HomePage>
                           ),
                           SizedBox(height: 3),
                           Text(
-                            "ค้นหาช่างใกล้คุณ พร้อมดูข้อมูลการรับรอง",
+                            language.technicianHomeSubtitle,
                             style: TextStyle(
                               fontFamily: "Kanit",
                               fontSize: 10.5,

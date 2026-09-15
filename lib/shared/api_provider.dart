@@ -58,8 +58,7 @@ const testingCategoryApi = '${testingApi}category/';
 
 //register
 const register = '${dsd_server}m/Register/';
-const registerV2 = '${dsd_server
-';
+const registerV2 = '${dsd_server}m/v2/Register/';
 
 // aboutUs
 const aboutUs = '${dsd_server}aboutUs/';
@@ -99,9 +98,9 @@ Future<dynamic> postDio(String url, Map<String, dynamic> criteria) async {
 
     final data = response.data;
 
-    debugPrint('✅ postDio: $url - $requestData');
-    debugPrint('✅ HTTP status: ${response.statusCode}');
-    debugPrint('✅ API status: ${data['status']}');
+    // debugPrint('✅ postDio: $url - $requestData');
+    // debugPrint('✅ HTTP status: ${response.statusCode}');
+    // debugPrint('✅ API status: ${data['status']}');
 
     if (data is! Map) {
       throw Exception('รูปแบบข้อมูลจาก API ไม่ถูกต้อง');

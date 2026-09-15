@@ -1,7 +1,7 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/blank_page/textfield.dart';
+import 'package:dsd/shared/api_provider.dart';
+import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
-import 'package:dsd/technician/technician_detail.dart';
 import 'package:flutter/material.dart';
 
 class TechnicianPage extends StatefulWidget {
@@ -12,188 +12,273 @@ class TechnicianPage extends StatefulWidget {
 }
 
 class _TechnicianPageState extends State<TechnicianPage> {
-  final TextEditingController _searchController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  List<Map<String, dynamic>> _technicians = [];
+  bool _isLoading = false;
+  bool _hasSearched = false;
+  bool _hasError = false;
 
-  final List<Map<String, dynamic>> technicians = [
-    {
-      "personalId": "4700800001962",
-      "names": "นายสุวัฒน์ เจริญพิบูลย์",
-      "site": "กองบริหารทรัพยากรบุคคล",
-      "certificates": [
-        {
-          "course": "ช่างไฟฟ้าภายในอาคาร ระดับ 1",
-          "certificateNo": "06-000541/2569",
-          "certificateDate": "2025-12-22T02:02:38Z",
-          "site": "กองบริหารทรัพยากรบุคคล",
-          "pathCer": null,
-        },
-        {
-          "course": "ช่างไฟฟ้าภายในอาคาร ระดับ 2",
-          "certificateNo": "06-000389/2568",
-          "certificateDate": "2024-06-10T09:00:00Z",
-          "site": "สำนักงานพัฒนาฝีมือแรงงาน กรุงเทพมหานคร",
-          "pathCer": null,
-        },
-        {
-          "course": "ช่างเดินสายไฟฟ้าแรงสูง",
-          "certificateNo": "06-000102/2567",
-          "certificateDate": "2023-02-18T09:00:00Z",
-          "site": "สำนักงานพัฒนาฝีมือแรงงาน นนทบุรี",
-          "pathCer": null,
-        },
-      ],
-    },
-    {
-      "personalId": "3309900005678",
-      "names": "นางสาวสมหญิง บุญมาก",
-      "site": "สำนักงานพัฒนาฝีมือแรงงาน เชียงใหม่",
-      "certificates": [
-        {
-          "course": "ช่างเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก",
-          "certificateNo": "07-000101/2569",
-          "certificateDate": "2025-10-01T09:00:00Z",
-          "site": "สำนักงานพัฒนาฝีมือแรงงาน เชียงใหม่",
-          "pathCer": null,
-        },
-        {
-          "course": "ช่างซ่อมเครื่องทำความเย็นขนาดเล็ก",
-          "certificateNo": "07-000455/2567",
-          "certificateDate": "2024-01-25T09:00:00Z",
-          "site": "สำนักงานพัฒนาฝีมือแรงงาน เชียงใหม่",
-          "pathCer": null,
-        },
-      ],
-    },
-    {
-      "personalId": "1101200001234",
-      "names": "นายสมชาย ใจดี",
-      "course": "ช่างไฟฟ้าภายในอาคาร ระดับ 2",
-      "certificates": [
-        {
-          "course": "ช่างเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก",
-          "certificateNo": "07-000101/2569",
-          "certificateDate": "2025-10-01T09:00:00Z",
-          "site": "สำนักงานพัฒนาฝีมือแรงงาน เชียงใหม่",
-          "pathCer": null,
-        },
-      ],
-    },
-  ];
+  bool get _hasSearchQuery =>
+      _firstNameController.text.trim().isNotEmpty ||
+      _lastNameController.text.trim().isNotEmpty;
 
-  List<Map<String, dynamic>> _filteredTechnicians = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredTechnicians = List.from(technicians);
-    _searchController.addListener(_searchTechnician);
-  }
-
-  // ── ดึงลิสต์ใบเซอร์ + fallback (ตรงกับ logic ของหน้า detail) ──
-  List<Map<String, dynamic>> _certsOf(Map<String, dynamic> item) {
-    final raw = item["certificates"];
-
-    if (raw is List) {
-      return raw
-          .whereType<Map>()
-          .map((e) => Map<String, dynamic>.from(e))
-          .toList();
-    }
-
-    if (item["course"] != null || item["certificateNo"] != null) {
-      return [
-        {
-          "course": item["course"],
-          "certificateNo": item["certificateNo"],
-          "certificateDate": item["certificateDate"],
-          "site": item["site"],
-          "pathCer": item["pathCer"],
-        },
-      ];
-    }
-
-    return [];
-  }
-
-  void _searchTechnician() {
-    final keyword = _searchController.text.trim().toLowerCase();
-
+  Future<void> _searchTechnicians() async {
+    if (_isLoading || !_hasSearchQuery) return;
+    FocusScope.of(context).unfocus();
     setState(() {
-      if (keyword.isEmpty) {
-        _filteredTechnicians = List.from(technicians);
-        return;
-      }
-
-      _filteredTechnicians =
-          technicians.where((item) {
-            final matchTop =
-                (item["names"] ?? "").toString().toLowerCase().contains(
-                  keyword,
-                ) ||
-                (item["site"] ?? "").toString().toLowerCase().contains(
-                  keyword,
-                ) ||
-                (item["personalId"] ?? "").toString().contains(keyword);
-
-            if (matchTop) return true;
-
-            // ── เช็คทุกใบเซอร์ของช่างคนนี้ (รวม fallback) ──
-            final certs = _certsOf(item);
-            return certs.any((cert) {
-              return (cert["course"] ?? "").toString().toLowerCase().contains(
-                    keyword,
-                  ) ||
-                  (cert["certificateNo"] ?? "")
-                      .toString()
-                      .toLowerCase()
-                      .contains(keyword) ||
-                  (cert["site"] ?? "").toString().toLowerCase().contains(
-                    keyword,
-                  );
-            });
-          }).toList();
+      _isLoading = true;
+      _hasSearched = true;
+      _hasError = false;
+      _technicians = [];
     });
+
+    try {
+      final result = await postapi('${dsd_server}m/Technician/read', {
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        // 'limit': 10,
+      }).timeout(const Duration(seconds: 30));
+      if (!mounted) return;
+      if (result is! Map || result['status'] != 'S') {
+        throw const FormatException('Search failed');
+      }
+      final data = result['objectData'];
+      if (data != null && (data is! List || data.any((item) => item is! Map))) {
+        throw const FormatException('Invalid search results');
+      }
+      setState(() {
+        _technicians =
+            (data as List? ?? [])
+                .map((item) => Map<String, dynamic>.from(item as Map))
+                .toList();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _hasError = true;
+      });
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final language = AppStrings.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
-        title: 'ค้นหาช่างที่ได้รับการรับรอง',
+        title: language.technicianSearchTitle,
         rightBtn: false,
         backAction: () => Navigator.pop(context),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            buildSearch(
-              controller: _searchController,
-              hintText: "ค้นหาชื่อ เลขรับรอง จังหวัด...",
-              onChanged: (value) {
-                _searchTechnician();
-              },
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child:
-                  _filteredTechnicians.isEmpty
-                      ? const Center(child: Text("ไม่พบข้อมูลช่าง"))
-                      : ListView.builder(
-                        itemCount: _filteredTechnicians.length,
-                        itemBuilder: (context, index) {
-                          return _buildTechnicianCard(
-                            _filteredTechnicians[index],
-                          );
-                        },
+      body: SafeArea(
+        top: false,
+        child: CustomScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildNameField(
+                      controller: _firstNameController,
+                      label: language.technicianFirstNameHint,
+                      action: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildNameField(
+                      controller: _lastNameController,
+                      label: language.technicianLastNameHint,
+                      action: TextInputAction.search,
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed:
+                            _isLoading || !_hasSearchQuery
+                                ? null
+                                : _searchTechnicians,
+                        icon:
+                            _isLoading
+                                ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Color(0xFF433600),
+                                  ),
+                                )
+                                : Image.asset(
+                                  'assets/DSD/icon/icon_search.png',
+                                  width: 24,
+                                  height: 24,
+                                  color:
+                                      _isLoading || !_hasSearchQuery
+                                          ? AppColors.textgrey
+                                          : const Color(0xFF433600),
+                                ),
+                        label: Text(
+                          _isLoading
+                              ? language.technicianSearching
+                              : language.technicianSearchTitle,
+                          textAlign: TextAlign.center,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: AppColors.textDark,
+
+                          disabledBackgroundColor: const Color(0xFFE7E8E2),
+                          disabledForegroundColor: AppColors.textgrey,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          textStyle: const TextStyle(
+                            fontFamily: 'Kanit',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (_technicians.isNotEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =>
+                        _buildTechnicianCard(_technicians[index]),
+                    childCount: _technicians.length,
+                  ),
+                ),
+              )
+            else
+              SliverToBoxAdapter(child: _buildSearchStatus()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNameField({
+    required TextEditingController controller,
+    required String label,
+    required TextInputAction action,
+  }) {
+    return TextField(
+      controller: controller,
+      enabled: !_isLoading,
+      onChanged: (_) => setState(() {}),
+      textInputAction: action,
+      onSubmitted:
+          action == TextInputAction.search ? (_) => _searchTechnicians() : null,
+      decoration: InputDecoration(
+        prefixIcon: Padding(
+          padding: const EdgeInsets.all(10),
+          child: const Icon(
+            Icons.person_outline_rounded,
+            size: 24,
+            color: AppColors.textgrey,
+          ),
+        ),
+        hintText: label,
+        hintStyle: const TextStyle(color: AppColors.textDark),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 16,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.borderColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.borderColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchStatus() {
+    final language = AppStrings.of(context);
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (!_hasSearched) return const SizedBox.shrink();
+    final hasError = _hasError;
+    final title =
+        hasError
+            ? language.technicianSearchFailed
+            : language.technicianNotFound;
+    final hint =
+        hasError
+            ? language.technicianSearchErrorHint
+            : language.technicianNotFoundHint;
+    return Center(
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 96,
+              height: 96,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFDECEC),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                hasError
+                    ? Icons.wifi_off_rounded
+                    : Icons.person_search_outlined,
+                size: 48,
+                color: const Color(0xFFB54848),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF292D32),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              hint,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.6,
+                color: Color(0xFF65675F),
+              ),
             ),
           ],
         ),
@@ -201,136 +286,153 @@ class _TechnicianPageState extends State<TechnicianPage> {
     );
   }
 
-  Widget _buildTechnicianCard(Map<String, dynamic> item) {
-    final certCount = _certsOf(item).length;
+  Widget _buildTechnicianImage(String? imageUrl) {
+    final url = imageUrl?.trim() ?? '';
+    Widget fallback() =>
+        Image.asset('assets/DSD/imgs/logo_app.png', fit: BoxFit.contain);
 
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        width: 64,
+        height: 64,
+        child: ColoredBox(
+          color: Colors.white,
+          child:
+              url.isEmpty
+                  ? fallback()
+                  : Image.network(
+                    url,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => fallback(),
+                    loadingBuilder:
+                        (context, child, progress) =>
+                            progress == null ? child : fallback(),
+                  ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTechnicianCard(Map<String, dynamic> item) {
+    final language = AppStrings.of(context);
+    final name = [item['prefixName'], item['firstName'], item['lastName']]
+        .map((value) => value?.toString().trim() ?? '')
+        .where((value) => value.isNotEmpty)
+        .join(' ');
+    final isCertified = item['isCert'] == true;
+    final foreground =
+        isCertified ? const Color(0xFF2E7D32) : const Color(0xFFB54848);
+    final background =
+        isCertified ? const Color(0xFFE8F5E9) : const Color(0xFFFDECEC);
+    final border =
+        isCertified ? const Color(0xFFD4E8D6) : const Color(0xFFF1D5D5);
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(14),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TechnicianDetailPage(technician: item),
-              ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Avatar
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(17),
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: 4,
+              child: ColoredBox(color: foreground),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 18, 16, 18),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(color: border),
+                    ),
+                    child: _buildTechnicianImage(item['imageUrl']?.toString()),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(9.0),
-                    child: Image.asset(
-                      'assets/DSD/icon/icon_user.png',
-                      color: Colors.white,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (isCertified) ...[
+                          Text(
+                            language.technicianCertifyingDepartment,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF65675F),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                        ],
+                        Text(
+                          name.isEmpty ? language.technicianUnnamed : name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF292D32),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: background,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                isCertified
+                                    ? Icons.verified_rounded
+                                    : Icons.info_outline,
+                                size: 16,
+                                color: foreground,
+                              ),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  isCertified
+                                      ? language.technicianCertified
+                                      : language.technicianNotCertified,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: foreground,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-
-                // ── ข้อมูลสำคัญเท่านั้น ──
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item["names"] ?? "-",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.5,
-                          color: Colors.black87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "เลขบัตร: ${item["personalId"] ?? "-"}",
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: Colors.grey.shade600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        item["site"] ?? "-",
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: Colors.grey.shade600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-
-                // ── badge จำนวนใบเซอร์ ──
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.workspace_premium_outlined,
-                        size: 13,
-                        color: AppColors.primary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        "$certCount ใบ",
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 6),
-
-                const Icon(
-                  Icons.chevron_right,
-                  color: AppColors.primary,
-                  size: 22,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

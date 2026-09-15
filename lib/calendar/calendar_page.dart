@@ -1,6 +1,8 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/calendar/calendar_detail.dart';
+import 'package:dsd/blank_page/category_chip.dart';
+import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/calendar/calendar_source.dart';
+import 'package:dsd/calendar/calendar_style.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/locale_provider.dart';
 import 'package:dsd/style_theme.dart';
@@ -82,6 +84,13 @@ class _CalendarPageState extends State<CalendarPage> {
   List<CalendarEvent> _onDate(DateTime date) =>
       _filtered.where((event) => isSameDay(event.start, date)).toList();
 
+  String _categoryTitle(int id, AppStrings language) => switch (id) {
+    2 => language.calendarTrainingCategory,
+    3 => language.calendarTestingCategory,
+    4 => language.calendarCompetitionCategory,
+    _ => language.categoryAll,
+  };
+
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context);
@@ -112,19 +121,14 @@ class _CalendarPageState extends State<CalendarPage> {
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
+                  child: buildSearch(
                     controller: _search,
+                    hintText: language.calendarSearchHint,
                     onChanged: (_) => setState(() {}),
-                    decoration: InputDecoration(
-                      hintText: thai ? 'ค้นหากิจกรรม' : 'Search events',
-                      prefixIcon: const Icon(Icons.search),
-                      border: const OutlineInputBorder(),
-                      isDense: true,
-                    ),
                   ),
                 ),
                 IconButton(
-                  tooltip: thai ? 'โหลดข้อมูลใหม่' : 'Refresh',
+                  tooltip: language.calendarRefresh,
                   onPressed: _loading ? null : _load,
                   icon: const Icon(Icons.refresh),
                 ),
@@ -136,19 +140,18 @@ class _CalendarPageState extends State<CalendarPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                ChoiceChip(
-                  label: Text(thai ? 'ทั้งหมด' : 'All'),
+                CategoryChip(
+                  label: language.categoryAll,
                   selected: _category == null,
-                  onSelected: (_) => setState(() => _category = null),
+                  onSelected: () => setState(() => _category = null),
                 ),
                 for (final category in calendarCategories)
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
-                    child: ChoiceChip(
-                      label: Text(thai ? category.title : category.titleEN),
+                    child: CategoryChip(
+                      label: _categoryTitle(category.id, language),
                       selected: _category == category.id,
-                      onSelected:
-                          (_) => setState(() => _category = category.id),
+                      onSelected: () => setState(() => _category = category.id),
                     ),
                   ),
               ],
@@ -163,20 +166,23 @@ class _CalendarPageState extends State<CalendarPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            thai
-                                ? 'โหลดปฏิทินจากเว็บไซต์ไม่สำเร็จ'
-                                : 'Unable to load the website calendar',
-                          ),
+                          Text(language.calendarLoadFailed),
                           TextButton(
                             onPressed: _load,
-                            child: Text(thai ? 'ลองใหม่' : 'Retry'),
+                            child: Text(language.calendarRetry),
                           ),
                         ],
                       ),
                     )
                     : ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      padding: EdgeInsets.fromLTRB(
+                        16,
+                        0,
+                        16,
+                        24 +
+                            MediaQuery.viewPaddingOf(context).bottom +
+                            (widget.pushedFromPage ? 0 : 72),
+                      ),
                       children: [
                         if (!_listMode) ...[
                           TableCalendar<CalendarEvent>(
@@ -220,21 +226,20 @@ class _CalendarPageState extends State<CalendarPage> {
                                   (date, _) =>
                                       calendarDate(date, thai, monthOnly: true),
                             ),
-                            calendarStyle: CalendarStyle(
-                              markersMaxCount: 1,
-                              todayDecoration: BoxDecoration(
-                                color: AppColors.primaryShade,
-                                shape: BoxShape.circle,
-                              ),
-                              selectedDecoration: BoxDecoration(
-                                color: AppColors.primary,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
+                            calendarStyle: activityCalendarStyle,
                           ),
                           const SizedBox(height: 16),
-                          Text(
-                            '${calendarDate(_selectedDay, thai)} · ${items.length} ${language.activity}',
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(calendarDate(_selectedDay, thai)),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                '${items.length} ${language.activity}',
+                                textAlign: TextAlign.right,
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8),
                         ],
@@ -242,19 +247,27 @@ class _CalendarPageState extends State<CalendarPage> {
                           Padding(
                             padding: const EdgeInsets.all(24),
                             child: Center(
-                              child: Text(
-                                thai ? 'ไม่พบกิจกรรม' : 'No events found',
-                              ),
+                              child: Text(language.calendarNoEvents),
                             ),
                           ),
                         for (final event in items)
                           Card(
                             color: AppColors.primaryShade,
                             child: ListTile(
-                              leading: const Icon(Icons.event),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 8,
+                              ),
+                              horizontalTitleGap: 14,
+                              leading: Image.asset(
+                                'assets/DSD/imgs/logo_app.png',
+                                width: 48,
+                                height: 48,
+                                fit: BoxFit.contain,
+                              ),
                               title: Text(event.title),
                               subtitle: Text(
-                                '${calendarDate(event.start, thai)}\n${thai ? calendarCategories.firstWhere((c) => c.id == event.category).title : calendarCategories.firstWhere((c) => c.id == event.category).titleEN}',
+                                '${calendarDate(event.start, thai)}\n${_categoryTitle(event.category, language)}',
                               ),
                               isThreeLine: true,
                               // onTap:

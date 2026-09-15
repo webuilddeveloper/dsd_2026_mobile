@@ -4,6 +4,32 @@
 import 'package:flutter/material.dart';
 
 class AppStrings {
+  final String categoryAll;
+  final String calendarSearchHint;
+  final String calendarRefresh;
+  final String calendarLoadFailed;
+  final String calendarRetry;
+  final String calendarNoEvents;
+  final String calendarTrainingCategory;
+  final String calendarTestingCategory;
+  final String calendarCompetitionCategory;
+
+  // Technician search
+  final String technicianSearchTitle;
+  final String technicianHomeTitle;
+  final String technicianHomeSubtitle;
+  final String technicianFirstNameHint;
+  final String technicianLastNameHint;
+  final String technicianSearching;
+  final String technicianSearchFailed;
+  final String technicianSearchErrorHint;
+  final String technicianNotFound;
+  final String technicianNotFoundHint;
+  final String technicianUnnamed;
+  final String technicianCertified;
+  final String technicianCertifyingDepartment;
+  final String technicianNotCertified;
+
   final String languagePageTitle;
   final String selectLanguage;
   final String languageChangeNote;
@@ -204,6 +230,31 @@ class AppStrings {
   final String loginFailed;
 
   const AppStrings({
+    required this.categoryAll,
+    required this.calendarSearchHint,
+    required this.calendarRefresh,
+    required this.calendarLoadFailed,
+    required this.calendarRetry,
+    required this.calendarNoEvents,
+    required this.calendarTrainingCategory,
+    required this.calendarTestingCategory,
+    required this.calendarCompetitionCategory,
+
+    required this.technicianSearchTitle,
+    required this.technicianHomeTitle,
+    required this.technicianHomeSubtitle,
+    required this.technicianFirstNameHint,
+    required this.technicianLastNameHint,
+    required this.technicianSearching,
+    required this.technicianSearchFailed,
+    required this.technicianSearchErrorHint,
+    required this.technicianNotFound,
+    required this.technicianNotFoundHint,
+    required this.technicianUnnamed,
+    required this.technicianCertified,
+    required this.technicianCertifyingDepartment,
+    required this.technicianNotCertified,
+
     required this.languagePageTitle,
     required this.selectLanguage,
     required this.languageChangeNote,
@@ -405,6 +456,33 @@ class AppStrings {
   });
 
   static const AppStrings th = AppStrings(
+    categoryAll: "ทั้งหมด",
+    calendarSearchHint: "ค้นหากิจกรรม",
+    calendarRefresh: "โหลดข้อมูลใหม่",
+    calendarLoadFailed: "โหลดปฏิทินจากเว็บไซต์ไม่สำเร็จ",
+    calendarRetry: "ลองใหม่",
+    calendarNoEvents: "ไม่พบกิจกรรม",
+    calendarTrainingCategory: "ตารางฝึกอบรม",
+    calendarTestingCategory: "ตารางทดสอบมาตรฐานฝีมือแรงงาน",
+    calendarCompetitionCategory: "ตารางการแข่งขันฝีมือแรงงาน",
+
+    technicianSearchTitle: "ค้นหาช่างที่ได้รับการรับรอง",
+    technicianHomeTitle: "ตรวจสอบรายชื่อช่างที่ได้รับการรับรอง",
+    technicianHomeSubtitle: "ค้นหาช่างใกล้คุณ พร้อมดูข้อมูลการรับรอง",
+    technicianFirstNameHint: "กรอกชื่อ",
+    technicianLastNameHint: "กรอกนามสกุล",
+    technicianSearching: "กำลังค้นหา...",
+    technicianSearchFailed: "ค้นหาไม่สำเร็จ",
+    technicianSearchErrorHint:
+        "ไม่สามารถเชื่อมต่อข้อมูลได้ในขณะนี้\nกรุณากดค้นหาเพื่อลองอีกครั้ง",
+    technicianNotFound: "ไม่พบช่างที่ตรงกับข้อมูลที่ระบุ",
+    technicianNotFoundHint:
+        "ตรวจสอบชื่อและนามสกุล แล้วลองค้นหาอีกครั้ง\nสามารถค้นหาด้วยชื่อหรือนามสกุลเพียงอย่างเดียวได้",
+    technicianUnnamed: "ไม่ระบุชื่อ",
+    technicianCertified: "ช่างที่ได้รับการรับรอง",
+    technicianCertifyingDepartment: "กรมพัฒนาฝีมือแรงงาน",
+    technicianNotCertified: "ไม่พบสถานะการรับรอง",
+
     languagePageTitle: 'ภาษา',
     selectLanguage: 'เลือกภาษา',
     languageChangeNote: 'การเปลี่ยนภาษาจะมีผลทันทีกับทุกหน้าในแอปพลิเคชัน',
@@ -604,6 +682,34 @@ class AppStrings {
   );
 
   static const AppStrings en = AppStrings(
+    categoryAll: "All",
+    calendarSearchHint: "Search events",
+    calendarRefresh: "Refresh",
+    calendarLoadFailed: "Unable to load the website calendar",
+    calendarRetry: "Retry",
+    calendarNoEvents: "No events found",
+    calendarTrainingCategory: "Training schedule",
+    calendarTestingCategory: "Skill standard tests",
+    calendarCompetitionCategory: "Skills competitions",
+
+    technicianSearchTitle: "Find certified technicians",
+    technicianHomeTitle: "Check certified technicians",
+    technicianHomeSubtitle: "Find nearby technicians and check certification",
+    technicianFirstNameHint: "Enter first name",
+    technicianLastNameHint: "Enter last name",
+    technicianSearching: "Searching...",
+    technicianSearchFailed: "Search unsuccessful",
+    technicianSearchErrorHint:
+        "Unable to load results right now.\nPlease search again.",
+    technicianNotFound: "No technicians match the details provided",
+    technicianNotFoundHint:
+        "Check the first and last name, then try again.\nYou can search with just a first or last name.",
+    technicianUnnamed: "Name not provided",
+    technicianCertified: "Certified",
+    technicianCertifyingDepartment:
+        "Certified by the Department of Skill Development",
+    technicianNotCertified: "No certification found",
+
     languagePageTitle: 'Language',
     selectLanguage: 'Select Language',
     languageChangeNote:
