@@ -2,6 +2,7 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/gallery_viewer.dart';
 import 'package:dsd/blank_page/launch.dart';
+import 'package:dsd/blank_page/pdf_viewer_page.dart';
 import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/locale_provider.dart';
@@ -13,8 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class KnowledgeDetail extends StatefulWidget {
-  const KnowledgeDetail({Key? key, required this.code, required this.model})
-    : super(key: key);
+  const KnowledgeDetail({super.key, required this.code, required this.model});
   final String code;
   final dynamic model;
 
@@ -119,17 +119,40 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                     Center(
                       child: InkWell(
                         onTap: () {
+                          final url =
+                              (model['fileUrl'] as String? ?? '').trim();
+                          final uri = Uri.tryParse(url);
+                          if (uri == null ||
+                              !['http', 'https'].contains(uri.scheme) ||
+                              uri.host.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  selectedCode == 'th'
+                                      ? 'ไม่พบลิงก์เอกสารที่ถูกต้อง'
+                                      : 'No valid document link available',
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+                          final isPdf = uri.path.toLowerCase().endsWith('.pdf');
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (_) => WebViewPage(
-                                    url: model['fileUrl'],
-                                    title: language.knowledge,
-                                  ),
+                                  (_) =>
+                                      isPdf
+                                          ? PdfViewerPage(
+                                            url: uri.toString(),
+                                            title: language.knowledge,
+                                          )
+                                          : WebViewPage(
+                                            url: uri.toString(),
+                                            title: language.knowledge,
+                                          ),
                             ),
                           );
-                          print(model['fileUrl']);
                         },
                         child: Container(
                           decoration: BoxDecoration(
