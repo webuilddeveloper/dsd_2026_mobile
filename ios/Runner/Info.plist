@@ -4,24 +4,34 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+
 	<key>CFBundleDisplayName</key>
 	<string>DSD E-Cer</string>
+
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+
 	<key>CFBundleName</key>
 	<string>DSD E-Cer</string>
+
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
+
 	<key>CFBundleSignature</key>
 	<string>????</string>
+
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -41,48 +51,85 @@
 			</array>
 		</dict>
 	</array>
+
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>line</string>
 		<string>lineauth2</string>
 		<string>line3rdp</string>
 	</array>
+
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
+
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+
 	<key>NSCameraUsageDescription</key>
 	<string>แอป DSD E-Cer ขออนุญาตเข้าถึงกล้องของอุปกรณ์ เพื่อใช้ในการถ่ายภาพเอกสารหรือข้อมูลที่เกี่ยวข้องกับการใช้งาน</string>
+
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>แอปพลิเคชันต้องการเข้าถึงตำแหน่งของท่านเพื่อแสดงข้อมูลแผนที่และบริการที่เกี่ยวข้อง</string>
+
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>แอป DSD E-Cer ขออนุญาตเข้าถึงรูปภาพในอุปกรณ์ เพื่อให้ผู้ใช้งานสามารถเลือกและอัปโหลดรูปภาพหรือเอกสารเข้าสู่ระบบ</string>
+
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+					<key>UISceneDelegateClassName</key>
+					<string>FlutterSceneDelegate</string>
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+
 	<key>UIFileSharingEnabled</key>
 	<true/>
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

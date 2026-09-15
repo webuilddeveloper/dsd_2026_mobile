@@ -58,7 +58,8 @@ const testingCategoryApi = '${testingApi}category/';
 
 //register
 const register = '${dsd_server}m/Register/';
-const registerV2 = '${dsd_server}m/v2/Register/';
+const registerV2 = '${dsd_server
+';
 
 // aboutUs
 const aboutUs = '${dsd_server}aboutUs/';

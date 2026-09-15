@@ -25,6 +25,7 @@ class _PolicyPageState extends State<PolicyPage> {
   String policyCode = '';
   String policyTitle = 'เงื่อนไขการใช้งาน';
   String policyContent = '';
+  bool isChecked = false;
 
   @override
   void initState() {
@@ -172,6 +173,7 @@ class _PolicyPageState extends State<PolicyPage> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
           title: Text(
@@ -219,68 +221,106 @@ class _PolicyPageState extends State<PolicyPage> {
                       top: false,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                        child: Row(
+                        child: Column(
                           children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: isSubmitting ? null : declinePolicy,
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: AppColors.textDark,
-                                  side: const BorderSide(
-                                    color: AppColors.borderColor,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.borderColor,
                                 ),
-                                child: const Text(
-                                  'ไม่ยอมรับ',
+                              ),
+                              child: CheckboxListTile(
+                                value: isChecked,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isChecked = value ?? false;
+                                  });
+                                },
+                                title: const Text(
+                                  'ฉันได้อ่านและยอมรับข้อกำหนดและเงื่อนไขการใช้งาน',
                                   style: TextStyle(
                                     fontFamily: 'Kanit',
-                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                    color: AppColors.textDark,
                                   ),
                                 ),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed:
-                                    isSubmitting || policyContent.trim().isEmpty
-                                        ? null
-                                        : acceptPolicy,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                            SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed:
+                                        isSubmitting ? null : declinePolicy,
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: AppColors.textDark,
+                                      side: const BorderSide(
+                                        color: AppColors.borderColor,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'ไม่ยอมรับ',
+                                      style: TextStyle(
+                                        fontFamily: 'Kanit',
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                child:
-                                    isSubmitting
-                                        ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                        : const Text(
-                                          'ยอมรับ',
-                                          style: TextStyle(
-                                            fontFamily: 'Kanit',
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                              ),
+                                const SizedBox(width: 12),
+
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed:
+                                        isSubmitting ||
+                                                policyContent.trim().isEmpty ||
+                                                !isChecked
+                                            ? null
+                                            : acceptPolicy,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primary,
+
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child:
+                                        isSubmitting
+                                            ? const SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                            : const Text(
+                                              'ยอมรับ',
+                                              style: TextStyle(
+                                                fontFamily: 'Kanit',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

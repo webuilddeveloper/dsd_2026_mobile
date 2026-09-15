@@ -447,7 +447,7 @@ class AppStrings {
     search: "ค้นหา",
     service: "บริการ",
     seeall: "ดูทั้งหมด",
-    standtest: "สมัครสอบมาตรฐาน\nที่นั่งทางวิชาชีพ",
+    standtest: "สมัครทดสอบมาตรฐานฝีมือแรงงาน",
     skillTestSchedule: "กำหนดการทดสอบมาตรฐานฝีมือแรงงาน",
     trainingapp: "สมัครฝึกอบรม",
     trainingCourses: "หลักสูตรฝึกอบรม ",
@@ -565,7 +565,7 @@ class AppStrings {
     size: "ขนาด",
     publishDate: "วันที่เผยแพร่",
     //certified
-    certifiedTitle: "สมัครรับรองความรู้ตามมาตรฐาน",
+    certifiedTitle: "สมัครรับรองความรู้ความสามารถ",
     userManual: "คู่มือการใช้งานสำหรับประชาชน",
     scanAndroid: "สแกนสำหรับ Android",
     scanIos: "สแกนสำหรับ iOS",

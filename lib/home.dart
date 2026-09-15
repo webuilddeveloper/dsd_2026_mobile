@@ -7,6 +7,7 @@ import 'package:dsd/blank_page/launch.dart';
 
 import 'package:dsd/blank_page/webview.dart';
 import 'package:dsd/interests.dart';
+import 'package:dsd/pdpa.dart';
 import 'package:dsd/technician/technician.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/locale_provider.dart';
@@ -22,7 +23,6 @@ import 'package:dsd/service/service_allpage.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:dsd/verified/verified_thaid.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
@@ -45,13 +45,14 @@ class HomePageState extends State<HomePage>
   String category = '';
   String idcard = '';
   bool isCert = false;
+  bool isPDPA = false;
 
   final txtFirstName = TextEditingController();
   final txtLastName = TextEditingController();
   final searchController = TextEditingController();
   late final AnimationController _certGlowController;
   String? _trainingErrorMessage;
-  
+
   List<Map<String, String>> training = [];
 
   bool _hasSelectedInterest = true;
@@ -115,6 +116,7 @@ class HomePageState extends State<HomePage>
 
     final value = await postapi('${registerV2}read', {"code": _code});
 
+    print('✅ _code: ${_code}');
     if (value != null &&
         value['objectData'] != null &&
         value['objectData'].isNotEmpty) {
@@ -122,6 +124,7 @@ class HomePageState extends State<HomePage>
 
       print('${user['idcard'] ?? ''}');
       print('${isCert = user['isCert']}');
+      print('${isPDPA = user['isPDPA']}');
       if (!mounted) return;
       setState(() {
         _imageUrl = user['imageUrl'] ?? '';
@@ -129,6 +132,7 @@ class HomePageState extends State<HomePage>
         txtLastName.text = user['lastName'] ?? '';
         idcard = user['idcard'] ?? '';
         isCert = user['isCert'];
+        isPDPA = user['isPDPA'];
       });
     }
   }
@@ -676,10 +680,15 @@ class HomePageState extends State<HomePage>
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const TechnicianPage()),
-        );
+        isPDPA
+            ? Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const TechnicianPage()),
+            )
+            : Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const TechnicianPDPA()),
+            );
       },
       child: Container(
         height: 84,

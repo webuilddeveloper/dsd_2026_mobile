@@ -257,14 +257,14 @@ class _CalendarPageState extends State<CalendarPage> {
                                 '${calendarDate(event.start, thai)}\n${thai ? calendarCategories.firstWhere((c) => c.id == event.category).title : calendarCategories.firstWhere((c) => c.id == event.category).titleEN}',
                               ),
                               isThreeLine: true,
-                              onTap:
-                                  () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (_) => CalendarDetail(event: event),
-                                    ),
-                                  ),
+                              // onTap:
+                              //     () => Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //         builder:
+                              //             (_) => CalendarDetail(event: event),
+                              //       ),
+                              //     ),
                             ),
                           ),
                       ],

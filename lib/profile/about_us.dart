@@ -57,6 +57,7 @@ class _AboutUsState extends State<AboutUs> {
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
+        
         title: language.aboutUs,
         backBtn: true,
         rightBtn: false,
