@@ -36,6 +36,7 @@ class CalendarEvent {
   });
 }
 
+
 /// Reads the event data embedded in the public DSD calendar pages.
 /// No JavaScript is executed and no mobile calendar API is used.
 class CalendarSource {

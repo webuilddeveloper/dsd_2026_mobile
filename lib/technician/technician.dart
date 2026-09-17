@@ -5,7 +5,9 @@ import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
 
 class TechnicianPage extends StatefulWidget {
-  const TechnicianPage({super.key});
+  const TechnicianPage({super.key, this.fetch});
+
+  final Future<dynamic> Function(Map<String, dynamic> body)? fetch;
 
   @override
   State<TechnicianPage> createState() => _TechnicianPageState();
@@ -18,27 +20,56 @@ class _TechnicianPageState extends State<TechnicianPage> {
   bool _isLoading = false;
   bool _hasSearched = false;
   bool _hasError = false;
+  static const _pageSize = 10;
+  bool _isLoadingMore = false;
+  bool _hasMore = false;
+  bool _loadMoreError = false;
+  int _nextSkip = 0;
+  String _searchedFirstName = '';
+  String _searchedLastName = '';
 
   bool get _hasSearchQuery =>
-      _firstNameController.text.trim().isNotEmpty ||
+      _firstNameController.text.trim().isNotEmpty &&
       _lastNameController.text.trim().isNotEmpty;
 
   Future<void> _searchTechnicians() async {
-    if (_isLoading || !_hasSearchQuery) return;
+    if (_isLoading || _isLoadingMore || !_hasSearchQuery) return;
     FocusScope.of(context).unfocus();
     setState(() {
       _isLoading = true;
       _hasSearched = true;
       _hasError = false;
+      _loadMoreError = false;
+      _hasMore = false;
+      _nextSkip = 0;
+      _searchedFirstName = _firstNameController.text.trim();
+      _searchedLastName = _lastNameController.text.trim();
       _technicians = [];
     });
+    await _fetchPage(loadMore: false);
+  }
 
+  Future<void> _loadMore() async {
+    if (_isLoading || _isLoadingMore || !_hasMore) return;
+    setState(() {
+      _isLoadingMore = true;
+      _loadMoreError = false;
+    });
+    await _fetchPage(loadMore: true);
+  }
+
+  Future<void> _fetchPage({required bool loadMore}) async {
     try {
-      final result = await postapi('${dsd_server}m/Technician/read', {
-        'firstName': _firstNameController.text.trim(),
-        'lastName': _lastNameController.text.trim(),
-        // 'limit': 10,
-      }).timeout(const Duration(seconds: 30));
+      final body = <String, dynamic>{
+        'firstName': _searchedFirstName,
+        'lastName': _searchedLastName,
+        'skip': _nextSkip,
+        'limit': _pageSize,
+      };
+      final result = await (widget.fetch != null
+              ? widget.fetch!(body)
+              : postapi('${dsd_server}m/Technician/read', body))
+          .timeout(const Duration(seconds: 30));
       if (!mounted) return;
       if (result is! Map || result['status'] != 'S') {
         throw const FormatException('Search failed');
@@ -47,19 +78,31 @@ class _TechnicianPageState extends State<TechnicianPage> {
       if (data != null && (data is! List || data.any((item) => item is! Map))) {
         throw const FormatException('Invalid search results');
       }
+      final page =
+          (data as List? ?? [])
+              .map((item) => Map<String, dynamic>.from(item as Map))
+              .toList();
       setState(() {
-        _technicians =
-            (data as List? ?? [])
-                .map((item) => Map<String, dynamic>.from(item as Map))
-                .toList();
+        _technicians = [..._technicians, ...page];
+        _nextSkip += page.length;
+        _hasMore = page.length >= _pageSize;
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _hasError = true;
+        if (loadMore) {
+          _loadMoreError = true;
+        } else {
+          _hasError = true;
+        }
       });
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isLoadingMore = false;
+        });
+      }
     }
   }
 
@@ -102,12 +145,22 @@ class _TechnicianPageState extends State<TechnicianPage> {
                       label: language.technicianLastNameHint,
                       action: TextInputAction.search,
                     ),
+                    if (!_hasSearchQuery) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        language.technicianRequiredNames,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textgrey,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         onPressed:
-                            _isLoading || !_hasSearchQuery
+                            _isLoading || _isLoadingMore || !_hasSearchQuery
                                 ? null
                                 : _searchTechnicians,
                         icon:
@@ -124,10 +177,7 @@ class _TechnicianPageState extends State<TechnicianPage> {
                                   'assets/DSD/icon/icon_search.png',
                                   width: 24,
                                   height: 24,
-                                  color:
-                                      _isLoading || !_hasSearchQuery
-                                          ? AppColors.textgrey
-                                          : const Color(0xFF433600),
+                                  color: Colors.black,
                                 ),
                         label: Text(
                           _isLoading
@@ -137,10 +187,10 @@ class _TechnicianPageState extends State<TechnicianPage> {
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.textDark,
+                          foregroundColor: Colors.black,
 
                           disabledBackgroundColor: const Color(0xFFE7E8E2),
-                          disabledForegroundColor: AppColors.textgrey,
+                          disabledForegroundColor: Colors.black,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           textStyle: const TextStyle(
@@ -171,6 +221,68 @@ class _TechnicianPageState extends State<TechnicianPage> {
               )
             else
               SliverToBoxAdapter(child: _buildSearchStatus()),
+            if (_technicians.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  child: Column(
+                    children: [
+                      Text(
+                        language.technicianResultCount.replaceAll(
+                          '{count}',
+                          _technicians.length.toString(),
+                        ),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textgrey,
+                        ),
+                      ),
+                      if (_loadMoreError) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          language.technicianSearchErrorHint,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                      if (_hasMore) ...[
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            key: const Key('technician-load-more'),
+                            onPressed: _isLoadingMore ? null : _loadMore,
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.textDark,
+                              side: const BorderSide(
+                                color: AppColors.primarysecond,
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child:
+                                _isLoadingMore
+                                    ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                    : Text(
+                                      language.technicianLoadMore.replaceAll(
+                                        '{count}',
+                                        _pageSize.toString(),
+                                      ),
+                                    ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -184,7 +296,7 @@ class _TechnicianPageState extends State<TechnicianPage> {
   }) {
     return TextField(
       controller: controller,
-      enabled: !_isLoading,
+      enabled: !_isLoading && !_isLoadingMore,
       onChanged: (_) => setState(() {}),
       textInputAction: action,
       onSubmitted:

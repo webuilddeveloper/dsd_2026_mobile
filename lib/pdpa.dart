@@ -212,7 +212,7 @@ class _TechnicianPDPAState extends State<TechnicianPDPA> {
                                 : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
+                          foregroundColor: Colors.black,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(

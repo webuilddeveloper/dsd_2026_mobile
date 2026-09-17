@@ -1,6 +1,6 @@
 import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/blank_page/format.dart';
-import 'package:dsd/blank_page/gallery_viewer.dart';
+import 'package:dsd/knowledge/knowledge_cover.dart';
 import 'package:dsd/blank_page/launch.dart';
 import 'package:dsd/blank_page/pdf_viewer_page.dart';
 import 'package:dsd/blank_page/webview.dart';
@@ -57,25 +57,38 @@ class _KnowledgeDetailPageState extends State<KnowledgeDetail> {
                       (model['imageUrl'] != null && model['imageUrl'] != '')
                           ? GestureDetector(
                             onTap:
-                                () => GalleryViewer.open(
-                                  context,
-                                  gallery: [
-                                    {'imageUrl': model['imageUrl']},
-                                  ],
-                                  initialIndex: 0,
+                                () => showDialog<void>(
+                                  context: context,
+                                  builder:
+                                      (context) => Dialog(
+                                        child: Stack(
+                                          children: [
+                                            InteractiveViewer(
+                                              child: KnowledgeCover(
+                                                source: model['imageUrl'],
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: IconButton(
+                                                onPressed:
+                                                    () =>
+                                                        Navigator.pop(context),
+                                                icon: const Icon(Icons.close),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                 ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                model['imageUrl'],
+                              child: KnowledgeCover(
+                                source: model['imageUrl'],
                                 width: double.infinity,
                                 height: 350,
-                                fit: BoxFit.cover,
-                                errorBuilder:
-                                    (_, __, ___) => Container(
-                                      height: 350,
-                                      color: Colors.grey[300],
-                                    ),
                               ),
                             ),
                           )

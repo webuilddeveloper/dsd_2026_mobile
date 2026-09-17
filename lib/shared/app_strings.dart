@@ -1,9 +1,24 @@
-/// ไฟล์นี้เก็บ string ทุกอย่างที่ต้องแปลภาษา
-/// เพิ่ม key ใหม่ได้เลย แล้วเรียกผ่าน AppStrings.of(context).key
+// ไฟล์นี้เก็บ string ทุกอย่างที่ต้องแปลภาษา
+// เพิ่ม key ใหม่ได้เลย แล้วเรียกผ่าน AppStrings.of(context).key
 
 import 'package:flutter/material.dart';
 
 class AppStrings {
+  final String notificationEdit;
+  final String notificationSelectAll;
+  final String notificationDeselectAll;
+  final String notificationSelectedCount;
+  final String notificationRead;
+  final String notificationReadAll;
+  final String notificationDelete;
+  final String notificationDeleteAll;
+  final String notificationDeleteTitle;
+  final String notificationDeleteMessage;
+  final String notificationReadFailed;
+  final String notificationDeleteFailed;
+  final String notificationDisabled;
+  final String notificationEmpty;
+
   final String categoryAll;
   final String calendarSearchHint;
   final String calendarRefresh;
@@ -21,6 +36,9 @@ class AppStrings {
   final String technicianFirstNameHint;
   final String technicianLastNameHint;
   final String technicianSearching;
+  final String technicianRequiredNames;
+  final String technicianResultCount;
+  final String technicianLoadMore;
   final String technicianSearchFailed;
   final String technicianSearchErrorHint;
   final String technicianNotFound;
@@ -230,6 +248,21 @@ class AppStrings {
   final String loginFailed;
 
   const AppStrings({
+    required this.notificationEdit,
+    required this.notificationSelectAll,
+    required this.notificationDeselectAll,
+    required this.notificationSelectedCount,
+    required this.notificationRead,
+    required this.notificationReadAll,
+    required this.notificationDelete,
+    required this.notificationDeleteAll,
+    required this.notificationDeleteTitle,
+    required this.notificationDeleteMessage,
+    required this.notificationReadFailed,
+    required this.notificationDeleteFailed,
+    required this.notificationDisabled,
+    required this.notificationEmpty,
+
     required this.categoryAll,
     required this.calendarSearchHint,
     required this.calendarRefresh,
@@ -246,6 +279,9 @@ class AppStrings {
     required this.technicianFirstNameHint,
     required this.technicianLastNameHint,
     required this.technicianSearching,
+    required this.technicianRequiredNames,
+    required this.technicianResultCount,
+    required this.technicianLoadMore,
     required this.technicianSearchFailed,
     required this.technicianSearchErrorHint,
     required this.technicianNotFound,
@@ -456,6 +492,23 @@ class AppStrings {
   });
 
   static const AppStrings th = AppStrings(
+    notificationEdit: 'แก้ไข',
+    notificationSelectAll: 'เลือกทั้งหมด',
+    notificationDeselectAll: 'ยกเลิกเลือกทั้งหมด',
+    notificationSelectedCount: 'เลือก {count} รายการ',
+    notificationRead: 'อ่านแล้ว',
+    notificationReadAll: 'อ่านทั้งหมด',
+    notificationDelete: 'ลบ',
+    notificationDeleteAll: 'ลบทั้งหมด',
+    notificationDeleteTitle: 'ลบการแจ้งเตือน',
+    notificationDeleteMessage:
+        'ต้องการลบ {count} รายการที่เลือกใช่หรือไม่? การลบนี้จะลบออกจากเครื่องนี้เท่านั้น',
+    notificationReadFailed:
+        'บันทึกสถานะอ่านไม่สำเร็จ {count} รายการ กรุณาลองอีกครั้ง',
+    notificationDeleteFailed: 'ลบรายการไม่สำเร็จ กรุณาลองอีกครั้ง',
+    notificationDisabled: 'ปิดการแสดงการแจ้งเตือนทุกประเภทแล้ว',
+    notificationEmpty: 'ยังไม่มีการแจ้งเตือน',
+
     categoryAll: "ทั้งหมด",
     calendarSearchHint: "ค้นหากิจกรรม",
     calendarRefresh: "โหลดข้อมูลใหม่",
@@ -472,6 +525,9 @@ class AppStrings {
     technicianFirstNameHint: "กรอกชื่อ",
     technicianLastNameHint: "กรอกนามสกุล",
     technicianSearching: "กำลังค้นหา...",
+    technicianResultCount: "แสดง {count} รายการ",
+    technicianLoadMore: "ดูเพิ่มเติมอีก {count} รายการ",
+    technicianRequiredNames: "กรุณากรอกทั้งชื่อและนามสกุลเพื่อค้นหา",
     technicianSearchFailed: "ค้นหาไม่สำเร็จ",
     technicianSearchErrorHint:
         "ไม่สามารถเชื่อมต่อข้อมูลได้ในขณะนี้\nกรุณากดค้นหาเพื่อลองอีกครั้ง",
@@ -682,6 +738,23 @@ class AppStrings {
   );
 
   static const AppStrings en = AppStrings(
+    notificationEdit: 'Edit',
+    notificationSelectAll: 'Select all',
+    notificationDeselectAll: 'Deselect all',
+    notificationSelectedCount: '{count} selected',
+    notificationRead: 'Read',
+    notificationReadAll: 'Read all',
+    notificationDelete: 'Delete',
+    notificationDeleteAll: 'Delete all',
+    notificationDeleteTitle: 'Delete notifications',
+    notificationDeleteMessage:
+        'Delete {count} selected notification(s)? This only removes them from this device.',
+    notificationReadFailed:
+        'Could not mark {count} notification(s) as read. Please retry.',
+    notificationDeleteFailed: 'Unable to delete notifications. Please retry.',
+    notificationDisabled: 'All notification types are turned off',
+    notificationEmpty: 'No notifications yet',
+
     categoryAll: "All",
     calendarSearchHint: "Search events",
     calendarRefresh: "Refresh",
@@ -698,6 +771,10 @@ class AppStrings {
     technicianFirstNameHint: "Enter first name",
     technicianLastNameHint: "Enter last name",
     technicianSearching: "Searching...",
+    technicianResultCount: "Showing {count} results",
+    technicianLoadMore: "Show {count} more results",
+    technicianRequiredNames:
+        "Please enter both first and last names to search.",
     technicianSearchFailed: "Search unsuccessful",
     technicianSearchErrorHint:
         "Unable to load results right now.\nPlease search again.",

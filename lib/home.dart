@@ -45,7 +45,7 @@ class HomePageState extends State<HomePage>
   String category = '';
   String idcard = '';
   bool isCert = false;
-  bool isPDPA = false;
+  bool isPdpa = false;
 
   final txtFirstName = TextEditingController();
   final txtLastName = TextEditingController();
@@ -83,6 +83,7 @@ class HomePageState extends State<HomePage>
   }
 
   Future<void> loadData() async {
+    print('🔄 Loading user data...');
     final code = await storage.read(key: 'profileCode');
     final profileCategory = await storage.read(key: 'profileCategory');
     final profileFirstName = await storage.read(key: 'profileFirstName') ?? '';
@@ -120,10 +121,14 @@ class HomePageState extends State<HomePage>
         value['objectData'] != null &&
         value['objectData'].isNotEmpty) {
       var user = value['objectData'][0];
-      print('✅ _code: ${_code}');
+      print('🔄 Loading user data...');
+      print('user: ${user}');
+      print('_code: ${_code}');
       print('${user['idcard'] ?? ''}');
-      print('${isCert = user['isCert']}');
-      print('${isPDPA = user['isPdpa']}');
+      print({"isCert": user['isCert']});
+      print({"isPdpa": user['isPdpa']});
+
+      print('🔄 User data loaded.');
       if (!mounted) return;
       setState(() {
         _imageUrl = user['imageUrl'] ?? '';
@@ -131,7 +136,7 @@ class HomePageState extends State<HomePage>
         txtLastName.text = user['lastName'] ?? '';
         idcard = user['idcard'] ?? '';
         isCert = user['isCert'];
-        isPDPA = user['isPdpa'];
+        isPdpa = user['isPdpa'];
       });
     }
   }
@@ -301,69 +306,69 @@ class HomePageState extends State<HomePage>
   //   return mockTraining;
   // }
 
-  List<Map<String, dynamic>> mockTraining = [
-    {
-      'trainingId': '0333454',
-      'course': 'ช่างปูกระเบื้อง(ช่างปู)',
-      'classNo': 1,
-      'site': 'สถาบันพัฒนาฝีมือแรงงาน 42 หนองคาย',
-      'dsdStartDate': '2026-07-06',
-      'dsdEndDate': '2026-07-09',
-      'period': 30,
-      'status2': false,
-    },
-    {
-      'trainingId': '0321757',
-      'course': 'การใช้เทคโนโลยีเพื่อจัดการน้ำสำหรับโรงเรือนเกษตรอัจฉริยะ',
-      'classNo': 2,
-      'site': 'สำนักงานพัฒนาฝีมือแรงงานกาฬสินธุ์',
-      'dsdStartDate': '2026-07-13',
-      'dsdEndDate': '2026-07-17',
-      'period': 18,
-      'status2': false,
-    },
-    {
-      'trainingId': '0327396',
-      'course': 'การบำรุงรักษาเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก',
-      'classNo': 3,
-      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
-      'dsdStartDate': '2026-07-13',
-      'dsdEndDate': '2026-07-17',
-      'period': 30,
-      'status2': false,
-    },
-    {
-      'trainingId': '0326287',
-      'course': 'การประกอบธุรกิจเครื่องดื่มมืออาชีพ',
-      'classNo': 4,
-      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
-      'dsdStartDate': '2026-07-13',
-      'dsdEndDate': '2026-07-17',
-      'period': 30,
-      'status2': true,
-    },
-    {
-      'trainingId': '0333926',
-      'course':
-          'เทคนิคการเพาะเลี้ยงผึ้งโพรงป่าด้วยนวัตกรรมการอนุรักษ์เชิงธรรมชาติ',
-      'classNo': 5,
-      'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
-      'dsdStartDate': '2026-07-15',
-      'dsdEndDate': '2026-07-17',
-      'period': 18,
-      'status2': false,
-    },
-    {
-      'trainingId': '0328033',
-      'course': 'พื้นฐานระบบปัญญาประดิษฐ์',
-      'classNo': 6,
-      'site': 'สำนักงานพัฒนาฝีมือแรงงานมหาสารคาม',
-      'dsdStartDate': '2026-07-18',
-      'dsdEndDate': '2026-07-26',
-      'period': 30,
-      'status2': true,
-    },
-  ];
+  // List<Map<String, dynamic>> mockTraining = [
+  //   {
+  //     'trainingId': '0333454',
+  //     'course': 'ช่างปูกระเบื้อง(ช่างปู)',
+  //     'classNo': 1,
+  //     'site': 'สถาบันพัฒนาฝีมือแรงงาน 42 หนองคาย',
+  //     'dsdStartDate': '2026-07-06',
+  //     'dsdEndDate': '2026-07-09',
+  //     'period': 30,
+  //     'status2': false,
+  //   },
+  //   {
+  //     'trainingId': '0321757',
+  //     'course': 'การใช้เทคโนโลยีเพื่อจัดการน้ำสำหรับโรงเรือนเกษตรอัจฉริยะ',
+  //     'classNo': 2,
+  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานกาฬสินธุ์',
+  //     'dsdStartDate': '2026-07-13',
+  //     'dsdEndDate': '2026-07-17',
+  //     'period': 18,
+  //     'status2': false,
+  //   },
+  //   {
+  //     'trainingId': '0327396',
+  //     'course': 'การบำรุงรักษาเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก',
+  //     'classNo': 3,
+  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+  //     'dsdStartDate': '2026-07-13',
+  //     'dsdEndDate': '2026-07-17',
+  //     'period': 30,
+  //     'status2': false,
+  //   },
+  //   {
+  //     'trainingId': '0326287',
+  //     'course': 'การประกอบธุรกิจเครื่องดื่มมืออาชีพ',
+  //     'classNo': 4,
+  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+  //     'dsdStartDate': '2026-07-13',
+  //     'dsdEndDate': '2026-07-17',
+  //     'period': 30,
+  //     'status2': true,
+  //   },
+  //   {
+  //     'trainingId': '0333926',
+  //     'course':
+  //         'เทคนิคการเพาะเลี้ยงผึ้งโพรงป่าด้วยนวัตกรรมการอนุรักษ์เชิงธรรมชาติ',
+  //     'classNo': 5,
+  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
+  //     'dsdStartDate': '2026-07-15',
+  //     'dsdEndDate': '2026-07-17',
+  //     'period': 18,
+  //     'status2': false,
+  //   },
+  //   {
+  //     'trainingId': '0328033',
+  //     'course': 'พื้นฐานระบบปัญญาประดิษฐ์',
+  //     'classNo': 6,
+  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานมหาสารคาม',
+  //     'dsdStartDate': '2026-07-18',
+  //     'dsdEndDate': '2026-07-26',
+  //     'period': 30,
+  //     'status2': true,
+  //   },
+  // ];
 
   /*===============================>> UI <<=============================== */
 
@@ -474,10 +479,11 @@ class HomePageState extends State<HomePage>
     final bool isLoggedIn = _code.isNotEmpty;
     final bool hasIdCard = idcard.isNotEmpty; // ต้องแก้จาก is cert
     final bool isCertified = isCert;
+    print(' Build HomePageState.........  ');
     print('_code : ${_code}');
     print('idcard : ${idcard}');
     print('isCert : ${isCert}');
-    print('isPDPA : ${isPDPA}');
+    print('isPdpa : ${isPdpa}');
 
     final String name =
         isLoggedIn
@@ -590,13 +596,13 @@ class HomePageState extends State<HomePage>
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () async {
-        if (!isPDPA) {
+        if (isCert && !isPdpa) {
           final consent = await Navigator.push<bool>(
             context,
             MaterialPageRoute(builder: (_) => const TechnicianPDPA()),
           );
           if (!context.mounted || !mounted || consent == null) return;
-          setState(() => isPDPA = consent);
+          setState(() => isPdpa = consent);
           if (!consent) return;
         }
         if (!context.mounted) return;
@@ -884,14 +890,24 @@ class HomePageState extends State<HomePage>
                 : _hasSelectedInterest
                 ? SizedBox(
                   height: MediaQuery.of(context).size.height * 0.1,
-                  child: Center(
-                    child: Text(
-                      language.noRecommendedCourses,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'Kanit',
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF9E6),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.primary.withOpacity(0.35),
+                        width: 1,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        language.noRecommendedCourses,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Kanit',
+                        ),
                       ),
                     ),
                   ),
@@ -955,13 +971,6 @@ class HomePageState extends State<HomePage>
                             border: Border.all(
                               color: Colors.white.withOpacity(.94),
                             ),
-                            // boxShadow: [
-                            //   BoxShadow(
-                            //     color: const Color(0xFF80631A).withOpacity(.12),
-                            //     blurRadius: 8,
-                            //     offset: const Offset(0, 2),
-                            //   ),
-                            // ],
                           ),
                           padding: const EdgeInsets.all(6),
                           child: Icon(

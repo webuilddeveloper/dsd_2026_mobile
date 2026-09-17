@@ -173,7 +173,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: Container(
-        height: 72 + MediaQuery.of(context).padding.bottom,
+        height: 64 + MediaQuery.of(context).padding.bottom,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
@@ -221,24 +221,24 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
             child: Container(
               alignment: Alignment.center,
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
                     icon!,
-                    height: 30,
-                    width: 30,
+                    height: 26,
+                    width: 26,
                     color:
                         _currentPage == index
                             ? AppColors.primarysecond
                             : const Color(0xff877573),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.w400,
                       color:
                           _currentPage == index

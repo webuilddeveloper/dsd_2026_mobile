@@ -1,5 +1,4 @@
 import 'package:dsd/blank_page/appbar.dart';
-import 'package:dsd/blank_page/category_chip.dart';
 import 'package:dsd/blank_page/textfield.dart';
 import 'package:dsd/calendar/calendar_source.dart';
 import 'package:dsd/calendar/calendar_style.dart';
@@ -84,12 +83,32 @@ class _CalendarPageState extends State<CalendarPage> {
   List<CalendarEvent> _onDate(DateTime date) =>
       _filtered.where((event) => isSameDay(event.start, date)).toList();
 
-  String _categoryTitle(int id, AppStrings language) => switch (id) {
-    2 => language.calendarTrainingCategory,
-    3 => language.calendarTestingCategory,
-    4 => language.calendarCompetitionCategory,
-    _ => language.categoryAll,
-  };
+  Widget _buildCategoryChip({
+    required String label,
+    required bool selected,
+    required VoidCallback onSelected,
+  }) {
+    return ChoiceChip(
+      label: Text(label),
+      selected: selected,
+      onSelected: (_) => onSelected(),
+      showCheckmark: false,
+      selectedColor: AppColors.primary,
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      labelStyle: TextStyle(
+        fontFamily: 'Kanit',
+        fontSize: 14,
+        fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+        color: AppColors.textDark,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      side: BorderSide(
+        color: selected ? AppColors.primary : AppColors.borderColor,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,176 +133,184 @@ class _CalendarPageState extends State<CalendarPage> {
         },
         rightAction: () => setState(() => _listMode = !_listMode),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 8, 0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: buildSearch(
-                    controller: _search,
-                    hintText: language.calendarSearchHint,
-                    onChanged: (_) => setState(() {}),
-                  ),
-                ),
-                IconButton(
-                  tooltip: language.calendarRefresh,
-                  onPressed: _loading ? null : _load,
-                  icon: const Icon(Icons.refresh),
-                ),
-              ],
-            ),
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                CategoryChip(
-                  label: language.categoryAll,
-                  selected: _category == null,
-                  onSelected: () => setState(() => _category = null),
-                ),
-                for (final category in calendarCategories)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: CategoryChip(
-                      label: _categoryTitle(category.id, language),
-                      selected: _category == category.id,
-                      onSelected: () => setState(() => _category = category.id),
+      // Menu extends its body beneath the bottom navigation bar.
+      // Respect that inherited inset, including the iOS home indicator.
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 8, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: buildSearch(
+                      controller: _search,
+                      hintText: thai ? 'ค้นหากิจกรรม' : 'Search events',
+                      onChanged: (_) => setState(() {}),
                     ),
                   ),
-              ],
+                  IconButton(
+                    tooltip: thai ? 'โหลดข้อมูลใหม่' : 'Refresh',
+                    onPressed: _loading ? null : _load,
+                    icon: const Icon(Icons.refresh),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child:
-                _loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _failed
-                    ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  _buildCategoryChip(
+                    label: thai ? 'ทั้งหมด' : 'All',
+                    selected: _category == null,
+                    onSelected: () => setState(() => _category = null),
+                  ),
+                  for (final category in calendarCategories)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: _buildCategoryChip(
+                        label: thai ? category.title : category.titleEN,
+                        selected: _category == category.id,
+                        onSelected:
+                            () => setState(() => _category = category.id),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            Expanded(
+              child:
+                  _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _failed
+                      ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              thai
+                                  ? 'โหลดปฏิทินจากเว็บไซต์ไม่สำเร็จ'
+                                  : 'Unable to load the website calendar',
+                            ),
+                            TextButton(
+                              onPressed: _load,
+                              child: Text(thai ? 'ลองใหม่' : 'Retry'),
+                            ),
+                          ],
+                        ),
+                      )
+                      : ListView(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                         children: [
-                          Text(language.calendarLoadFailed),
-                          TextButton(
-                            onPressed: _load,
-                            child: Text(language.calendarRetry),
-                          ),
-                        ],
-                      ),
-                    )
-                    : ListView(
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        0,
-                        16,
-                        24 +
-                            MediaQuery.viewPaddingOf(context).bottom +
-                            (widget.pushedFromPage ? 0 : 72),
-                      ),
-                      children: [
-                        if (!_listMode) ...[
-                          TableCalendar<CalendarEvent>(
-                            locale: locale,
-                            focusedDay: _focusedDay,
-                            firstDay:
-                                _events.isNotEmpty &&
-                                        _events.first.start.isBefore(
-                                          DateTime(2010),
-                                        )
-                                    ? _events.first.start
-                                    : DateTime(2010),
-                            lastDay:
-                                _events.isNotEmpty &&
-                                        _events.last.start.isAfter(
-                                          DateTime(
-                                            DateTime.now().year + 10,
-                                            12,
-                                            31,
-                                          ),
-                                        )
-                                    ? _events.last.start
-                                    : DateTime(
-                                      DateTime.now().year + 10,
-                                      12,
-                                      31,
+                          if (!_listMode) ...[
+                            TableCalendar<CalendarEvent>(
+                              locale: locale,
+                              focusedDay: _focusedDay,
+                              firstDay:
+                                  _events.isNotEmpty &&
+                                          _events.first.start.isBefore(
+                                            DateTime(2010),
+                                          )
+                                      ? _events.first.start
+                                      : DateTime(2010),
+                              lastDay:
+                                  _events.isNotEmpty &&
+                                          _events.last.start.isAfter(
+                                            DateTime(
+                                              DateTime.now().year + 10,
+                                              12,
+                                              31,
+                                            ),
+                                          )
+                                      ? _events.last.start
+                                      : DateTime(
+                                        DateTime.now().year + 10,
+                                        12,
+                                        31,
+                                      ),
+                              selectedDayPredicate:
+                                  (day) => isSameDay(day, _selectedDay),
+                              onDaySelected:
+                                  (day, focused) => setState(() {
+                                    _selectedDay = day;
+                                    _focusedDay = focused;
+                                  }),
+                              onPageChanged: (day) => _focusedDay = day,
+                              eventLoader: _onDate,
+                              headerStyle: HeaderStyle(
+                                titleCentered: true,
+                                formatButtonVisible: false,
+                                titleTextFormatter:
+                                    (date, _) => calendarDate(
+                                      date,
+                                      thai,
+                                      monthOnly: true,
                                     ),
-                            selectedDayPredicate:
-                                (day) => isSameDay(day, _selectedDay),
-                            onDaySelected:
-                                (day, focused) => setState(() {
-                                  _selectedDay = day;
-                                  _focusedDay = focused;
-                                }),
-                            onPageChanged: (day) => _focusedDay = day,
-                            eventLoader: _onDate,
-                            headerStyle: HeaderStyle(
-                              titleCentered: true,
-                              formatButtonVisible: false,
-                              titleTextFormatter:
-                                  (date, _) =>
-                                      calendarDate(date, thai, monthOnly: true),
+                              ),
+                              calendarStyle: activityCalendarStyle,
                             ),
-                            calendarStyle: activityCalendarStyle,
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(calendarDate(_selectedDay, thai)),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(calendarDate(_selectedDay, thai)),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  '${items.length} ${language.activity}',
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (items.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Center(
+                                child: Text(
+                                  thai ? 'ไม่พบกิจกรรม' : 'No events found',
+                                ),
                               ),
-                              const SizedBox(width: 12),
-                              Text(
-                                '${items.length} ${language.activity}',
-                                textAlign: TextAlign.right,
+                            ),
+                          for (final event in items)
+                            Card(
+                              color: AppColors.primaryShade,
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 8,
+                                ),
+                                horizontalTitleGap: 14,
+                                leading: Image.asset(
+                                  'assets/DSD/imgs/logo_app.png',
+                                  width: 48,
+                                  height: 48,
+                                  fit: BoxFit.contain,
+                                ),
+                                title: Text(event.title),
+                                subtitle: Text(
+                                  '${calendarDate(event.start, thai)}\n${thai ? calendarCategories.firstWhere((c) => c.id == event.category).title : calendarCategories.firstWhere((c) => c.id == event.category).titleEN}',
+                                ),
+                                isThreeLine: true,
+                                // onTap:
+                                //     () => Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder:
+                                //             (_) => CalendarDetail(event: event),
+                                //       ),
+                                //     ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
+                            ),
                         ],
-                        if (items.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: Center(
-                              child: Text(language.calendarNoEvents),
-                            ),
-                          ),
-                        for (final event in items)
-                          Card(
-                            color: AppColors.primaryShade,
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 8,
-                              ),
-                              horizontalTitleGap: 14,
-                              leading: Image.asset(
-                                'assets/DSD/imgs/logo_app.png',
-                                width: 48,
-                                height: 48,
-                                fit: BoxFit.contain,
-                              ),
-                              title: Text(event.title),
-                              subtitle: Text(
-                                '${calendarDate(event.start, thai)}\n${_categoryTitle(event.category, language)}',
-                              ),
-                              isThreeLine: true,
-                              // onTap:
-                              //     () => Navigator.push(
-                              //       context,
-                              //       MaterialPageRoute(
-                              //         builder:
-                              //             (_) => CalendarDetail(event: event),
-                              //       ),
-                              //     ),
-                            ),
-                          ),
-                      ],
-                    ),
-          ),
-        ],
+                      ),
+            ),
+          ],
+        ),
       ),
     );
   }

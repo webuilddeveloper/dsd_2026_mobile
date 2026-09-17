@@ -124,6 +124,7 @@ appBar({
   Function? rightAction,
   Function? backAction,
   String righttitle = "",
+  Widget? rightWidget,
 }) {
   return PreferredSize(
     preferredSize: const Size.fromHeight(80), // 🔻 ลดความสูง
@@ -185,50 +186,51 @@ appBar({
 
               // / 🔔 RIGHT
               // ignore: unrelated_type_equality_checks
-              rightBtn
-                  // ? GestureDetector(
-                  //   onTap: () => rightAction!(),
-                  //   child: Container(
-                  //     width: 40,
-                  //     height: 40,
-                  //     alignment: Alignment.center,
-                  //     decoration: BoxDecoration(
-                  //       color: const Color(0xFFFAFAFA),
-                  //       shape: BoxShape.circle,
-                  //       border: Border.all(
-                  //         width: 1,
-                  //         color: const Color(0xFFDBDBDB),
-                  //       ),
-                  //     ),
-                  //     child: Icon(Icons.list_rounded, size: 18),
-                  //   ),
-                  // )
-                  ? GestureDetector(
-                    onTap: () => rightAction!(),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFAFAFA),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          width: 1,
-                          color: const Color(0xFFDBDBDB),
+              rightWidget ??
+                  (rightBtn
+                      // ? GestureDetector(
+                      //   onTap: () => rightAction!(),
+                      //   child: Container(
+                      //     width: 40,
+                      //     height: 40,
+                      //     alignment: Alignment.center,
+                      //     decoration: BoxDecoration(
+                      //       color: const Color(0xFFFAFAFA),
+                      //       shape: BoxShape.circle,
+                      //       border: Border.all(
+                      //         width: 1,
+                      //         color: const Color(0xFFDBDBDB),
+                      //       ),
+                      //     ),
+                      //     child: Icon(Icons.list_rounded, size: 18),
+                      //   ),
+                      // )
+                      ? GestureDetector(
+                        onTap: () => rightAction!(),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFAFAFA),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              width: 1,
+                              color: const Color(0xFFDBDBDB),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.list_rounded, size: 18),
+                              SizedBox(width: 4),
+                              Text(righttitle, style: TextStyle(fontSize: 10)),
+                            ],
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.list_rounded, size: 18),
-                          SizedBox(width: 4),
-                          Text(righttitle, style: TextStyle(fontSize: 10)),
-                        ],
-                      ),
-                    ),
-                  )
-                  : SizedBox(width: 40),
+                      )
+                      : SizedBox(width: 40)),
             ],
           ),
         ),

@@ -167,7 +167,7 @@ class _InterestsState extends State<Interests> {
                     onPressed: isLoading ? null : skipAll,
                     child: Text(
                       language.skip,
-                      style: TextStyle(color: AppColors.textgrey),
+                      style: TextStyle(color: AppColors.primary),
                     ),
                   ),
                 ],

@@ -2,62 +2,56 @@ import 'package:dsd/blank_page/appbar.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/style_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dsd/notification/notification_preferences.dart';
+import 'package:dsd/shared/locale_provider.dart';
+import 'package:provider/provider.dart';
 
 class NotificationSettings extends StatefulWidget {
-  const NotificationSettings({super.key});
+  const NotificationSettings({super.key, this.preferences});
+  final NotificationPreferences? preferences;
 
   @override
   State<NotificationSettings> createState() => _NotificationSettingsState();
 }
 
 class _NotificationSettingsState extends State<NotificationSettings> {
-  // ── General ──
-  bool _allNotifications = true;
-  bool _sound = true;
-  bool _vibration = false;
-
-  // ── Type ──
-  bool _training = true;
-  bool _news = false;
-  bool _system = true;
+  late final NotificationPreferences _preferences;
 
   @override
   void initState() {
     super.initState();
-    _loadPrefs();
+    _preferences = widget.preferences ?? NotificationPreferences.shared;
+    _preferences.addListener(_changed);
+    _preferences.load();
   }
 
-  Future<void> _loadPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _allNotifications = prefs.getBool('notif_all') ?? true;
-      _sound = prefs.getBool('notif_sound') ?? true;
-      _vibration = prefs.getBool('notif_vibration') ?? false;
-      _training = prefs.getBool('notif_training') ?? true;
-      _news = prefs.getBool('notif_news') ?? false;
-      _system = prefs.getBool('notif_system') ?? true;
-    });
+  void _changed() {
+    if (mounted) setState(() {});
   }
 
-  Future<void> _savePrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('notif_all', _allNotifications);
-    await prefs.setBool('notif_sound', _sound);
-    await prefs.setBool('notif_vibration', _vibration);
-    await prefs.setBool('notif_training', _training);
-    await prefs.setBool('notif_news', _news);
-    await prefs.setBool('notif_system', _system);
+  @override
+  void dispose() {
+    _preferences.removeListener(_changed);
+    super.dispose();
   }
 
-  void _toggle(bool value, void Function(bool) setter) {
-    setState(() => setter(value));
-    _savePrefs();
+  Future<void> _toggle(String key, bool value) async {
+    try {
+      await _preferences.setValue(key, value);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('บันทึกการตั้งค่าไม่สำเร็จ กรุณาลองอีกครั้ง'),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final language = AppStrings.of(context);
+    final thai = context.watch<LocaleProvider>().locale.languageCode == 'th';
     return Scaffold(
       backgroundColor: AppColors.backgroundMain,
       appBar: appBar(
@@ -66,58 +60,56 @@ class _NotificationSettingsState extends State<NotificationSettings> {
         rightBtn: false,
         backAction: () => Navigator.pop(context),
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
-        children: [
-          _sectionCard(
-            title: language.generalNoti,
-            items: [
-              _SwitchItem(
-                label: language.enablenoti,
-                subtitle: language.skipenablenoti,
-                value: _allNotifications,
-                onChanged: (v) => _toggle(v, (x) => _allNotifications = x),
+      body:
+          !_preferences.ready
+              ? const Center(child: CircularProgressIndicator())
+              : SafeArea(
+                top: false,
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+                  children: [
+                    // _sectionCard(
+                    //   title: language.generalNoti,
+                    //   items: [
+                    //     _SwitchItem(
+                    //       label: language.enablenoti,
+                    //       subtitle: language.skipenablenoti,
+                    //       value: _preferences.all,
+                    //       onChanged: (v) => _toggle('notif_all', v),
+                    //     ),
+                    //     _SwitchItem(
+                    //       label: language.notificationsound,
+                    //       subtitle: language.skipnotisound,
+                    //       value: _preferences.value('notif_sound'),
+                    //       onChanged: _preferences.all ? (v) => _toggle('notif_sound', v) : null,
+                    //     ),
+                    //     _SwitchItem(
+                    //       label: language.vibration,
+                    //       subtitle: language.skipvibration,
+                    //       value: _preferences.value('notif_vibration'),
+                    //       onChanged: _preferences.all ? (v) => _toggle('notif_vibration', v) : null,
+                    //     ),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 12),
+                    _sectionCard(
+                      title: language.typenoti,
+                      items: [
+                        for (final type in notificationTypes)
+                          _SwitchItem(
+                            label: type[thai ? 'name' : 'nameEN']!,
+                            subtitle:
+                                thai
+                                    ? 'แสดงหมวดและรายการแจ้งเตือน${type['name']}'
+                                    : 'Show ${type['nameEN']!.toLowerCase()} notifications',
+                            value: _preferences.typeEnabled(type['type']!),
+                            onChanged: (v) => _toggle(type['key']!, v),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              _SwitchItem(
-                label: language.notificationsound,
-                subtitle: language.skipnotisound,
-                value: _sound,
-                onChanged: (v) => _toggle(v, (x) => _sound = x),
-              ),
-              _SwitchItem(
-                label: language.vibration,
-                subtitle: language.skipvibration,
-                value: _vibration,
-                onChanged: (v) => _toggle(v, (x) => _vibration = x),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _sectionCard(
-            title: language.typenoti,
-            items: [
-              _SwitchItem(
-                label: language.training,
-                subtitle: language.skiptraining,
-                value: _training,
-                onChanged: (v) => _toggle(v, (x) => _training = x),
-              ),
-              _SwitchItem(
-                label: language.news,
-                subtitle: language.skipnews,
-                value: _news,
-                onChanged: (v) => _toggle(v, (x) => _news = x),
-              ),
-              // _SwitchItem(
-              //   label: 'การแจ้งเตือนระบบ',
-              //   subtitle: 'อัปเดตและการบำรุงรักษาระบบ',
-              //   value: _system,
-              //   onChanged: (v) => _toggle(v, (x) => _system = x),
-              // ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -158,7 +150,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
               ],
             ),
           ),
-          ...items.map((item) => _buildRow(item)).toList(),
+          ...items.map((item) => _buildRow(item)),
         ],
       ),
     );
@@ -199,7 +191,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
               Switch(
                 value: item.value,
                 onChanged: item.onChanged,
-                activeColor: Colors.white,
+                activeThumbColor: Colors.white,
                 activeTrackColor: AppColors.primary,
                 inactiveThumbColor: Colors.white,
                 inactiveTrackColor: const Color(0xFFD3D1C7),
@@ -217,7 +209,7 @@ class _SwitchItem {
   final String label;
   final String subtitle;
   final bool value;
-  final ValueChanged<bool> onChanged;
+  final ValueChanged<bool>? onChanged;
 
   const _SwitchItem({
     required this.label,

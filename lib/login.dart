@@ -10,6 +10,7 @@ import 'package:dsd/forgot.dart';
 import 'package:dsd/interests.dart';
 import 'package:dsd/menu.dart';
 import 'package:dsd/policy.dart';
+import 'package:dsd/shared/policy_acceptance.dart';
 import 'package:dsd/register.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
@@ -549,7 +550,7 @@ class _LoginPageState extends State<LoginPage>
         );
 
         await readRegister();
-        _goToPolicy();
+        await _goToPolicy();
       } else {
         // ❌ LOGIN FAIL
         showDialogFail(
@@ -748,14 +749,19 @@ class _LoginPageState extends State<LoginPage>
 
       await readRegister();
 
-      _goToPolicy();
+      await _goToPolicy();
     }
   }
 
-  void _goToPolicy() {
+  Future<void> _goToPolicy() async {
+    final code = await storage.read(key: 'profileCode') ?? '';
+    final accepted = await PolicyAcceptance.hasAccepted(code);
+    if (!mounted) return;
     final nextPage = isInterests == false ? Interests(isEdit: false) : Menu();
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => PolicyPage(nextPage: nextPage)),
+      MaterialPageRoute(
+        builder: (_) => accepted ? nextPage : PolicyPage(nextPage: nextPage),
+      ),
       (route) => false,
     );
   }
