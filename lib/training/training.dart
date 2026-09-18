@@ -33,14 +33,6 @@ class _TrainingServiceState extends State<TrainingService> {
   }
 
   /*===============================>> API <<=============================== */
-  // Future<void> _trainingApi() async {
-  //   final data = await postDio('${trainingApi}readAPI', {"keySearch": "2569"});
-  //   setState(() {
-  //     training = (data as List).cast<Map<String, dynamic>>();
-  //     print('✅ training: ${training}');
-  //     isLoading = false;
-  //   });
-  // }
 
   String? errorMessage;
   Future<void> _trainingApi() async {

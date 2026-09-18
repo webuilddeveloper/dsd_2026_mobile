@@ -567,8 +567,6 @@ class _LoginPageState extends State<LoginPage>
         );
       }
     } catch (e) {
-      print("LOGIN ERROR: $e");
-
       // ❌ NETWORK ERROR
       showDialogFail(
         context,
@@ -584,15 +582,13 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> readRegister() async {
-    print('------------- readRegister');
     final storage = FlutterSecureStorage();
     final profileCode = await storage.read(key: 'profileCode') ?? '';
     final result = await postapi('${registerV2}read', {"code": profileCode});
-    print('profileCode : ${profileCode}');
-    print('------------- readRegister status : ${result['status']}');
+
     if (result['status'] == 'S') {
       final data = result['objectData'];
-      print(data);
+
       if (data.isNotEmpty) {
         isInterests = data[0]['isInterest'];
       }
@@ -619,9 +615,7 @@ class _LoginPageState extends State<LoginPage>
       //     'UVpJMVZhUWN4dXBDNk9wY0xJNm9tcjJKZHFTZUJCZXVGOUlISDRKRw';
       String redirectUri = 'https://gateway.we-builds.com/dsd/thaid';
       String base = 'https://imauth.bora.dopa.go.th/api/v2/oauth2/auth/';
-      // Random string for state, '1' for login.
       String state = '1${getRandomString()}';
-      // String state = 'mobile';
       String scope = 'pid given_name family_name openid';
       String parameter =
           '?response_type=$responseType&client_id=$clientId&redirect_uri=$redirectUri&scope=$scope&state=$state';
@@ -636,8 +630,7 @@ class _LoginPageState extends State<LoginPage>
 
         mode: LaunchMode.externalApplication,
       );
-      print('==================');
-      print('$base$parameter');
+
       // _callLogin();
     } catch (ex) {
       Fluttertoast.showToast(msg: 'เกิดข้อผิดพลาด');
@@ -681,9 +674,6 @@ class _LoginPageState extends State<LoginPage>
       // Decode token to get user info
       Map<String, dynamic> idData = JwtDecoder.decode(res.data['id_token']);
 
-      print('################# ID Data #################');
-      print(idData);
-
       // Prepare data for login instead of registration
       var _userData = {};
 
@@ -695,12 +685,7 @@ class _LoginPageState extends State<LoginPage>
 
       _userData['firstName'] = idData['given_name'];
       _userData['lastName'] = idData['family_name'];
-
       _userData['idcard'] = idData['pid'];
-
-      print('##################################');
-      print(_userData);
-      print(_userData.runtimeType);
 
       // Use _login instead of _register for login process
       _handleSocail(category: "thaid", model: _userData['thaiID']);
@@ -722,12 +707,13 @@ class _LoginPageState extends State<LoginPage>
       "lastName": model['lastname'] ?? '',
     };
 
-    print('======================>> _handleSocail');
     final result = await postapi('$registerV2$category/login', body);
 
     if (result['status'] == 'S') {
       final data = result['objectData'] ?? {};
+      
 
+      print('data code : ${data['code']} ');
       await storage.write(key: 'token', value: result['jsonData']);
       await storage.write(key: 'dataUserLoginDDPM', value: jsonEncode(data));
       await storage.write(key: 'profileCode', value: data['code'] ?? '');

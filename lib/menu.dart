@@ -23,6 +23,8 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   final storage = FlutterSecureStorage();
   final GlobalKey<HomePageState> _homeKey = GlobalKey<HomePageState>();
 
+  final _calendarKey = GlobalKey<CalendarPageState>();
+
   List<Widget> pages = <Widget>[];
   int _currentPage = 0;
   int _previousPage = 0;
@@ -32,7 +34,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   void initState() {
     pages = <Widget>[
       HomePage(key: _homeKey, onTabChange: _onItemTapped),
-      CalendarPage(key: ValueKey(1), onTabChange: _onItemTapped),
+      CalendarPage(key: _calendarKey, onTabChange: _onItemTapped),
       NotificationList(key: ValueKey(2), onTabChange: _onItemTapped),
       UserInformationPage(key: ValueKey(3), onTabChange: _onItemTapped),
     ];
@@ -40,6 +42,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   }
 
   void _onItemTapped(int index) async {
+    if (index == 1) _calendarKey.currentState?.showCurrentMonth();
     if (index == _currentPage) return;
 
     if (index == 2 || index == 3) {

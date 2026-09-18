@@ -83,7 +83,6 @@ class HomePageState extends State<HomePage>
   }
 
   Future<void> loadData() async {
-    print('🔄 Loading user data...');
     final code = await storage.read(key: 'profileCode');
     final profileCategory = await storage.read(key: 'profileCategory');
     final profileFirstName = await storage.read(key: 'profileFirstName') ?? '';
@@ -121,14 +120,7 @@ class HomePageState extends State<HomePage>
         value['objectData'] != null &&
         value['objectData'].isNotEmpty) {
       var user = value['objectData'][0];
-      print('🔄 Loading user data...');
-      print('user: ${user}');
-      print('_code: ${_code}');
-      print('${user['idcard'] ?? ''}');
-      print({"isCert": user['isCert']});
-      print({"isPdpa": user['isPdpa']});
 
-      print('🔄 User data loaded.');
       if (!mounted) return;
       setState(() {
         _imageUrl = user['imageUrl'] ?? '';
@@ -177,198 +169,6 @@ class HomePageState extends State<HomePage>
       return [];
     }
   }
-
-  // Future<Set<String>> _getSelectedInterestKeywords() async {
-  //   try {
-  //     // โหลดหมวดหมู่ทั้งหมด
-  //     final categoryData = await postDio('${trainingApi}category/read', {});
-  //     final categories =
-  //         (categoryData as List)
-  //             .whereType<Map>()
-  //             .map((item) => Map<String, dynamic>.from(item))
-  //             .toList();
-
-  //     // โหลดหมวดหมู่ที่ผู้ใช้เลือก
-  //     final interestData = await postDio('${register}readInterest', {
-  //       "profileCode": await storage.read(key: 'profileCode'),
-  //     });
-
-  //     final interests =
-  //         (interestData as List)
-  //             .whereType<Map>()
-  //             .map((item) => Map<String, dynamic>.from(item))
-  //             .toList();
-
-  //     // กรองเฉพาะหมวดหมู่ที่ผู้ใช้เลือกอยู่
-  //     final Set<String> activeCategoryCodes =
-  //         interests
-  //             .where((item) => item['isActive'] == true)
-  //             .map((item) => item['trainingCategory']?.toString())
-  //             .whereType<String>()
-  //             .where((code) => code.isNotEmpty)
-  //             .toSet();
-
-  //     // นำ code ไปหา title
-  //     final Set<String> selectedCategoryTitles =
-  //         categories
-  //             .where((category) {
-  //               final code = category['code']?.toString();
-
-  //               return code != null && activeCategoryCodes.contains(code);
-  //             })
-  //             .map((category) => category['title']?.toString().trim())
-  //             .whereType<String>()
-  //             .where((title) => title.isNotEmpty)
-  //             .toSet();
-
-  //     // รวม title และคำใกล้เคียงเป็น Keyword
-  //     final Set<String> keywords = {};
-
-  //     for (final title in selectedCategoryTitles) {
-  //       keywords.add(_normalizeText(title));
-
-  //       final aliases = interestKeywordAliases[title] ?? [];
-
-  //       keywords.addAll(
-  //         aliases.map(_normalizeText).where((keyword) => keyword.isNotEmpty),
-  //       );
-  //     }
-
-  //     debugPrint('✅ activeCategoryCodes: $activeCategoryCodes');
-  //     debugPrint('✅ selectedCategoryTitles: $selectedCategoryTitles');
-  //     debugPrint('✅ keywords: $keywords');
-
-  //     return keywords;
-  //   } catch (error, stackTrace) {
-  //     debugPrint('❌ _getSelectedInterestKeywords error: $error');
-  //     debugPrintStack(stackTrace: stackTrace);
-
-  //     return {};
-  //   }
-  // }
-
-  // Future<List<Map<String, dynamic>>> _futureTraining() async {
-  //   try {
-  //     _trainingErrorMessage = null;
-  //     // โหลด Keyword จากความสนใจ
-  //     final keywords = await _getSelectedInterestKeywords();
-
-  //     _hasSelectedInterest = keywords.isNotEmpty;
-  //     print('_hasSelectedInterest : $_hasSelectedInterest');
-
-  //     if (!_hasSelectedInterest) {
-  //       debugPrint('⚠️ ผู้ใช้ยังไม่ได้เลือกความสนใจ');
-  //       return [];
-  //     }
-
-  //     // โหลดหลักสูตร
-  //     final data = await postDio('${trainingApi}readAPI', {
-  //       'keySearch': '2569',
-  //     });
-
-  //     final trainings =
-  //         (
-  //             // mockTraining
-  //             data as List)
-  //             .whereType<Map>()
-  //             .map((item) => Map<String, dynamic>.from(item))
-  //             .toList();
-
-  //     // กรองหลักสูตรตาม Keyword
-  //     final recommendedTrainings =
-  //         trainings.where((training) {
-  //           final searchableText = _normalizeText(
-  //             [
-  //               training['course'],
-  //               training['description'],
-  //             ].whereType<String>().join(' '),
-  //           );
-
-  //           return keywords.any((keyword) {
-  //             return searchableText.contains(keyword);
-  //           });
-  //         }).toList();
-
-  //     debugPrint('✅ training ทั้งหมด: ${trainings.length}');
-  //     debugPrint('✅ training ที่ตรงความสนใจ: ${recommendedTrainings.length}');
-
-  //     return recommendedTrainings;
-  //   } catch (error, stackTrace) {
-  //     debugPrint('❌ _futureTraining error: $error');
-  //     debugPrintStack(stackTrace: stackTrace);
-
-  //     _trainingErrorMessage = error.toString().replaceFirst('Exception: ', '');
-  //     return [];
-  //   }
-  // }
-
-  // Future<List<Map<String, dynamic>>> _futureTraining() async {
-  //   return mockTraining;
-  // }
-
-  // List<Map<String, dynamic>> mockTraining = [
-  //   {
-  //     'trainingId': '0333454',
-  //     'course': 'ช่างปูกระเบื้อง(ช่างปู)',
-  //     'classNo': 1,
-  //     'site': 'สถาบันพัฒนาฝีมือแรงงาน 42 หนองคาย',
-  //     'dsdStartDate': '2026-07-06',
-  //     'dsdEndDate': '2026-07-09',
-  //     'period': 30,
-  //     'status2': false,
-  //   },
-  //   {
-  //     'trainingId': '0321757',
-  //     'course': 'การใช้เทคโนโลยีเพื่อจัดการน้ำสำหรับโรงเรือนเกษตรอัจฉริยะ',
-  //     'classNo': 2,
-  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานกาฬสินธุ์',
-  //     'dsdStartDate': '2026-07-13',
-  //     'dsdEndDate': '2026-07-17',
-  //     'period': 18,
-  //     'status2': false,
-  //   },
-  //   {
-  //     'trainingId': '0327396',
-  //     'course': 'การบำรุงรักษาเครื่องปรับอากาศในบ้านและการพาณิชย์ขนาดเล็ก',
-  //     'classNo': 3,
-  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
-  //     'dsdStartDate': '2026-07-13',
-  //     'dsdEndDate': '2026-07-17',
-  //     'period': 30,
-  //     'status2': false,
-  //   },
-  //   {
-  //     'trainingId': '0326287',
-  //     'course': 'การประกอบธุรกิจเครื่องดื่มมืออาชีพ',
-  //     'classNo': 4,
-  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
-  //     'dsdStartDate': '2026-07-13',
-  //     'dsdEndDate': '2026-07-17',
-  //     'period': 30,
-  //     'status2': true,
-  //   },
-  //   {
-  //     'trainingId': '0333926',
-  //     'course':
-  //         'เทคนิคการเพาะเลี้ยงผึ้งโพรงป่าด้วยนวัตกรรมการอนุรักษ์เชิงธรรมชาติ',
-  //     'classNo': 5,
-  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานเลย',
-  //     'dsdStartDate': '2026-07-15',
-  //     'dsdEndDate': '2026-07-17',
-  //     'period': 18,
-  //     'status2': false,
-  //   },
-  //   {
-  //     'trainingId': '0328033',
-  //     'course': 'พื้นฐานระบบปัญญาประดิษฐ์',
-  //     'classNo': 6,
-  //     'site': 'สำนักงานพัฒนาฝีมือแรงงานมหาสารคาม',
-  //     'dsdStartDate': '2026-07-18',
-  //     'dsdEndDate': '2026-07-26',
-  //     'period': 30,
-  //     'status2': true,
-  //   },
-  // ];
 
   /*===============================>> UI <<=============================== */
 
@@ -479,11 +279,6 @@ class HomePageState extends State<HomePage>
     final bool isLoggedIn = _code.isNotEmpty;
     final bool hasIdCard = idcard.isNotEmpty; // ต้องแก้จาก is cert
     final bool isCertified = isCert;
-    print(' Build HomePageState.........  ');
-    print('_code : ${_code}');
-    print('idcard : ${idcard}');
-    print('isCert : ${isCert}');
-    print('isPdpa : ${isPdpa}');
 
     final String name =
         isLoggedIn

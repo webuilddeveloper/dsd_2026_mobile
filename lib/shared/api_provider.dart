@@ -66,21 +66,6 @@ const aboutUs = '${dsd_server}aboutUs/';
 // policy
 const policyApi = '${dsd_server}m/policy/';
 
-// Future<dynamic> postDio(String url, dynamic criteria) async {
-//   final storage = FlutterSecureStorage();
-//   final profileCode = await storage.read(key: 'profileCode9');
-
-//   if (profileCode != '' && profileCode != null) {
-//     criteria = {'profileCode': profileCode, ...criteria};
-//   }
-
-//   Dio dio = Dio();
-//   var response = await dio.post(url, data: criteria);
-//   print('✅ postDio: ${url} - ${criteria}');
-//   print('✅ status: ${response.statusCode}');
-
-//   return Future.value(response.data['objectData']);
-// }
 Future<dynamic> postDio(String url, Map<String, dynamic> criteria) async {
   const storage = FlutterSecureStorage();
   final profileCode = await storage.read(key: 'profileCode9');
@@ -122,6 +107,7 @@ Future<dynamic> postDio(String url, Map<String, dynamic> criteria) async {
     throw Exception(message ?? 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
   }
 }
+
 
 Future<dynamic> postapi(String url, dynamic criteria) async {
   var body = json.encode(criteria);

@@ -141,7 +141,6 @@ class _LicenseDetailPageState extends State<LicenseDetailPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              /// CARD / QR
               GestureDetector(
                 onTap: () {
                   // setState(() {

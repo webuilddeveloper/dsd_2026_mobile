@@ -545,9 +545,6 @@ class _PageLicenseState extends State<PageLicense> {
     );
   }
 
-  // ─────────────────────────────────────────────
-  //  Card แต่ละรายการ — แสดงข้อมูลจริงครบถ้วน
-  // ─────────────────────────────────────────────
   Widget _buildItem({
     required Map<String, dynamic> data,
     required String title,
@@ -558,9 +555,6 @@ class _PageLicenseState extends State<PageLicense> {
       padding: const EdgeInsets.only(right: 16),
       child: InkWell(
         onTap: () {
-          // print("data: $data");
-          print('certificateNo : ${data['certificateNo']}');
-          print('typeOfTrain : ${data['typeOfTrain']}');
           Navigator.push(
             context,
             MaterialPageRoute(

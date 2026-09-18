@@ -2,7 +2,8 @@ import 'package:dsd/blank_page/appbar.dart';
 
 import 'package:dsd/blank_page/format.dart';
 import 'package:dsd/blank_page/gallery_viewer.dart';
-import 'package:dsd/blank_page/launch.dart';
+import 'package:dsd/news/news_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:dsd/shared/api_provider.dart';
 import 'package:dsd/shared/app_strings.dart';
 import 'package:dsd/shared/locale_provider.dart';
@@ -54,11 +55,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
     final selectedCode = provider.locale.languageCode;
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: appBar(
-        title: language.pressrelease,
-        rightBtn: false,
-        backAction: () => goBack(),
-      ),
+      appBar: appBar(title: '--', rightBtn: false, backAction: () => goBack()),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,9 +130,12 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        selectedCode == "th"
-                            ? widget.news['title']
-                            : widget.news['titleEN'] ?? "",
+                        cleanNewsText(
+                          (selectedCode == "th"
+                                  ? widget.news['title']
+                                  : widget.news['titleEN'] ?? "")
+                              .toString(),
+                        ),
 
                         style: const TextStyle(
                           fontSize: 14,
@@ -193,14 +193,46 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                       ),
                       SizedBox(height: 16),
 
-                      Html(data: widget.news['description']),
+                      // Html(data: widget.news['description']),
+                      // Html(
+                      //   data: widget.news['description'] ?? '',
+                      //   onLinkTap: (url, attributes, element) async {
+                      //     await _openNewsLink(url);
+                      //   },
+                      // ),
+                      Html(
+                        data: normalizeNewsHtml(
+                          widget.news['description']?.toString() ?? '',
+                        ),
+                        style: {
+                          'body': Style(
+                            margin: Margins.zero,
+                            padding: HtmlPaddings.zero,
+                            fontSize: FontSize(14),
+                            lineHeight: const LineHeight(1.6),
+                            textAlign: TextAlign.start,
+                          ),
+                          'p': Style(margin: Margins.only(bottom: 12, top: 0)),
+                          'a': Style(
+                            color: const Color(0xFF1565C0),
+                            textDecoration: TextDecoration.underline,
+                          ),
+                        },
+                        onLinkTap: (url, attributes, element) async {
+                          await _openNewsLink(url);
+                        },
+                      ),
                       SizedBox(height: 32),
-                      widget.news['textButton'] != ''
+                      (widget.news['textButton']
+                                  ?.toString()
+                                  .trim()
+                                  .isNotEmpty ??
+                              false)
                           ? Center(
                             child: InkWell(
                               onTap: () {
                                 final link = widget.news['linkUrl'];
-                                launchURL(link as String);
+                                _openNewsLink(link?.toString());
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -241,5 +273,25 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _openNewsLink(String? value) async {
+    final uri = newsLinkUri(value);
+    try {
+      if (uri == null ||
+          !await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw StateError('Unable to open news link');
+      }
+    } catch (_) {
+      if (!mounted) return;
+      final thai = context.read<LocaleProvider>().locale.languageCode == 'th';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            thai ? 'ไม่สามารถเปิดลิงก์นี้ได้' : 'Unable to open this link',
+          ),
+        ),
+      );
+    }
   }
 }

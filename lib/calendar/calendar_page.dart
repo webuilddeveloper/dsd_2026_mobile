@@ -20,10 +20,10 @@ class CalendarPage extends StatefulWidget {
   });
 
   @override
-  State<CalendarPage> createState() => _CalendarPageState();
+  State<CalendarPage> createState() => CalendarPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class CalendarPageState extends State<CalendarPage> {
   final _source = CalendarSource();
   final _search = TextEditingController();
   List<CalendarEvent> _events = [];
@@ -34,9 +34,21 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
 
+  void showCurrentMonth() {
+    final today = DateTime.now();
+    setState(() {
+      _focusedDay = today;
+      _selectedDay = today;
+      _listMode = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _focusedDay = DateTime.now();
+    _selectedDay = DateTime.now();
+
     _load();
   }
 
@@ -125,6 +137,10 @@ class _CalendarPageState extends State<CalendarPage> {
         backBtn: true,
         rightBtn: true,
         backAction: () {
+          // Reset calendar ให้กลับมาเดือนปัจจุบัน
+          _focusedDay = DateTime.now();
+          _selectedDay = DateTime.now();
+
           if (widget.pushedFromPage) {
             Navigator.pop(context);
           } else {
@@ -209,6 +225,7 @@ class _CalendarPageState extends State<CalendarPage> {
                             TableCalendar<CalendarEvent>(
                               locale: locale,
                               focusedDay: _focusedDay,
+
                               firstDay:
                                   _events.isNotEmpty &&
                                           _events.first.start.isBefore(

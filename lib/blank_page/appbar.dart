@@ -60,25 +60,38 @@ class AppBarHome extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(14),
-                      child: Image.network(
-                        imageUrl.isNotEmpty ? imageUrl : defaultImage,
+                      child: SizedBox(
                         width: 32,
                         height: 32,
-                        fit: BoxFit.cover,
-                        errorBuilder:
-                            (_, __, ___) => Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                color: Colors.grey[300],
-                              ),
-                              child: const Icon(
-                                Icons.person,
-                                size: 20,
-                                color: Colors.grey,
-                              ),
+                        child: ClipOval(
+                          child: OverflowBox(
+                            minWidth: 40,
+                            maxWidth: 40,
+                            minHeight: 40,
+                            maxHeight: 40,
+                            alignment: Alignment.center,
+                            child: Image.network(
+                              imageUrl.isNotEmpty ? imageUrl : defaultImage,
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                              errorBuilder:
+                                  (_, __, ___) => Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey[300],
+                                    ),
+                                    child: const Icon(
+                                      Icons.person,
+                                      size: 20,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                             ),
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),

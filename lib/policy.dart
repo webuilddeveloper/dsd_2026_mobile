@@ -77,19 +77,31 @@ class _PolicyPageState extends State<PolicyPage> {
   }
 
   Future<void> readPolicy() async {
+    var stage = 'read_profile_code';
     try {
       _profileCode = await storage.read(key: 'profileCode') ?? '';
+      print("_profileCode :${_profileCode}");
+
       if (_profileCode.isEmpty) throw StateError('Missing profile code');
+      stage = 'read_local_acceptance';
       if (await PolicyAcceptance.hasAccepted(_profileCode)) {
         _continue();
         return;
       }
-      // The legacy API uses username + reference to identify acknowledgements.
-      // Use the stable profile code, since social accounts may have no username.
+
+      stage = 'request_policy';
       final result = await _post('${policyApi}read', {
         'username': _profileCode,
         'profileCode': _profileCode,
       });
+      stage = 'validate_policy_response';
+
+      if (result is Map) {
+        debugPrint(
+          '[Policy] สำเร็จ: ${result['status'] == 'S'} | '
+          'ชนิดข้อมูล: ${result['objectData'].runtimeType}',
+        );
+      }
       if (result is! Map ||
           result['status'] != 'S' ||
           result['objectData'] == null) {
@@ -100,6 +112,7 @@ class _PolicyPageState extends State<PolicyPage> {
         _continue();
         return;
       }
+      stage = 'parse_policy';
       final data = _extractPolicyData(result);
 
       if (!mounted) return;
@@ -127,6 +140,9 @@ class _PolicyPageState extends State<PolicyPage> {
       });
       WidgetsBinding.instance.addPostFrameCallback((_) => _checkReadToEnd());
     } catch (e) {
+      debugPrint(
+        '[Policy] โหลดไม่สำเร็จ | ขั้นตอน: $stage | ชนิดข้อผิดพลาด: ${e.runtimeType}',
+      );
       if (!mounted) return;
 
       setState(() => isLoading = false);
@@ -367,7 +383,9 @@ class _PolicyPageState extends State<PolicyPage> {
                                   decoration: BoxDecoration(
                                     color:
                                         hasReadToEnd
-                                            ? AppColors.primary.withValues(alpha: 0.12)
+                                            ? AppColors.primary.withValues(
+                                              alpha: 0.12,
+                                            )
                                             : Colors.grey.shade100,
                                     borderRadius: BorderRadius.circular(10),
                                   ),

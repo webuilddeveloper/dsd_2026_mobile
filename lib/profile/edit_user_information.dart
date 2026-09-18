@@ -413,15 +413,34 @@ class _EditUserInformationPageState extends State<EditUserInformationPage> {
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
+                      // Container(
+                      //   height: 140,
+                      //   width: 140,
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(75),
+                      //     border: Border.all(width: 6, color: Colors.white),
+                      //     color: AppColors.primary,
+                      //   ),
+                      //   child: ClipOval(child: _buildProfileImage()),
+                      // ),
                       Container(
                         height: 140,
                         width: 140,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(75),
-                          border: Border.all(width: 6, color: Colors.white),
+                          shape: BoxShape.circle,
                           color: AppColors.primary,
+                          border: Border.all(width: 6, color: Colors.white),
                         ),
-                        child: ClipOval(child: _buildProfileImage()),
+                        child: ClipOval(
+                          child: OverflowBox(
+                            minWidth: 150,
+                            maxWidth: 150,
+                            minHeight: 150,
+                            maxHeight: 150,
+                            alignment: Alignment.center,
+                            child: _buildProfileImage(),
+                          ),
+                        ),
                       ),
                       Positioned(
                         bottom: 0,

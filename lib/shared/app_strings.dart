@@ -24,6 +24,7 @@ class AppStrings {
   final String calendarRefresh;
   final String calendarLoadFailed;
   final String calendarRetry;
+  final String trainingConnectionError;
   final String calendarNoEvents;
   final String calendarTrainingCategory;
   final String calendarTestingCategory;
@@ -268,6 +269,7 @@ class AppStrings {
     required this.calendarRefresh,
     required this.calendarLoadFailed,
     required this.calendarRetry,
+    required this.trainingConnectionError,
     required this.calendarNoEvents,
     required this.calendarTrainingCategory,
     required this.calendarTestingCategory,
@@ -514,6 +516,8 @@ class AppStrings {
     calendarRefresh: "โหลดข้อมูลใหม่",
     calendarLoadFailed: "โหลดปฏิทินจากเว็บไซต์ไม่สำเร็จ",
     calendarRetry: "ลองใหม่",
+    trainingConnectionError:
+        "ไม่สามารถโหลดข้อมูลฝึกอบรมได้ในขณะนี้\nกรุณาลองใหม่อีกครั้ง",
     calendarNoEvents: "ไม่พบกิจกรรม",
     calendarTrainingCategory: "ตารางฝึกอบรม",
     calendarTestingCategory: "ตารางทดสอบมาตรฐานฝีมือแรงงาน",
@@ -760,6 +764,8 @@ class AppStrings {
     calendarRefresh: "Refresh",
     calendarLoadFailed: "Unable to load the website calendar",
     calendarRetry: "Retry",
+    trainingConnectionError:
+        "Unable to load training data right now.\nPlease try again.",
     calendarNoEvents: "No events found",
     calendarTrainingCategory: "Training schedule",
     calendarTestingCategory: "Skill standard tests",

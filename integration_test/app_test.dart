@@ -193,6 +193,7 @@ void main() {
           await tester.pumpAndSettle();
         }
 
+
         if (isSuccess) {
           isRegistered = true;
         } else {
@@ -478,7 +479,7 @@ void main() {
           await safePop();
         }
       }
-      print('----------');
+
       // ============================================
       // 12. ทดสอบหน้า Profile และการกดเมนูต่างๆ (_rowtxt)
       // ============================================

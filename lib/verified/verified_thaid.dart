@@ -275,7 +275,6 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
   }
 
   _callThaiID() async {
-    print('---------->>_verified _callThaiID');
     try {
       String responseType = 'code';
       String clientId = 'b1lzRU9NcmxEWjFTdXRTMEtaZDhXaHFSTk0xc1hyc00';
@@ -303,7 +302,6 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
   }
 
   _getToken() async {
-    print('---------->>getToken_verified');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
       await prefs.remove('thaiDCode');
@@ -337,11 +335,7 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
         ),
       );
 
-      // Decode token to get user info
       Map<String, dynamic> idData = JwtDecoder.decode(res.data['id_token']);
-
-      // print('################# ID Data #################');
-      // print(idData);
 
       var _userData = {};
 
@@ -355,12 +349,8 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
       _userData['lastName'] = idData['family_name'];
       _userData['idcard'] = idData['pid'];
 
-      print('##################################');
-      print(_userData);
-
       await update(model: _userData['thaiID']);
     } catch (e) {
-      print('---------->>_getToken error: $e');
       await prefs.remove('thaiDCode');
       await prefs.remove('thaiDState');
       if (!mounted) return;
@@ -372,11 +362,6 @@ class _verifiedThaiIDState extends State<verifiedThaiID>
   String category = '';
 
   Future<void> update({required Map<String, dynamic> model}) async {
-    print('--------update---------');
-    print(model);
-
-    print('model id pid : ${model['pid']}');
-
     final code = await storage.read(key: 'profileCode');
     final profileCategory = await storage.read(key: 'profileCategory');
 

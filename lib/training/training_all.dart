@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TrainingAll extends StatefulWidget {
-  const TrainingAll({super.key});
+  const TrainingAll({super.key, this.request});
+  final Future<dynamic> Function(String, Map<String, dynamic>)? request;
 
   @override
   State<TrainingAll> createState() => _TrainingAllState();
@@ -27,6 +28,70 @@ class _TrainingAllState extends State<TrainingAll> {
 
   final TextEditingController courseSearch = TextEditingController();
   int selectedIndex = 0;
+  bool _categoryError = false;
+  Object? _categoryFailure;
+  bool _categoryLoading = false;
+
+  Future<dynamic> _post(String url, Map<String, dynamic> body) =>
+      (widget.request ?? postDio)(url, body).timeout(
+        const Duration(seconds: 30),
+      );
+
+  @override
+  void dispose() {
+    courseSearch.dispose();
+    super.dispose();
+  }
+
+  void _retryTraining() {
+    setState(() {
+      futureTraining = fetchTraining(
+        categoryCode:
+            category.isEmpty
+                ? null
+                : category[selectedIndex]['code']?.toString(),
+      );
+    });
+  }
+
+  Widget _connectionError(Object? error, VoidCallback retry) {
+    final language = AppStrings.of(context);
+    final message = error?.toString().replaceFirst('Exception: ', '').trim();
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Tooltip(
+        message: language.calendarRetry,
+        child: InkWell(
+          onTap: retry,
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF9E6),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.35),
+                width: 1,
+              ),
+            ),
+            child: Text(
+              message == null || message.isEmpty
+                  ? language.trainingConnectionError
+                  : message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Kanit',
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -101,39 +166,55 @@ class _TrainingAllState extends State<TrainingAll> {
 
   /*================ API =================*/
 
-  // Future<List<Map<String, dynamic>>> fetchTraining({
-  //   String? categoryCode,
-  // }) async {
-  //   final body = {"keySearch": "2569"};
-
-  //   // ✅ ส่งเฉพาะตอนมี category
-  //   if (categoryCode != null && categoryCode.isNotEmpty) {
-  //     body["category"] = categoryCode;
-  //   }
-
-  //   final data = await postDio('${trainingApi}readAPI', body);
-  //   return (data as List).cast<Map<String, dynamic>>();
-  // }
   Future<List<Map<String, dynamic>>> fetchTraining({
     String? categoryCode,
   }) async {
-    if (categoryCode == null || categoryCode.isEmpty) {
-      return mockTraining;
+    final body = {"keySearch": "2569"};
+
+    // ✅ ส่งเฉพาะตอนมี category
+    if (categoryCode != null && categoryCode.isNotEmpty) {
+      body["category"] = categoryCode;
     }
 
-    return mockTraining.where((e) => e['category'] == categoryCode).toList();
+    final data = await _post('${trainingApi}readAPI', body);
+    return (data as List).cast<Map<String, dynamic>>();
   }
+  // Future<List<Map<String, dynamic>>> fetchTraining({
+  //   String? categoryCode,
+  // }) async {
+  //   if (categoryCode == null || categoryCode.isEmpty) {
+  //     return mockTraining;
+  //   }
+
+  //   return mockTraining.where((e) => e['category'] == categoryCode).toList();
+  // }
 
   // ignore: non_constant_identifier_names
   Future<void> TrainingCategoryApi() async {
-    final data = await postDio('${trainingCategoryApi}read', {'limit': 999});
-
+    if (_categoryLoading) return;
     setState(() {
-      category = [
-        {'code': '', 'title': 'ทั้งหมด', "titleEN": 'All'},
-        ...(data as List).cast<Map<String, dynamic>>(),
-      ];
+      _categoryLoading = true;
+      _categoryError = false;
     });
+    try {
+      final data = await _post('${trainingCategoryApi}read', {'limit': 999});
+      final rows = (data as List).cast<Map<String, dynamic>>();
+      if (!mounted) return;
+      setState(() {
+        category = [
+          {'code': '', 'title': 'ทั้งหมด', 'titleEN': 'All'},
+          ...rows,
+        ];
+      });
+    } catch (error) {
+      if (mounted)
+        setState(() {
+          _categoryError = true;
+          _categoryFailure = error;
+        });
+    } finally {
+      if (mounted) setState(() => _categoryLoading = false);
+    }
   }
 
   /*================ FILTER =================*/
@@ -183,6 +264,9 @@ class _TrainingAllState extends State<TrainingAll> {
 
             const SizedBox(height: 12),
 
+            if (_categoryError)
+              _connectionError(_categoryFailure, TrainingCategoryApi),
+            if (_categoryLoading) const LinearProgressIndicator(),
             // 🔥 category tabs
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -243,11 +327,13 @@ class _TrainingAllState extends State<TrainingAll> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text("ไม่พบข้อมูล"));
+                  if (snapshot.hasError) {
+                    return _connectionError(snapshot.error, _retryTraining);
                   }
-
-                  final filtered = getFilteredList(snapshot.data!);
+                  final filtered = getFilteredList(snapshot.data ?? []);
+                  if (filtered.isEmpty) {
+                    return Center(child: Text(language.noData));
+                  }
 
                   return GridView.builder(
                     itemCount: filtered.length,

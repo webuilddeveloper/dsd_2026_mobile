@@ -181,23 +181,27 @@ class _UserInformationPageState extends State<UserInformationPage> {
                               });
                             },
                           ),
-                          SizedBox(height: 8),
-                          isCert == true
-                              ? _rowtxt(
-                                title: language.workhistory,
-                                ontap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PageLicense(),
-                                    ),
-                                  );
-                                },
-                              )
-                              : SizedBox(),
-                          SizedBox(height: 8),
-                          const Divider(color: AppColors.backgroundMain),
-                          SizedBox(height: 8),
+                          if (isCert == true) ...[
+                            const Divider(
+                              height: 1,
+                              color: AppColors.backgroundMain,
+                            ),
+                            _rowtxt(
+                              title: language.workhistory,
+                              ontap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PageLicense(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                          const Divider(
+                            height: 1,
+                            color: AppColors.backgroundMain,
+                          ),
                           _rowtxt(
                             title: language.changePassword,
                             ontap: () {
@@ -217,11 +221,12 @@ class _UserInformationPageState extends State<UserInformationPage> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          // SizedBox(height: 16),
-                          // _rowtxt(title: 'การถูกใจ', ontap: () {}),
-                          // SizedBox(height: 8),
-                          // const Divider(color: AppColors.backgroundMain),
-                          SizedBox(height: 8),
+                          SizedBox(height: 16),
+                          _rowtxt(title: 'การถูกใจ', ontap: () {}),
+                          const Divider(
+                            height: 1,
+                            color: AppColors.backgroundMain,
+                          ),
                           _rowtxt(
                             title: language.trainingapplication,
                             ontap: () {
@@ -233,7 +238,10 @@ class _UserInformationPageState extends State<UserInformationPage> {
                               );
                             },
                           ),
-                          SizedBox(height: 8),
+                          const Divider(
+                            height: 1,
+                            color: AppColors.backgroundMain,
+                          ),
                           _rowtxt(
                             title: language.interest,
                             ontap: () {
@@ -245,9 +253,6 @@ class _UserInformationPageState extends State<UserInformationPage> {
                               );
                             },
                           ),
-                          SizedBox(height: 8),
-                          const Divider(color: AppColors.backgroundMain),
-                          SizedBox(height: 8),
                           SizedBox(height: 32),
                           Text(
                             language.settings,
@@ -268,9 +273,10 @@ class _UserInformationPageState extends State<UserInformationPage> {
                               );
                             },
                           ),
-                          SizedBox(height: 8),
-                          const Divider(color: AppColors.backgroundMain),
-                          SizedBox(height: 8),
+                          const Divider(
+                            height: 1,
+                            color: AppColors.backgroundMain,
+                          ),
                           _rowtxt(
                             title: language.changelanguage,
                             ontap: () {
@@ -283,9 +289,10 @@ class _UserInformationPageState extends State<UserInformationPage> {
                             },
                           ),
 
-                          SizedBox(height: 8),
-                          const Divider(color: AppColors.backgroundMain),
-                          SizedBox(height: 8),
+                          const Divider(
+                            height: 1,
+                            color: AppColors.backgroundMain,
+                          ),
                           _rowtxt(
                             title: language.aboutUs,
                             ontap: () {
@@ -297,9 +304,6 @@ class _UserInformationPageState extends State<UserInformationPage> {
                               );
                             },
                           ),
-                          SizedBox(height: 8),
-                          const Divider(color: AppColors.backgroundMain),
-                          SizedBox(height: 8),
                         ],
                       ),
                     ),
@@ -323,16 +327,22 @@ class _UserInformationPageState extends State<UserInformationPage> {
                               color: AppColors.primary,
                             ),
                             child: ClipOval(
-                              child:
-                                  _imageUrl.isNotEmpty && _imageUrl != ''
-                                      ? Image.network(
-                                        _imageUrl,
-                                        fit: BoxFit.cover,
-                                      )
-                                      : Image.asset(
-                                        'assets/DSD/imgs/profile.png',
-                                        fit: BoxFit.cover,
-                                      ),
+                              child: OverflowBox(
+                                minWidth: 150,
+                                maxWidth: 150,
+                                minHeight: 150,
+                                maxHeight: 150,
+                                child:
+                                    _imageUrl.isNotEmpty && _imageUrl != ''
+                                        ? Image.network(
+                                          _imageUrl,
+                                          fit: BoxFit.cover,
+                                        )
+                                        : Image.asset(
+                                          'assets/DSD/imgs/profile.png',
+                                          fit: BoxFit.cover,
+                                        ),
+                              ),
                             ),
                           ),
                         ],
@@ -399,15 +409,27 @@ class _UserInformationPageState extends State<UserInformationPage> {
   InkWell _rowtxt({required String title, required VoidCallback ontap}) {
     return InkWell(
       onTap: () => ontap(),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 52),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Icon(Icons.arrow_forward_ios, color: AppColors.primary),
+            ],
           ),
-          Icon(Icons.arrow_forward_ios, color: AppColors.primary),
-        ],
+        ),
       ),
     );
   }

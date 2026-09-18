@@ -56,8 +56,8 @@ android {
                 } else {
                     signingConfigs.getByName("debug")
                 }
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
         getByName("debug") {
             // ใช้ debug keystore อัตโนมัติ ไม่ต้องทำอะไรเพิ่ม
